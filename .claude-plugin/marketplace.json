@@ -11,17 +11,10 @@
 	"plugins": [
 		{
 			"name": "pubky",
-			"description": "Build applications ON the Pubky protocol — web, server, and native mobile. Use for the Pubky client SDKs (@synonymdev/pubky JS/WASM, the pubky Rust crate, @synonymdev/react-native-pubky, pubky-core-ffi), keypair identity and the pubkyauth flow, pubky:// /pub storage (put/get/list/delete), spec-compliant data with pubky-app-specs, pkarr resolution, and querying the Nexus read API. Bundles the `pubky` (web/server) and `pubky-mobile` (iOS/Android/React Native) skills. NOT for running or self-hosting infrastructure — install the pubky-infra plugin for that.",
+			"description": "Build on and operate the Pubky protocol. Bundles three skills: `pubky` (build web/server apps with the @synonymdev/pubky JS/WASM and pubky Rust SDKs, pubky-app-specs, the pubkyauth flow, pubky:// /pub storage, and the Nexus read API), `pubky-mobile` (build native iOS/Android/React Native apps with react-native-pubky and pubky-core-ffi), and `pubky-infra` (run and self-host the homeserver, Nexus, pubky-docker stack, homegate, pkdns, and relays). Each skill auto-activates on its own triggers.",
 			"source": "./",
 			"strict": false,
-			"skills": ["./skills/pubky", "./skills/pubky-mobile"]
-		},
-		{
-			"name": "pubky-infra",
-			"description": "Operate and self-host Pubky infrastructure. Use for running a homeserver (Docker, admin API, config.toml, signup tokens), the Nexus indexer (nexusd, Neo4j/Redis, migrations), the full local stack (pubky-docker), signup gating (homegate), self-sovereign DNS (pkdns, pkarr-relay), and http-relay. NOT for building apps that consume Pubky — install the pubky plugin for that.",
-			"source": "./",
-			"strict": false,
-			"skills": ["./skills/pubky-infra"]
+			"skills": ["./skills/pubky", "./skills/pubky-mobile", "./skills/pubky-infra"]
 		}
 	]
 }

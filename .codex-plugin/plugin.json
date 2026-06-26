@@ -1,5 +1,5 @@
 {
-	"name": "pubky-agent-skills",
+	"name": "pubky",
 	"version": "0.1.0",
 	"description": "Pubky agent skills for AI coding tools (Claude Code, Codex, Cursor, Gemini).",
 	"author": {
