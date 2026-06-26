@@ -1,0 +1,20 @@
+{
+	"name": "pubky-agent-skills",
+	"version": "0.1.0",
+	"description": "Pubky agent skills for AI coding tools (Claude Code, Codex, Cursor, Gemini).",
+	"author": {
+		"name": "Pubky",
+		"email": "dev@synonym.to",
+		"url": "https://pubky.org"
+	},
+	"homepage": "https://github.com/pubky/agent-skills",
+	"repository": "https://github.com/pubky/agent-skills",
+	"license": "MIT",
+	"keywords": ["agent-skills", "pubky", "pkarr", "homeserver", "decentralized"],
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Pubky Agent Skills",
+		"shortDescription": "Build on and operate the Pubky protocol",
+		"category": "Productivity"
+	}
+}

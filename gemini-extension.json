@@ -1,0 +1,5 @@
+{
+	"name": "pubky-agent-skills",
+	"version": "0.1.0",
+	"description": "Pubky agent skills for Claude Code, Codex, Cursor, and Gemini CLI."
+}
