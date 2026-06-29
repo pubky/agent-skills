@@ -32,15 +32,20 @@ export const meta = {
 
 // args is either the full manifest inline, or { manifestPath } — in which case a bootstrap
 // agent reads it off disk (the manifest is too large to pass inline at scale). A schema'd
-// return guarantees clean JSON text regardless of any agent chatter/fences.
+// return guarantees clean JSON text regardless of any agent chatter/fences. If args doesn't
+// arrive at all, fall back to the default path the /sync-references command writes.
 let A = args || {}
-if (A.manifestPath && !A.files) {
+if (typeof A === 'string') { try { A = JSON.parse(A) } catch { A = {} } }  // tool may deliver args JSON-encoded
+log(`args: type=${typeof args} keys=${A && typeof A === 'object' ? Object.keys(A).join(',') : 'none'}`)
+const manifestPath = A.files ? null : (A.manifestPath || '/tmp/sync-manifest.json')
+if (manifestPath) {
   const loaded = await agent(
-    `Run \`cat ${A.manifestPath}\` and return its exact stdout verbatim as the string field 'contents'. It is a JSON document; do not alter, summarize, or re-indent it.`,
+    `Run \`cat ${manifestPath}\` and return its exact stdout verbatim as the string field 'contents'. It is a JSON document; do not alter, summarize, or re-indent it.`,
     { schema: { type: 'object', additionalProperties: false, required: ['contents'], properties: { contents: { type: 'string' } } },
       label: 'load-manifest', phase: 'Reconcile' }
   )
   A = JSON.parse(loaded.contents)
+  log(`manifest loaded: mode=${A.mode} files=${(A.files || []).length}`)
 }
 const FILES = A.files || []
 const RULES = A.rulesText || ''
