@@ -1,0 +1,201 @@
+{
+  "path": "skills/pubky-mobile/references/ring-auth.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-ring",
+      "sha": "ce0e083145b0d7567dd81828e25ababcc49ddd28"
+    },
+    {
+      "repo": "pubky-core",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "request-a-session-via-ring-primary-path",
+      "repo": "pubky/react-native-pubky",
+      "path": "README.md",
+      "sha": "84ec77af",
+      "url": "https://github.com/pubky/react-native-pubky/blob/84ec77af/README.md#L349-L373"
+    },
+    {
+      "anchor": "request-a-session-via-ring-primary-path",
+      "repo": "pubky/react-native-pubky",
+      "path": "src/index.tsx",
+      "sha": "84ec77af",
+      "url": "https://github.com/pubky/react-native-pubky/blob/84ec77af/src/index.tsx#L519-L545"
+    },
+    {
+      "anchor": "deeplink-schemes-and-the-single-parser",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/inputParser.ts",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/utils/inputParser.ts#L342-L346"
+    },
+    {
+      "anchor": "deeplink-schemes-and-the-single-parser",
+      "repo": "pubky/pubky-ring",
+      "path": "README.md",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/README.md#L49-L62"
+    },
+    {
+      "anchor": "deeplink-schemes-and-the-single-parser",
+      "repo": "pubky/pubky-core",
+      "path": "docs/AUTH.md",
+      "sha": "ba6d69c117b9",
+      "url": "https://github.com/pubky/pubky-core/blob/ba6d69c117b9/docs/AUTH.md#L59-L63"
+    },
+    {
+      "anchor": "deeplink-schemes-and-the-single-parser",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/inputParser.ts",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/utils/inputParser.ts#L370-L405"
+    },
+    {
+      "anchor": "deeplink-schemes-and-the-single-parser",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/actions/sessionAction.ts",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/utils/actions/sessionAction.ts#L49-L84"
+    },
+    {
+      "anchor": "capabilities-ring-view",
+      "repo": "pubky/pubky-core",
+      "path": "docs/AUTH.md",
+      "sha": "ba6d69c117b9",
+      "url": "https://github.com/pubky/pubky-core/blob/ba6d69c117b9/docs/AUTH.md#L87-L94"
+    },
+    {
+      "anchor": "relay-secret-summary",
+      "repo": "pubky/pubky-core",
+      "path": "docs/AUTH.md",
+      "sha": "ba6d69c117b9",
+      "url": "https://github.com/pubky/pubky-core/blob/ba6d69c117b9/docs/AUTH.md#L48-L73"
+    },
+    {
+      "anchor": "x-callback-return-inter-app",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/inputParser.ts",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/utils/inputParser.ts#L289-L307"
+    },
+    {
+      "anchor": "x-callback-return-inter-app",
+      "repo": "pubky/pubky-ring",
+      "path": "src/i18n/locales/en.json",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/i18n/locales/en.json#L87"
+    },
+    {
+      "anchor": "consent-flow-and-timeouts",
+      "repo": "pubky/pubky-ring",
+      "path": "src/i18n/locales/en.json",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/i18n/locales/en.json#L87"
+    },
+    {
+      "anchor": "signup-deeplinks-and-homeserver-keys",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/constants.ts",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/utils/constants.ts#L6-L8"
+    },
+    {
+      "anchor": "authenticator-side-only-if-building-a-wallet",
+      "repo": "pubky/react-native-pubky",
+      "path": "src/index.tsx",
+      "sha": "84ec77af",
+      "url": "https://github.com/pubky/react-native-pubky/blob/84ec77af/src/index.tsx#L82-L117"
+    },
+    {
+      "anchor": "authenticator-side-only-if-building-a-wallet",
+      "repo": "pubky/react-native-pubky",
+      "path": "README.md",
+      "sha": "84ec77af",
+      "url": "https://github.com/pubky/react-native-pubky/blob/84ec77af/README.md#L40-L52"
+    },
+    {
+      "anchor": "authenticator-side-only-if-building-a-wallet",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/inputParser.ts",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/utils/inputParser.ts#L54-L63"
+    },
+    {
+      "anchor": "sessions-revoke-and-re-auth",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/react-native/src/auth.ts",
+      "sha": "HEAD",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/HEAD/snippets/react-native/src/auth.ts#L4-L31"
+    },
+    {
+      "anchor": "sessions-revoke-and-re-auth",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/pubky.ts",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/utils/pubky.ts#L583-L602"
+    },
+    {
+      "anchor": "key-migration-animated-qr",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/actions/migrateAction.ts",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/utils/actions/migrateAction.ts#L169-L172"
+    },
+    {
+      "anchor": "key-migration-animated-qr",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/inputParser.ts",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/utils/inputParser.ts#L314-L340"
+    },
+    {
+      "anchor": "key-migration-animated-qr",
+      "repo": "pubky/pubky-ring",
+      "path": "src/components/MigrateModal.tsx",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/components/MigrateModal.tsx#L95-L127"
+    },
+    {
+      "anchor": "key-migration-animated-qr",
+      "repo": "pubky/pubky-ring",
+      "path": "src/components/AnimatedQR.tsx",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/components/AnimatedQR.tsx#L29-L31"
+    },
+    {
+      "anchor": "key-migration-animated-qr",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/actions/migrateAction.ts",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/utils/actions/migrateAction.ts#L161-L244"
+    },
+    {
+      "anchor": "clipboard-qr-input-formats",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/inputParser.ts",
+      "sha": "ce0e083145b0",
+      "url": "https://github.com/pubky/pubky-ring/blob/ce0e083145b0/src/utils/inputParser.ts#L111-L133"
+    }
+  ],
+  "snippet": {
+    "total": 6,
+    "pass": 6,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 24,
+    "refuted": 0,
+    "caveated": 3,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 1931
+}

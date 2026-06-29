@@ -1,0 +1,205 @@
+{
+  "path": "skills/pubky/references/app-specs.md",
+  "role": "canonical",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-app-specs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448"
+    },
+    {
+      "repo": "pubky-ai-kit",
+      "sha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
+    },
+    {
+      "repo": "npm:pubky-app-specs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "paths-and-uris",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/constants.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/constants.rs"
+    },
+    {
+      "anchor": "paths-and-uris",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/uri_parser.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/uri_parser.rs"
+    },
+    {
+      "anchor": "object-ids",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/traits.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/traits.rs"
+    },
+    {
+      "anchor": "object-ids",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/types.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/types.rs"
+    },
+    {
+      "anchor": "object-ids",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/blob.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/blob.rs"
+    },
+    {
+      "anchor": "the-validatable-lifecycle",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/file.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/file.rs"
+    },
+    {
+      "anchor": "pubkyappuser",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/user.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/user.rs"
+    },
+    {
+      "anchor": "pubkyapppost",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/post.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/post.rs"
+    },
+    {
+      "anchor": "pubkyapptag",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/tag.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/tag.rs"
+    },
+    {
+      "anchor": "pubkyappbookmark",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/bookmark.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/bookmark.rs"
+    },
+    {
+      "anchor": "pubkyappfollow-and-pubkyappmute",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/follow.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/follow.rs"
+    },
+    {
+      "anchor": "pubkyappfile",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/file.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/file.rs"
+    },
+    {
+      "anchor": "pubkyappblob",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/blob.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/blob.rs"
+    },
+    {
+      "anchor": "pubkyappfeed",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/feed.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/feed.rs"
+    },
+    {
+      "anchor": "pubkyapplastread",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/last_read.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/last_read.rs"
+    },
+    {
+      "anchor": "validation-limits",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/limits.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/limits.rs"
+    },
+    {
+      "anchor": "the-deleted-keyword",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/post.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/models/post.rs"
+    },
+    {
+      "anchor": "unicode-length-counting",
+      "repo": "pubky/pubky-app-specs",
+      "path": "docs/UNICODE_NOTES.md",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/docs/UNICODE_NOTES.md"
+    },
+    {
+      "anchor": "builder-and-crate-apis",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/wasm.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/wasm.rs"
+    },
+    {
+      "anchor": "builder-and-crate-apis",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/lib.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/src/lib.rs"
+    },
+    {
+      "anchor": "pubkyappuser",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/js/src/profile-storage.ts",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/profile-storage.ts"
+    },
+    {
+      "anchor": "pubkyappblob",
+      "repo": "pubky/pubky-app-specs",
+      "path": "pkg/README.md",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/pkg/README.md"
+    },
+    {
+      "anchor": "builder-and-crate-apis",
+      "repo": "pubky/pubky-app-specs",
+      "path": "examples/create_user.rs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/031b5a2d534180664b0017b345365a4d3b9f6448/examples/create_user.rs"
+    }
+  ],
+  "snippet": {
+    "total": 4,
+    "pass": 1,
+    "fail": 3,
+    "unverifiable": 0,
+    "failing": [
+      "snippet-file-blob",
+      "snippet-builder-create-post",
+      "snippet-rust-create-user"
+    ]
+  },
+  "factCheck": {
+    "supported": 35,
+    "refuted": 1,
+    "caveated": 4,
+    "unsupported": 0
+  },
+  "guardrailViolations": [
+    "No planned/unshipped feature is presented as available: the draft correctly states 'This is all public /pub data; no /priv exists' and never claims private storage, homeserver mirroring, backup restore, cloud backup, or two-way sync. v0/instability is well caveated (prominent 'Unstable, v0.x' block citing the README's 'Rapid Development Phase'/'v0 draft' and the pubky.app/v1 LTS path note). No unprovenanced claims found.",
+    "Mirrored drift-prone API detail (soft flag, per maintenance rule #4): the full per-value VALIDATION_LIMITS table and the full 21-item VALID_MIME_TYPES allowlist are reproduced verbatim from limits.rs/file.rs — the most breaking-change-prone content in the file. It is mitigated (the draft says read it at runtime via getValidationLimits()/getValidMimeTypes(), tags every number 'as of 0.5.3', and links limits.rs/file.rs), but rule #4 favours leaning on the runtime getters + a link over a hardcoded copy to avoid re-creating the drift burden."
+  ],
+  "wordCount": 2680
+}

@@ -6,7 +6,7 @@
     "pubky-core": {
       "url": "https://github.com/pubky/pubky-core",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
       "pathsOfInterest": [
         "README.md",
         "docs/AUTH.md",
@@ -22,7 +22,7 @@
     "pubky-app-specs": {
       "url": "https://github.com/pubky/pubky-app-specs",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "031b5a2d534180664b0017b345365a4d3b9f6448",
       "authoritative": true,
       "pathsOfInterest": [
         "README.md",
@@ -33,7 +33,7 @@
     "pubky-nexus": {
       "url": "https://github.com/pubky/pubky-nexus",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "60d4ac625528f61bdac39d376066b836a4c60e70",
       "pathsOfInterest": [
         "README.md",
         "docker/**",
@@ -44,7 +44,7 @@
     "react-native-pubky": {
       "url": "https://github.com/pubky/react-native-pubky",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "84ec77af1dd52c5cb37648467954c159aba5719e",
       "npmScope": "@synonymdev/react-native-pubky",
       "pathsOfInterest": [
         "README.md",
@@ -54,7 +54,7 @@
     "pubky-core-ffi": {
       "url": "https://github.com/pubky/pubky-core-ffi",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "782d6c0c842c793b1a43ecc0931d2127e9bba841",
       "pathsOfInterest": [
         "README.md",
         "build.sh",
@@ -65,7 +65,7 @@
     "pubky-ring": {
       "url": "https://github.com/pubky/pubky-ring",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "ce0e083145b0d7567dd81828e25ababcc49ddd28",
       "pathsOfInterest": [
         "README.md",
         "docs/**"
@@ -74,7 +74,7 @@
     "pubky-docker": {
       "url": "https://github.com/pubky/pubky-docker",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "a5544e6247c1f7195ae116586a578d6a8a007a67",
       "pathsOfInterest": [
         "README.md",
         "**/*.yml",
@@ -86,7 +86,7 @@
     "homegate": {
       "url": "https://github.com/pubky/homegate",
       "branch": "master",
-      "lastSeenSha": null,
+      "lastSeenSha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
       "pathsOfInterest": [
         "README.md",
         "openapi.yaml",
@@ -96,7 +96,7 @@
     "pkdns": {
       "url": "https://github.com/pubky/pkdns",
       "branch": "master",
-      "lastSeenSha": null,
+      "lastSeenSha": "221fe940116b076174e67782e426b69761cc32b6",
       "pathsOfInterest": [
         "README.md",
         "docs/**"
@@ -105,7 +105,7 @@
     "pkarr": {
       "url": "https://github.com/pubky/pkarr",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "00f8c534db488246097f6d8a98b45ecc80188ae7",
       "pathsOfInterest": [
         "README.md",
         "**/relay/**",
@@ -115,7 +115,7 @@
     "mainline": {
       "url": "https://github.com/pubky/mainline",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "e77f8060a947736a9f97d4f3001ad1b871f7bb29",
       "pathsOfInterest": [
         "README.md"
       ]
@@ -123,7 +123,7 @@
     "http-relay": {
       "url": "https://github.com/pubky/http-relay",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "e4f3d9e33d438aba5b889af41e20d76209fb10d8",
       "pathsOfInterest": [
         "README.md"
       ]
@@ -131,7 +131,7 @@
     "pubky-cli": {
       "url": "https://github.com/pubky/pubky-cli",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "3f23d8340f83130ee5a3349041d12662adb582ac",
       "pathsOfInterest": [
         "README.md"
       ]
@@ -139,7 +139,7 @@
     "pubky-noise": {
       "url": "https://github.com/pubky/pubky-noise",
       "branch": "master",
-      "lastSeenSha": null,
+      "lastSeenSha": "be472b914ac98ced838c16e59b659d82c667f245",
       "pathsOfInterest": [
         "README.md"
       ]
@@ -147,7 +147,7 @@
     "paykit-rs": {
       "url": "https://github.com/pubky/paykit-rs",
       "branch": "master",
-      "lastSeenSha": null,
+      "lastSeenSha": "5f860da46c78a05abd2a737216c3c953a2e47e43",
       "pathsOfInterest": [
         "README.md"
       ]
@@ -155,7 +155,7 @@
     "homeserver-dashboard": {
       "url": "https://github.com/pubky/homeserver-dashboard",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "b3be93d8d2a9d93a9670983f28bed5fb380431af",
       "pathsOfInterest": [
         "README.md"
       ]
@@ -163,7 +163,7 @@
     "umbrel-app-store": {
       "url": "https://github.com/pubky/umbrel-app-store",
       "branch": "master",
-      "lastSeenSha": null,
+      "lastSeenSha": "d0b96adf0a217dd4f682d364100d9c460a9b9c7b",
       "pathsOfInterest": [
         "README.md",
         "**/pubky*/**"
@@ -172,7 +172,7 @@
     "pubky-app": {
       "url": "https://github.com/pubky/pubky-app",
       "branch": "dev",
-      "lastSeenSha": null,
+      "lastSeenSha": "57d41baa6daea4430a15aaa807f260765cae0960",
       "pathsOfInterest": [
         "README.md",
         "src/**"
@@ -181,7 +181,7 @@
     "pubky-explorer": {
       "url": "https://github.com/pubky/pubky-explorer",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "aa04d491435098cb431ba84d115a471d52fd3b2a",
       "pathsOfInterest": [
         "README.md",
         "src/**"
@@ -190,7 +190,7 @@
     "workshop": {
       "url": "https://github.com/pubky/workshop",
       "branch": "spanish",
-      "lastSeenSha": null,
+      "lastSeenSha": "b952363b519aabe7b67583f3611d43837d52cb07",
       "pathsOfInterest": [
         "README.md"
       ]
@@ -198,7 +198,7 @@
     "pubky-knowledge-base-v2": {
       "url": "https://github.com/pubky/pubky-knowledge-base-v2",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "c9981c6501456f9305918820017134af40d278c0",
       "rulesFile": ".ai-rules.md",
       "verifiedSnippets": true,
       "pathsOfInterest": [
@@ -212,7 +212,7 @@
     "pubky-ai-kit": {
       "url": "https://github.com/pubky/pubky-ai-kit",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
       "kind": "migration-source",
       "note": "The retiring monolith. Secondary seed for structure/wording only; prefer upstream truth.",
       "pathsOfInterest": [
@@ -223,42 +223,42 @@
       "kind": "docs",
       "url": "https://docs.rs/pubky",
       "tracksRepo": "pubky-core",
-      "lastSeenSha": null
+      "lastSeenSha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
     "nexus-swagger": {
       "kind": "docs",
       "url": "https://nexus.pubky.app/swagger-ui/",
       "openapi": "https://nexus.pubky.app/api-docs/openapi.json",
       "tracksRepo": "pubky-nexus",
-      "lastSeenSha": null
+      "lastSeenSha": "60d4ac625528f61bdac39d376066b836a4c60e70"
     },
     "npm:@synonymdev/pubky": {
       "kind": "registry",
       "url": "https://www.npmjs.com/package/@synonymdev/pubky",
       "tracksRepo": "pubky-core",
       "pinnedVersion": "0.9.3",
-      "lastSeenSha": null
+      "lastSeenSha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
     "npm:@synonymdev/react-native-pubky": {
       "kind": "registry",
       "url": "https://www.npmjs.com/package/@synonymdev/react-native-pubky",
       "tracksRepo": "react-native-pubky",
       "pinnedVersion": "0.13.0",
-      "lastSeenSha": null
+      "lastSeenSha": "84ec77af1dd52c5cb37648467954c159aba5719e"
     },
     "npm:pubky-app-specs": {
       "kind": "registry",
       "url": "https://www.npmjs.com/package/pubky-app-specs",
       "tracksRepo": "pubky-app-specs",
       "pinnedVersion": "0.5.3",
-      "lastSeenSha": null
+      "lastSeenSha": "031b5a2d534180664b0017b345365a4d3b9f6448"
     },
     "crate:pubky": {
       "kind": "registry",
       "url": "https://crates.io/crates/pubky",
       "tracksRepo": "pubky-core",
       "pinnedVersion": "0.9.3",
-      "lastSeenSha": null
+      "lastSeenSha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     }
   },
   "references": {
@@ -287,7 +287,11 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
+        "pubky-knowledge-base-v2": "c9981c6501456f9305918820017134af40d278c0",
+        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+      }
     },
     "skills/pubky/references/auth.md": {
       "role": "normal",
@@ -307,7 +311,10 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
+        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+      }
     },
     "skills/pubky/references/app-specs.md": {
       "role": "canonical",
@@ -332,7 +339,11 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-app-specs": "031b5a2d534180664b0017b345365a4d3b9f6448",
+        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
+        "npm:pubky-app-specs": "031b5a2d534180664b0017b345365a4d3b9f6448"
+      }
     },
     "skills/pubky/references/sdk-js.md": {
       "role": "normal",
@@ -364,7 +375,12 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-knowledge-base-v2": "c9981c6501456f9305918820017134af40d278c0",
+        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
+        "npm:@synonymdev/pubky": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+      }
     },
     "skills/pubky/references/sdk-rust.md": {
       "role": "normal",
@@ -392,7 +408,12 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-knowledge-base-v2": "c9981c6501456f9305918820017134af40d278c0",
+        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+        "docs.rs/pubky": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+        "crate:pubky": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+      }
     },
     "skills/pubky/references/nexus-api.md": {
       "role": "normal",
@@ -416,7 +437,11 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "nexus-swagger": "60d4ac625528f61bdac39d376066b836a4c60e70",
+        "pubky-nexus": "60d4ac625528f61bdac39d376066b836a4c60e70",
+        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
+      }
     },
     "skills/pubky/references/testing-and-testnet.md": {
       "role": "normal",
@@ -438,7 +463,10 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
+      }
     },
     "skills/pubky/references/reference-apps.md": {
       "role": "normal",
@@ -478,7 +506,13 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-app": "57d41baa6daea4430a15aaa807f260765cae0960",
+        "pubky-explorer": "aa04d491435098cb431ba84d115a471d52fd3b2a",
+        "workshop": "b952363b519aabe7b67583f3611d43837d52cb07",
+        "pubky-knowledge-base-v2": "c9981c6501456f9305918820017134af40d278c0",
+        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
+      }
     },
     "skills/pubky/references/advanced-messaging-payments.md": {
       "role": "normal",
@@ -498,7 +532,10 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-noise": "be472b914ac98ced838c16e59b659d82c667f245",
+        "paykit-rs": "5f860da46c78a05abd2a737216c3c953a2e47e43"
+      }
     },
     "skills/pubky/references/shipped-vs-planned.md": {
       "role": "canonical",
@@ -525,7 +562,11 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
+        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+        "pubky-app-specs": "031b5a2d534180664b0017b345365a4d3b9f6448"
+      }
     },
     "skills/pubky-mobile/references/react-native.md": {
       "role": "normal",
@@ -550,7 +591,11 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "react-native-pubky": "84ec77af1dd52c5cb37648467954c159aba5719e",
+        "pubky-knowledge-base-v2": "c9981c6501456f9305918820017134af40d278c0",
+        "npm:@synonymdev/react-native-pubky": "84ec77af1dd52c5cb37648467954c159aba5719e"
+      }
     },
     "skills/pubky-mobile/references/native-ffi.md": {
       "role": "normal",
@@ -567,7 +612,9 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-core-ffi": "782d6c0c842c793b1a43ecc0931d2127e9bba841"
+      }
     },
     "skills/pubky-mobile/references/ring-auth.md": {
       "role": "normal",
@@ -590,7 +637,10 @@
       "linksTo": [
         "skills/pubky/references/auth.md"
       ],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-ring": "ce0e083145b0d7567dd81828e25ababcc49ddd28",
+        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+      }
     },
     "skills/pubky-mobile/references/concepts-pointer.md": {
       "role": "pointer",
@@ -634,7 +684,12 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+        "pubky-docker": "a5544e6247c1f7195ae116586a578d6a8a007a67",
+        "homeserver-dashboard": "b3be93d8d2a9d93a9670983f28bed5fb380431af",
+        "umbrel-app-store": "d0b96adf0a217dd4f682d364100d9c460a9b9c7b"
+      }
     },
     "skills/pubky-infra/references/nexus-operations.md": {
       "role": "normal",
@@ -650,7 +705,9 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-nexus": "60d4ac625528f61bdac39d376066b836a4c60e70"
+      }
     },
     "skills/pubky-infra/references/local-stack.md": {
       "role": "normal",
@@ -667,7 +724,9 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-docker": "a5544e6247c1f7195ae116586a578d6a8a007a67"
+      }
     },
     "skills/pubky-infra/references/signup-gating.md": {
       "role": "normal",
@@ -683,7 +742,9 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "homegate": "ea838a80b6463124906b8837f8c47e0b0731ecc8"
+      }
     },
     "skills/pubky-infra/references/dns-and-relays.md": {
       "role": "normal",
@@ -711,7 +772,11 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pkdns": "221fe940116b076174e67782e426b69761cc32b6",
+        "pkarr": "00f8c534db488246097f6d8a98b45ecc80188ae7",
+        "mainline": "e77f8060a947736a9f97d4f3001ad1b871f7bb29"
+      }
     },
     "skills/pubky-infra/references/http-relay.md": {
       "role": "normal",
@@ -725,7 +790,9 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "http-relay": "e4f3d9e33d438aba5b889af41e20d76209fb10d8"
+      }
     },
     "skills/pubky-infra/references/operator-cli.md": {
       "role": "normal",
@@ -739,7 +806,9 @@
         }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-cli": "3f23d8340f83130ee5a3349041d12662adb582ac"
+      }
     }
   }
 }

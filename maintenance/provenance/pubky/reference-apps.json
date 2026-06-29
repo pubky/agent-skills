@@ -1,0 +1,129 @@
+{
+  "path": "skills/pubky/references/reference-apps.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-app",
+      "sha": "57d41baa6daea4430a15aaa807f260765cae0960"
+    },
+    {
+      "repo": "pubky-explorer",
+      "sha": "aa04d491435098cb431ba84d115a471d52fd3b2a"
+    },
+    {
+      "repo": "workshop",
+      "sha": "b952363b519aabe7b67583f3611d43837d52cb07"
+    },
+    {
+      "repo": "pubky-knowledge-base-v2",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "repo": "pubky-ai-kit",
+      "sha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "pubky.app structure",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "src/content/docs/explore/pubky-apps/reference-app/pubky-app.md",
+      "sha": "c9981c650145",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/c9981c650145/src/content/docs/explore/pubky-apps/reference-app/pubky-app.md"
+    },
+    {
+      "anchor": "App architectures: which reference to copy",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "src/content/docs/explore/pubky-apps/app-architectures/custom-backend.md",
+      "sha": "c9981c650145",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/c9981c650145/src/content/docs/explore/pubky-apps/app-architectures/custom-backend.md"
+    },
+    {
+      "anchor": "pubky.app: layered core architecture",
+      "repo": "pubky/pubky-app",
+      "path": "docs/architecture.md",
+      "sha": "57d41baa6dae",
+      "url": "https://github.com/pubky/pubky-app/blob/57d41baa6dae/docs/architecture.md"
+    },
+    {
+      "anchor": "pubky.app: layered core architecture (hard constraints)",
+      "repo": "pubky/pubky-app",
+      "path": "AGENTS.md",
+      "sha": "57d41baa6dae",
+      "url": "https://github.com/pubky/pubky-app/blob/57d41baa6dae/AGENTS.md"
+    },
+    {
+      "anchor": "pubky.app: local-first data flow",
+      "repo": "pubky/pubky-app",
+      "path": "docs/local-first.md",
+      "sha": "57d41baa6dae",
+      "url": "https://github.com/pubky/pubky-app/blob/57d41baa6dae/docs/local-first.md"
+    },
+    {
+      "anchor": "pubky.app: caching, IDs, and pipes",
+      "repo": "pubky/pubky-app",
+      "path": "docs/data-patterns.md",
+      "sha": "57d41baa6dae",
+      "url": "https://github.com/pubky/pubky-app/blob/57d41baa6dae/docs/data-patterns.md"
+    },
+    {
+      "anchor": "pubky.app: error handling",
+      "repo": "pubky/pubky-app",
+      "path": "docs/error-handling.md",
+      "sha": "57d41baa6dae",
+      "url": "https://github.com/pubky/pubky-app/blob/57d41baa6dae/docs/error-handling.md"
+    },
+    {
+      "anchor": "Pubky Explorer: read-only public-data browser",
+      "repo": "pubky/pubky-explorer",
+      "path": "src/state.ts",
+      "sha": "aa04d4914350",
+      "url": "https://github.com/pubky/pubky-explorer/blob/aa04d4914350/src/state.ts"
+    },
+    {
+      "anchor": "Pubky Explorer: read-side robustness patterns (infinite scroll)",
+      "repo": "pubky/pubky-explorer",
+      "path": "src/Explorer.tsx",
+      "sha": "aa04d4914350",
+      "url": "https://github.com/pubky/pubky-explorer/blob/aa04d4914350/src/Explorer.tsx"
+    },
+    {
+      "anchor": "Workshop: the end-to-end newcomer flow",
+      "repo": "pubky/workshop",
+      "path": "workshop.mjs",
+      "sha": "b952363b519a",
+      "url": "https://github.com/pubky/workshop/blob/b952363b519a/workshop.mjs"
+    },
+    {
+      "anchor": "Workshop: verify your writes (URLs)",
+      "repo": "pubky/workshop",
+      "path": "utils.mjs",
+      "sha": "b952363b519a",
+      "url": "https://github.com/pubky/workshop/blob/b952363b519a/utils.mjs"
+    },
+    {
+      "anchor": "React integration patterns",
+      "repo": "pubky/pubky-ai-kit",
+      "path": "pubky-dev-context.md",
+      "sha": "5654d0d27218",
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md"
+    }
+  ],
+  "snippet": {
+    "total": 10,
+    "pass": 10,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 32,
+    "refuted": 0,
+    "caveated": 1,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 3023
+}

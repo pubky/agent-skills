@@ -1,0 +1,120 @@
+{
+  "path": "skills/pubky/references/testing-and-testnet.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-core",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    },
+    {
+      "repo": "pubky-ai-kit",
+      "sha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "surface-1-rust-in-process-tests",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-testnet/README.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-testnet/README.md"
+    },
+    {
+      "anchor": "surface-1-rust-in-process-tests",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-testnet/src/ephemeral_testnet.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-testnet/src/ephemeral_testnet.rs"
+    },
+    {
+      "anchor": "surface-1-rust-in-process-tests",
+      "repo": "pubky/pubky-core",
+      "path": "examples/rust/1-testnet/main.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/examples/rust/1-testnet/main.rs"
+    },
+    {
+      "anchor": "postgresql-is-required",
+      "repo": "pubky/pubky-core",
+      "path": "docs/DEV_TESTING_GUIDES.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/docs/DEV_TESTING_GUIDES.md"
+    },
+    {
+      "anchor": "surface-2-standalone-local-testnet",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-testnet/src/static_testnet.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-testnet/src/static_testnet.rs"
+    },
+    {
+      "anchor": "surface-2-standalone-local-testnet",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-sdk/bindings/js/pkg/package.json",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/pkg/package.json"
+    },
+    {
+      "anchor": "surface-2-standalone-local-testnet",
+      "repo": "pubky/pubky-core",
+      "path": "examples/javascript/0-check-testnet.mjs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/examples/javascript/0-check-testnet.mjs"
+    },
+    {
+      "anchor": "surface-3-scripting-with-pubky-cli",
+      "repo": "pubky/pubky-cli",
+      "path": "src/user.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/user.rs"
+    },
+    {
+      "anchor": "surface-3-scripting-with-pubky-cli",
+      "repo": "pubky/pubky-cli",
+      "path": "Cargo.toml",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/Cargo.toml"
+    },
+    {
+      "anchor": "writing-correct-tests",
+      "repo": "pubky/pubky-core",
+      "path": "examples/javascript/README.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/examples/javascript/README.md"
+    },
+    {
+      "anchor": "writing-correct-tests",
+      "repo": "jasonvandenberg/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "main"
+    },
+    {
+      "anchor": "full-self-hosted-stack",
+      "repo": "jasonvandenberg/agent-skills",
+      "path": "skills/pubky-infra/references/local-stack.md",
+      "sha": "main"
+    }
+  ],
+  "snippet": {
+    "total": 7,
+    "pass": 6,
+    "fail": 1,
+    "unverifiable": 0,
+    "failing": [
+      "snippet-pubkycli-onboarding"
+    ]
+  },
+  "factCheck": {
+    "supported": 21,
+    "refuted": 0,
+    "caveated": 3,
+    "unsupported": 0
+  },
+  "guardrailViolations": [
+    "No PLANNED/unshipped feature is presented as available: the draft correctly enumerates /priv private storage, encrypted/guarded data as a general primitive, homeserver mirroring, backup restore, cloud backup, and two-way sync as features NOT to exercise in tests, and treats /priv writes as a 403 (not a usable surface). No instability-caveat gaps either: the only /pub-reachability and facade-construction claims defer to concepts.md by link rather than restating, consistent with the maintenance rules. (No violations of the shipped-vs-planned guardrail.)",
+    "Mirrored drift-prone API detail (maintenance rule 4 / 'should be a link'): the Surface 3 section reproduces the full `pubky-cli user` subcommand signatures and the complete environment-variable table verbatim. pubky-cli is pinned pre-release (0.1.0-rc.1 on pubky 0.6.0-rc.6) and churny; per the canonical-not-copy / link-upstream rules this exact-flag enumeration should be trimmed to a short summary that defers to the linked pubky-cli README, to avoid re-creating the drift burden. The stable hardcoded testnet ports table is fine to keep inline."
+  ],
+  "wordCount": 1490
+}

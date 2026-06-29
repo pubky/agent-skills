@@ -1,0 +1,186 @@
+{
+  "path": "skills/pubky-infra/references/dns-and-relays.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "pkdns",
+      "sha": "221fe940116b076174e67782e426b69761cc32b6"
+    },
+    {
+      "repo": "pkarr",
+      "sha": "00f8c534db488246097f6d8a98b45ecc80188ae7"
+    },
+    {
+      "repo": "mainline",
+      "sha": "e77f8060a947736a9f97d4f3001ad1b871f7bb29"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "pkdns — public-key DNS resolver (run/options/verify/record-types/port-53/browser-dot)",
+      "repo": "pubky/pkdns",
+      "path": "README.md",
+      "sha": "221fe940116b",
+      "url": "https://github.com/pubky/pkdns/blob/221fe940116b/README.md"
+    },
+    {
+      "anchor": "pkdns config (trimmed to gotcha/security/decision fields)",
+      "repo": "pubky/pkdns",
+      "path": "server/config.sample.toml",
+      "sha": "221fe940116b",
+      "url": "https://github.com/pubky/pkdns/blob/221fe940116b/server/config.sample.toml"
+    },
+    {
+      "anchor": "DNS-over-HTTPS (browsers)",
+      "repo": "pubky/pkdns",
+      "path": "docs/dns-over-https.md",
+      "sha": "221fe940116b",
+      "url": "https://github.com/pubky/pkdns/blob/221fe940116b/docs/dns-over-https.md"
+    },
+    {
+      "anchor": "Docker (pkdns compose)",
+      "repo": "pubky/pkdns",
+      "path": "compose.yaml",
+      "sha": "221fe940116b",
+      "url": "https://github.com/pubky/pkdns/blob/221fe940116b/compose.yaml"
+    },
+    {
+      "anchor": "Logging",
+      "repo": "pubky/pkdns",
+      "path": "docs/logging.md",
+      "sha": "221fe940116b",
+      "url": "https://github.com/pubky/pkdns/blob/221fe940116b/docs/logging.md"
+    },
+    {
+      "anchor": "Hosted servers",
+      "repo": "pubky/pkdns",
+      "path": "servers.txt",
+      "sha": "221fe940116b",
+      "url": "https://raw.githubusercontent.com/pubky/pkdns/master/servers.txt"
+    },
+    {
+      "anchor": "pkdns-cli — publishing tool (subcommands/republish/dyndns)",
+      "repo": "pubky/pkdns",
+      "path": "cli/src/cli.rs",
+      "sha": "221fe940116b",
+      "url": "https://github.com/pubky/pkdns/blob/221fe940116b/cli/src/cli.rs"
+    },
+    {
+      "anchor": "pkdns-cli republish + max-ttl 0 + zone-without-SOA",
+      "repo": "pubky/pkdns",
+      "path": "cli/sample/README.md",
+      "sha": "221fe940116b",
+      "url": "https://github.com/pubky/pkdns/blob/221fe940116b/cli/sample/README.md"
+    },
+    {
+      "anchor": "pkdns-cli DynDNS zone sample",
+      "repo": "pubky/pkdns",
+      "path": "cli/sample/pkarr.zone",
+      "sha": "221fe940116b",
+      "url": "https://github.com/pubky/pkdns/blob/221fe940116b/cli/sample/pkarr.zone"
+    },
+    {
+      "anchor": "pkarr-relay — install & run / --testnet / no-flag default",
+      "repo": "pubky/pkarr",
+      "path": "relay/README.md",
+      "sha": "00f8c534db48",
+      "url": "https://github.com/pubky/pkarr/blob/00f8c534db48/relay/README.md"
+    },
+    {
+      "anchor": "pkarr-relay CLI flags",
+      "repo": "pubky/pkarr",
+      "path": "relay/src/main.rs",
+      "sha": "00f8c534db48",
+      "url": "https://github.com/pubky/pkarr/blob/00f8c534db48/relay/src/main.rs"
+    },
+    {
+      "anchor": "HTTP API request/response shapes + PUT/GET error codes + ABNF (linked)",
+      "repo": "pubky/pkarr",
+      "path": "design/relays.md",
+      "sha": "00f8c534db48",
+      "url": "https://github.com/pubky/pkarr/blob/00f8c534db48/design/relays.md"
+    },
+    {
+      "anchor": "HTTP API — z32-not-pubky key extractor (attribution fix)",
+      "repo": "pubky/pkarr",
+      "path": "relay/src/extractors.rs",
+      "sha": "00f8c534db48",
+      "url": "https://github.com/pubky/pkarr/blob/00f8c534db48/relay/src/extractors.rs"
+    },
+    {
+      "anchor": "HTTP API — status codes, ResolvePolicy, GET / health page",
+      "repo": "pubky/pkarr",
+      "path": "relay/src/handlers.rs",
+      "sha": "00f8c534db48",
+      "url": "https://github.com/pubky/pkarr/blob/00f8c534db48/relay/src/handlers.rs"
+    },
+    {
+      "anchor": "Config (trimmed: behind_proxy + user_dht_quota + cache/ports)",
+      "repo": "pubky/pkarr",
+      "path": "relay/src/config.example.toml",
+      "sha": "00f8c534db48",
+      "url": "https://github.com/pubky/pkarr/blob/00f8c534db48/relay/src/config.example.toml"
+    },
+    {
+      "anchor": "Docker (relay TCP+UDP, config :ro, cache volume, wget healthcheck)",
+      "repo": "pubky/pkarr",
+      "path": "docker-compose.yml",
+      "sha": "00f8c534db48",
+      "url": "https://github.com/pubky/pkarr/blob/00f8c534db48/docker-compose.yml"
+    },
+    {
+      "anchor": "Public relays",
+      "repo": "pubky/pkarr",
+      "path": "relays.txt",
+      "sha": "00f8c534db48",
+      "url": "https://raw.githubusercontent.com/pubky/pkarr/main/relays.txt"
+    },
+    {
+      "anchor": "Resolvers are deprecated",
+      "repo": "pubky/pkarr",
+      "path": "design/resolvers.md",
+      "sha": "00f8c534db48",
+      "url": "https://github.com/pubky/pkarr/blob/00f8c534db48/design/resolvers.md"
+    },
+    {
+      "anchor": "DHT ephemeral / republish / 1000-byte cap",
+      "repo": "pubky/pkarr",
+      "path": "README.md",
+      "sha": "00f8c534db48",
+      "url": "https://github.com/pubky/pkarr/blob/00f8c534db48/README.md"
+    },
+    {
+      "anchor": "mainline — BEPs, node modes (compiled v7.0.0), no built-in rate limiting",
+      "repo": "pubky/mainline",
+      "path": "README.md",
+      "sha": "e77f8060a947",
+      "url": "https://github.com/pubky/mainline/blob/e77f8060a947/README.md"
+    },
+    {
+      "anchor": "Canonical protocol 'why' link target (role constraint)",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://github.com/pubky/agent-skills/blob/main/skills/pubky/references/concepts.md"
+    }
+  ],
+  "snippet": {
+    "total": 4,
+    "pass": 4,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 33,
+    "refuted": 0,
+    "caveated": 0,
+    "unsupported": 0
+  },
+  "guardrailViolations": [
+    "Mirroring of drift-prone API detail vs CLAUDE.md rule #4 ('link upstream; summarize, don't mirror'). The draft reproduces, verbatim and in full, several pre-1.0 / churny surfaces that the rule says to summarize-and-link rather than re-copy: (1) the entire pkdns server/config.sample.toml, (2) the entire pkarr relay/src/config.example.toml, (3) the relay HTTP API request/response blocks + the full PUT/GET error-code table + the payload ABNF (design/relays.md). Each block IS accompanied by a link and is accurate at the pinned commits, so this is a maintainability/drift concern rather than a correctness defect — but per the project's own load-bearing rule these are exactly the 'drift-prone API detail' that should be trimmed to a link plus a short 'what this means in Pubky' summary (e.g. keep the behind_proxy + user_dht_quota explanations, drop the verbatim full-file dumps). Advisory, not a factual error."
+  ],
+  "wordCount": 1954
+}
