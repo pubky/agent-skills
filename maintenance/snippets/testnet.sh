@@ -30,14 +30,19 @@ case "$cmd" in
       echo "already running (pid $(cat "$PIDFILE"))"; exit 0
     fi
     [ -d "$CORE_DIR" ] || { echo "missing clone: $CORE_DIR (run /sync-references which clones it)"; exit 1; }
-    ( cd "$CORE_DIR" && cargo build -p pubky-testnet >/dev/null 2>&1 )
-    ( cd "$CORE_DIR" && RUST_LOG=info nohup ./target/debug/pubky-testnet >"$LOGFILE" 2>&1 & echo $! > "$PIDFILE" )
+    ( cd "$CORE_DIR" && cargo build -q -p pubky-testnet ) || { echo "build failed"; exit 1; }
+    # launch directly (no wrapping subshell) so $! is the testnet binary's pid, not a subshell's
+    cd "$CORE_DIR"
+    RUST_LOG=info nohup ./target/debug/pubky-testnet >"$LOGFILE" 2>&1 &
+    echo $! > "$PIDFILE"
     i=0; until grep -q "Testnet running" "$LOGFILE" 2>/dev/null || [ $i -ge 60 ]; do i=$((i+1)); sleep 1; done
     if grep -q "Testnet running" "$LOGFILE"; then echo "testnet up (pid $(cat "$PIDFILE"))"; else
       echo "testnet failed to start; see $LOGFILE"; tail -20 "$LOGFILE"; exit 1; fi
     ;;
   stop)
-    if [ -f "$PIDFILE" ]; then kill "$(cat "$PIDFILE")" 2>/dev/null || true; rm -f "$PIDFILE"; echo "stopped"; else echo "not running"; fi
+    if [ -f "$PIDFILE" ]; then kill "$(cat "$PIDFILE")" 2>/dev/null || true; rm -f "$PIDFILE"; fi
+    pkill -f 'target/debug/pubky-testnet' 2>/dev/null || true   # belt-and-suspenders
+    echo "stopped"
     ;;
   status)
     if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then echo "running (pid $(cat "$PIDFILE"))"; else echo "stopped"; fi
