@@ -163,7 +163,9 @@ const FINAL_SCHEMA = {
     blocking: { type: 'array', items: { type: 'string' } },
     nonBlocking: { type: 'array', items: { type: 'string' } },
     wordCount: { type: 'number' },
-    finalMarkdown: { type: 'string' },
+    // minLength gives the schema-retry layer something to reject when an agent returns a status
+    // line instead of the document; the structural gate in stubReasons() catches the rest.
+    finalMarkdown: { type: 'string', minLength: 400 },
     provenance: {
       type: 'array',
       items: {
@@ -232,6 +234,22 @@ function overlapRatio(a, b) {
   let hit = 0
   for (const s of sa) if (sb.has(s)) hit++
   return hit / sa.size
+}
+
+// Deterministic substance check on the finalize output — never trust the agent's self-graded
+// accept for a property a script can verify. The sandbox forbids importing maintenance/lib.mjs,
+// so this mirrors checkReference() there; keep the two in sync.
+function stubReasons(md, reportedWordCount) {
+  const t = (md || '').trim(), reasons = []
+  const words = t ? t.split(/\s+/).length : 0
+  if (words < 80) reasons.push(`too short (${words}w)`)
+  if (!/^#{1,6}\s/m.test(t)) reasons.push('no heading')
+  if (((t.match(/^```/gm) || []).length) % 2) reasons.push('unbalanced fences')
+  const first = (t.split('\n').find(l => l.trim()) || '').trim()
+  if (/^(done|finalize|finalized|gate:|fixes applied)\b/i.test(first) || /\bgate:\s*accept=/i.test(t) || /\bfile finalized\b/i.test(t))
+    reasons.push('looks like a finalize-log')
+  if (reportedWordCount && words && words < reportedWordCount * 0.5) reasons.push(`body ${words}w << reported ${reportedWordCount}w`)
+  return reasons
 }
 
 // ===========================================================================
@@ -357,18 +375,25 @@ const perFile = await pipeline(
       `lead with code and the technical model; drop anything duplicating a canonical file (link instead). ` +
       `Never remove a correctness caveat or a verified snippet to save words. ` +
       `Then GATE: accept=true only if the stub scaffolding is gone, COVERS is satisfied, links are well-formed, role constraints hold, and no unfixed mustFix remains. ` +
-      `Return the final file body as finalMarkdown plus per-section provenance.`,
+      `CRITICAL: finalMarkdown MUST be the COMPLETE file body — GitHub-flavored markdown beginning with a "# " heading. It is the literal file content, NOT a status line, summary, or description of your work; never emit "done", "finalize complete", "file finalized", or a "Gate: accept=..." log as the body. Also return per-section provenance.`,
       { schema: FINAL_SCHEMA, phase: 'Finalize', label: `finalize:${f.path.split('/').pop()}` }
-    ).then(fin => ({
-      path: f.path, role: f.role, covers: f.covers,
-      sourcesUsed: f.sources.map(s => ({ repo: s.repo, sha: s.sha })),
-      snippet: summarizeSnippets((snippetResults && snippetResults.results) || []),
-      factCheck: summarizeFactcheck(factcheck),
-      guardrailViolations: (factcheck && factcheck.guardrailViolations) || [],
-      accept: fin.accept, blocking: fin.blocking || [], nonBlocking: fin.nonBlocking || [],
-      wordCount: fin.wordCount || (fin.finalMarkdown || '').split(/\s+/).length,
-      finalMarkdown: fin.finalMarkdown, provenance: fin.provenance || [],
-    }))
+    ).then(fin => {
+      const md = fin.finalMarkdown || ''
+      const stub = stubReasons(md, fin.wordCount)   // deterministic override of the self-graded accept
+      if (stub.length) log(`⚠ ${f.path}: finalize output failed substance check (${stub.join('; ')}) — forcing accept=false`)
+      return {
+        path: f.path, role: f.role, covers: f.covers,
+        sourcesUsed: f.sources.map(s => ({ repo: s.repo, sha: s.sha })),
+        snippet: summarizeSnippets((snippetResults && snippetResults.results) || []),
+        factCheck: summarizeFactcheck(factcheck),
+        guardrailViolations: (factcheck && factcheck.guardrailViolations) || [],
+        accept: Boolean(fin.accept) && stub.length === 0,
+        blocking: [...(fin.blocking || []), ...stub.map(s => `substance: ${s}`)],
+        nonBlocking: fin.nonBlocking || [],
+        wordCount: md.split(/\s+/).filter(Boolean).length,   // real count, never the self-report
+        finalMarkdown: md, provenance: fin.provenance || [],
+      }
+    })
   }
 )
 
