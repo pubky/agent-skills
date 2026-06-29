@@ -13,6 +13,7 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs'
 import { join, dirname, resolve, relative } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { checkReference, slugifyHeading } from './lib.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const CHECK_LINKS = process.argv.includes('--links')
@@ -132,20 +133,49 @@ for (const skill of SKILLS) {
   if (!existsSync(join(ROOT, refDir))) continue
   for (const f of readdirSync(join(ROOT, refDir)).filter(f => f.endsWith('.md'))) allRefs.push(`${refDir}/${f}`)
 }
+// --- 5a. reference substance: a finalize-log / stub written as content is PR-blocking ----------
+// roles drive the word floor (pointer files are legitimately thin); default to 'normal' if absent.
+let refRoles = {}
+try {
+  const lk = JSON.parse(read('maintenance/sources.lock.json'))
+  for (const [p, r] of Object.entries(lk.references || {})) refRoles[p] = r.role || 'normal'
+} catch { /* sources.lock.json missing/invalid — all roles default to normal */ }
+for (const ref of allRefs) {
+  const res = checkReference(read(ref), { role: refRoles[ref] || 'normal' })
+  if (!res.ok) add('blocking', 'substance', `${ref}: ${res.reasons.join('; ')}`)
+}
+add('ok', 'substance', `reference substance checked across ${allRefs.length} files`)
+
+// --- 5b. relative links resolve, AND #anchors point at a real heading in the target -----------
 const externalUrls = new Set()
+const headingCache = {}
+const headingsOf = (absPath) => {
+  if (absPath in headingCache) return headingCache[absPath]
+  const set = new Set()
+  try { for (const m of readFileSync(absPath, 'utf8').matchAll(/^#{1,6}\s+(.+?)\s*#*\s*$/gm)) set.add(slugifyHeading(m[1])) }
+  catch { /* unreadable target -> empty set; existence is checked separately */ }
+  return (headingCache[absPath] = set)
+}
 for (const ref of allRefs) {
   const md = read(ref)
+  const refAbs = join(ROOT, ref)
   for (const m of md.matchAll(/\]\(([^)]+)\)/g)) {
-    const target = m[1].split('#')[0].split(' ')[0]
-    if (!target) continue
+    const raw = m[1].split(' ')[0]                 // drop an optional "title"
+    const hashIdx = raw.indexOf('#')
+    const target = hashIdx >= 0 ? raw.slice(0, hashIdx) : raw
+    const anchor = hashIdx >= 0 ? raw.slice(hashIdx + 1) : ''
     if (/^https?:\/\//.test(target)) { externalUrls.add(target); continue }
     if (target.startsWith('mailto:')) continue
-    const resolved = resolve(dirname(join(ROOT, ref)), target)
-    if (!existsSync(resolved))
-      add('blocking', 'rel-link', `${ref}: broken relative link -> ${target}`)
+    let targetAbs = refAbs                          // empty target => same-file anchor
+    if (target) {
+      targetAbs = resolve(dirname(refAbs), target)
+      if (!existsSync(targetAbs)) { add('blocking', 'rel-link', `${ref}: broken relative link -> ${target}`); continue }
+    }
+    if (anchor && /\.md$/.test(targetAbs) && !headingsOf(targetAbs).has(slugifyHeading(anchor)))
+      add('blocking', 'rel-link', `${ref}: link -> ${target || '(self)'}#${anchor} has no matching heading in target`)
   }
 }
-add('ok', 'rel-link', `relative links checked across ${allRefs.length} reference files`)
+add('ok', 'rel-link', `relative links + #anchors checked across ${allRefs.length} reference files`)
 
 // --- 6. canonical-copy (disk shingle overlap) ------------------------------
 function shingles(text, n = 8) {

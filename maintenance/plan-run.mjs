@@ -13,6 +13,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { checkReference } from './lib.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const argv = process.argv.slice(2)
@@ -56,6 +57,23 @@ function refStale(ref) {
   return false
 }
 
+// A reference also needs regenerating if its on-disk artifact is corrupt/stub or its last run
+// wasn't accepted — this lets a plain incremental rerun self-heal a bad file even though its
+// source SHAs were (wrongly) bumped by a prior run. Returns null when healthy, else a short reason.
+function refUnhealthyReason(p) {
+  const abs = join(ROOT, p)
+  if (!existsSync(abs)) return 'missing on disk'
+  const role = (refs[p] || {}).role || 'normal'
+  const res = checkReference(readFileSync(abs, 'utf8'), { role })
+  if (!res.ok) return res.reasons[0]
+  const sk = p.split('/')[1], fn = p.split('/').pop().replace(/\.md$/, '.json')
+  const pp = join(ROOT, 'maintenance/provenance', sk, fn)
+  if (!existsSync(pp)) return 'no provenance sidecar'
+  try { if (JSON.parse(readFileSync(pp, 'utf8')).accept !== true) return 'last run not accepted' }
+  catch { return 'unreadable provenance sidecar' }
+  return null
+}
+
 // --- compute in-scope set ---------------------------------------------------
 const refs = lock.references
 let inScope
@@ -66,11 +84,17 @@ if (onlyFiles) {
 } else if (mode === 'initial' && !forceRepos) {
   inScope = Object.keys(refs)   // --initial regenerates every reference, regardless of recorded SHAs
 } else {
+  const healthNotes = []
   inScope = Object.keys(refs).filter(p => {
     const ref = refs[p]
     if (forceRepos) return (ref.sources || []).some(s => forceRepos.includes(s.repo))
-    return refStale(ref)
+    if (refStale(ref)) return true
+    const bad = refUnhealthyReason(p)            // self-heal: re-scope corrupt/unaccepted files
+    if (bad) { healthNotes.push(`  ! ${p} (${bad})`); return true }
+    return false
   })
+  if (healthNotes.length)
+    console.error(`self-heal: ${healthNotes.length} unhealthy file(s) re-scoped despite fresh SHAs:\n${healthNotes.join('\n')}`)
   // pull in pointer/linking files whose linksTo target is in scope (light recheck)
   const set = new Set(inScope)
   for (const [p, ref] of Object.entries(refs))

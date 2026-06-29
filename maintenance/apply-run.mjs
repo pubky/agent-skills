@@ -9,6 +9,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { checkReference } from './lib.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const argv = process.argv.slice(2)
@@ -30,13 +31,23 @@ for (const r of report.files || []) {
   const abs = join(ROOT, r.path)
   const skill = r.path.split('/')[1]
   const base = r.path.split('/').pop().replace(/\.md$/, '')
+  const role = r.role || 'normal'
+  const md = r.finalMarkdown || ''
 
-  // 1. write markdown — ONLY for accepted files. A gate-failed file must stay stale
-  // (the on-disk reference is left untouched so it's re-attempted next run); its draft
-  // is parked in a .rejected.md sidecar for inspection, never in skills/**.
-  if (r.finalMarkdown) {
-    const body = r.finalMarkdown.endsWith('\n') ? r.finalMarkdown : r.finalMarkdown + '\n'
-    if (r.accept) {
+  // Deterministic substance gate: even a file the workflow self-graded accept:true is parked if
+  // its body isn't a real reference doc (a finalize-log/stub landed in finalMarkdown). The live
+  // reference is left untouched and its SHA is NOT bumped, so the next run re-attempts it. This is
+  // the last line of defense behind the workflow's own gate — apply never trusts the report blindly.
+  const check = md ? checkReference(md, { role, reportedWordCount: r.wordCount ?? null })
+                   : { ok: false, reasons: ['empty finalMarkdown'], stats: { words: 0 } }
+  const realWords = md.split(/\s+/).filter(Boolean).length
+  const accept = r.accept && check.ok
+
+  // 1. write markdown — only when accepted AND substantive; everything else is parked in a
+  // .rejected.md sidecar for inspection, never written to skills/**.
+  if (md) {
+    const body = md.endsWith('\n') ? md : md + '\n'
+    if (accept) {
       if (!DRY) { mkdirSync(dirname(abs), { recursive: true }); writeFileSync(abs, body) }
       written++
     } else {
@@ -46,19 +57,21 @@ for (const r of report.files || []) {
     }
   }
 
-  // 2. provenance sidecar
+  // 2. provenance sidecar — record the EFFECTIVE accept and the REAL word count (computed from the
+  // bytes, never the agent's self-report) so the sidecar can never disagree with the file on disk.
   const fn = `${base}.json`
   const provPath = join(ROOT, 'maintenance/provenance', skill, fn)
   const sidecar = {
-    path: r.path, role: r.role, accept: r.accept, generatedAt: now,
+    path: r.path, role: r.role, accept, generatedAt: now,
     sourcesUsed: r.sourcesUsed || [], provenance: r.provenance || [],
     snippet: r.snippet || null, factCheck: r.factCheck || null,
-    guardrailViolations: r.guardrailViolations || [], wordCount: r.wordCount || null,
+    guardrailViolations: r.guardrailViolations || [], wordCount: realWords,
+    substance: { ok: check.ok, reasons: check.reasons },
   }
   if (!DRY) { mkdirSync(dirname(provPath), { recursive: true }); writeFileSync(provPath, JSON.stringify(sidecar, null, 2) + '\n') }
 
-  // 3. bump per-file lastGeneratedSha ONLY on accept
-  if (r.accept) {
+  // 3. bump per-file lastGeneratedSha ONLY on an effective accept
+  if (accept) {
     accepted++
     const ref = lock.references[r.path]
     if (ref && mf) {
@@ -66,6 +79,8 @@ for (const r of report.files || []) {
       for (const s of mf.sources || []) { if (s.sha) { ref.lastGeneratedSha[s.repo] = s.sha; bumpedRepos.add(s.repo) } }
     }
     log.push(`  ✓ ${r.path} (accepted)`)
+  } else if (r.accept && !check.ok) {
+    log.push(`  ✗ ${r.path} (workflow accepted but FAILED substance gate — parked, SHA held): ${check.reasons.join('; ')}`)
   } else {
     log.push(`  ⚠ ${r.path} (gate failed — left stale, will retry): ${(r.blocking || []).join('; ')}`)
   }
