@@ -24,20 +24,30 @@ const manifestByPath = Object.fromEntries((manifest.files || []).map(f => [f.pat
 const now = new Date().toISOString()
 const log = []
 
-let written = 0, accepted = 0, bumpedRepos = new Set()
+let written = 0, accepted = 0, rejected = 0, bumpedRepos = new Set()
 for (const r of report.files || []) {
   const mf = manifestByPath[r.path]
   const abs = join(ROOT, r.path)
+  const skill = r.path.split('/')[1]
+  const base = r.path.split('/').pop().replace(/\.md$/, '')
 
-  // 1. write markdown
+  // 1. write markdown — ONLY for accepted files. A gate-failed file must stay stale
+  // (the on-disk reference is left untouched so it's re-attempted next run); its draft
+  // is parked in a .rejected.md sidecar for inspection, never in skills/**.
   if (r.finalMarkdown) {
-    if (!DRY) { mkdirSync(dirname(abs), { recursive: true }); writeFileSync(abs, r.finalMarkdown.endsWith('\n') ? r.finalMarkdown : r.finalMarkdown + '\n') }
-    written++
+    const body = r.finalMarkdown.endsWith('\n') ? r.finalMarkdown : r.finalMarkdown + '\n'
+    if (r.accept) {
+      if (!DRY) { mkdirSync(dirname(abs), { recursive: true }); writeFileSync(abs, body) }
+      written++
+    } else {
+      const rejPath = join(ROOT, 'maintenance/provenance', skill, `${base}.rejected.md`)
+      if (!DRY) { mkdirSync(dirname(rejPath), { recursive: true }); writeFileSync(rejPath, body) }
+      rejected++
+    }
   }
 
   // 2. provenance sidecar
-  const skill = r.path.split('/')[1]
-  const fn = r.path.split('/').pop().replace(/\.md$/, '.json')
+  const fn = `${base}.json`
   const provPath = join(ROOT, 'maintenance/provenance', skill, fn)
   const sidecar = {
     path: r.path, role: r.role, accept: r.accept, generatedAt: now,
@@ -68,7 +78,7 @@ for (const f of manifest.files || []) for (const s of f.sources || []) {
 
 if (!DRY) writeFileSync(lockPath, JSON.stringify(lock, null, 2) + '\n')
 
-console.log(`${DRY ? '[dry-run] ' : ''}wrote ${written} file(s), ${accepted} accepted; bumped SHAs for ${bumpedRepos.size} repo(s)`)
+console.log(`${DRY ? '[dry-run] ' : ''}wrote ${written} accepted file(s), parked ${rejected} rejected draft(s); ${accepted} SHA-bumped for ${bumpedRepos.size} repo(s)`)
 console.log(log.join('\n'))
 if (report.copyCheck?.flags?.length) {
   console.log(`\ncanonical-copy flags (review):`)
