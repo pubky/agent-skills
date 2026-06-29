@@ -1,0 +1,52 @@
+{
+  "path": "skills/pubky-mobile/references/concepts-pointer.md",
+  "role": "pointer",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [],
+  "provenance": [
+    {
+      "anchor": "Intro + two-SDK/naming model",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky-mobile/references/concepts-pointer.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://github.com/pubky/agent-skills/blob/1d0965d183087c497278a56313ae772d7cc49b74/skills/pubky-mobile/references/concepts-pointer.md"
+    },
+    {
+      "anchor": "Canonical references",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky-mobile/references/concepts-pointer.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://github.com/pubky/agent-skills/blob/1d0965d183087c497278a56313ae772d7cc49b74/skills/pubky-mobile/references/concepts-pointer.md"
+    },
+    {
+      "anchor": "Concept-to-method map",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky-mobile/references/concepts-pointer.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://github.com/pubky/agent-skills/blob/1d0965d183087c497278a56313ae772d7cc49b74/skills/pubky-mobile/references/concepts-pointer.md"
+    },
+    {
+      "anchor": "Not on the mobile surface",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky-mobile/references/concepts-pointer.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://github.com/pubky/agent-skills/blob/1d0965d183087c497278a56313ae772d7cc49b74/skills/pubky-mobile/references/concepts-pointer.md"
+    }
+  ],
+  "snippet": {
+    "total": 0,
+    "pass": 0,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 22,
+    "refuted": 0,
+    "caveated": 0,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 430
+}

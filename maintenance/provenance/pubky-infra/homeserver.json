@@ -1,0 +1,101 @@
+{
+  "path": "skills/pubky-infra/references/homeserver.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-core",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    },
+    {
+      "repo": "pubky-docker",
+      "sha": "a5544e6247c1f7195ae116586a578d6a8a007a67"
+    },
+    {
+      "repo": "homeserver-dashboard",
+      "sha": "b3be93d8d2a9d93a9670983f28bed5fb380431af"
+    },
+    {
+      "repo": "umbrel-app-store",
+      "sha": "d0b96adf0a217dd4f682d364100d9c460a9b9c7b"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "Run it",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/main.rs",
+      "sha": "ba6d69c",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/src/main.rs"
+    },
+    {
+      "anchor": "Three servers, four sockets",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/data_directory/config_toml.rs",
+      "sha": "ba6d69c",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/src/data_directory/config_toml.rs"
+    },
+    {
+      "anchor": "Three servers, four sockets",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/data_directory/config.default.toml",
+      "sha": "ba6d69c",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/src/data_directory/config.default.toml"
+    },
+    {
+      "anchor": "config.toml",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/config.sample.toml",
+      "sha": "ba6d69c",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/config.sample.toml"
+    },
+    {
+      "anchor": "Admin API (:6288)",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/admin_server/app.rs",
+      "sha": "ba6d69c",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/src/admin_server/app.rs"
+    },
+    {
+      "anchor": "Security guardrails",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/client_server/auth/authorization.rs",
+      "sha": "ba6d69c",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/src/client_server/auth/authorization.rs"
+    },
+    {
+      "anchor": "Security guardrails",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/constants.rs",
+      "sha": "ba6d69c",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/src/constants.rs"
+    },
+    {
+      "anchor": "Event streams (client server)",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/persistence/files/events/events_repository.rs",
+      "sha": "ba6d69c",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/src/persistence/files/events/events_repository.rs"
+    }
+  ],
+  "snippet": {
+    "total": 5,
+    "pass": 5,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 31,
+    "refuted": 1,
+    "caveated": 4,
+    "unsupported": 0
+  },
+  "guardrailViolations": [
+    "No sentence in the draft presents a PLANNED/unshipped feature as available (no /priv-as-available, no mirroring, restore, cloud backup, or two-way sync; event streams and local Pubky Backup are both on the shipped list). The /priv issue is the REVERSE: the draft presents a now-implemented feature as forbidden — captured in mustFix, not here.",
+    "Stable-sounding /pub claims carry the required instability caveat ('the /pub layout is not stabilized') and the file opens with a pre-1.0 / API-shape drift caveat, so no missing-instability-caveat violation. Nexus /v0 is linked out, not restated.",
+    "Public-key string usage is CORRECT: the draft's callout that admin-path {pubkey} is the raw z32 form (publicKey.z32()), not the pubky<z32> display form, matches the Z32Pubkey extractor and the disable_users test (uses pubkey.z32())."
+  ],
+  "wordCount": 1180
+}

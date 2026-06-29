@@ -1,0 +1,141 @@
+{
+  "path": "skills/pubky-infra/references/operator-cli.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-cli",
+      "sha": "3f23d8340f83130ee5a3349041d12662adb582ac"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "Install & run",
+      "repo": "pubky/pubky-cli",
+      "path": "Cargo.toml",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/Cargo.toml"
+    },
+    {
+      "anchor": "Install & run",
+      "repo": "pubky/pubky-cli",
+      "path": "README.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/README.md#L18-L38"
+    },
+    {
+      "anchor": "Connection & auth (shared by every admin subcommand)",
+      "repo": "pubky/pubky-cli",
+      "path": "src/admin.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L10-L18"
+    },
+    {
+      "anchor": "Connection & auth (shared by every admin subcommand)",
+      "repo": "pubky/pubky-cli",
+      "path": "src/admin.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L134-L144"
+    },
+    {
+      "anchor": "Connection & auth (shared by every admin subcommand)",
+      "repo": "pubky/pubky-cli",
+      "path": "src/util.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/util.rs"
+    },
+    {
+      "anchor": "Admin command tree",
+      "repo": "pubky/pubky-cli",
+      "path": "src/admin.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L20-L60"
+    },
+    {
+      "anchor": "admin info — server stats",
+      "repo": "pubky/pubky-cli",
+      "path": "src/admin.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L107-L179"
+    },
+    {
+      "anchor": "admin info — server stats",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/openapi.yml",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/openapi.yml#L689"
+    },
+    {
+      "anchor": "admin generate-token — mint a signup/invite token",
+      "repo": "pubky/pubky-cli",
+      "path": "src/admin.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L181-L188"
+    },
+    {
+      "anchor": "admin generate-token — mint a signup/invite token",
+      "repo": "pubky/pubky-cli",
+      "path": "src/user.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/user.rs#L13-L24"
+    },
+    {
+      "anchor": "admin generate-token — mint a signup/invite token",
+      "repo": "pubky/pubky-cli",
+      "path": "README.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/README.md#L37"
+    },
+    {
+      "anchor": "admin user disable|enable — gate a user",
+      "repo": "pubky/pubky-cli",
+      "path": "src/admin.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L190-L210"
+    },
+    {
+      "anchor": "admin storage delete — remove one WebDAV entry",
+      "repo": "pubky/pubky-cli",
+      "path": "src/admin.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L212-L231"
+    },
+    {
+      "anchor": "Public-key wire format (z32, not the JS pubky<z32> display form)",
+      "repo": "pubky/pkarr",
+      "path": "pkarr/src/types/keys.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pkarr/blob/main/pkarr/src/types/keys.rs#L297-L305"
+    },
+    {
+      "anchor": "Coverage vs the full admin API",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/admin_server/app.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/src/admin_server/app.rs"
+    },
+    {
+      "anchor": "Coverage vs the full admin API",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/openapi.yml",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/openapi.yml"
+    }
+  ],
+  "snippet": {
+    "total": 4,
+    "pass": 4,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 21,
+    "refuted": 0,
+    "caveated": 0,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 880
+}

@@ -2,7 +2,7 @@
   "path": "skills/pubky/references/sdk-js.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-29T09:22:36.374Z",
+  "generatedAt": "2026-06-29T11:38:23.320Z",
   "sourcesUsed": [
     {
       "repo": "pubky-knowledge-base-v2",
@@ -23,67 +23,74 @@
   ],
   "provenance": [
     {
-      "anchor": "Install and runtime / Initialize the client",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-sdk/bindings/js/pkg/README.md",
-      "sha": "main",
+      "anchor": "Version",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/sdk-js.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
+    },
+    {
+      "anchor": "Install and runtime",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/sdk-js.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
       "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/pkg/README.md"
     },
     {
-      "anchor": "Install and runtime (module system + node version)",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-sdk/bindings/js/pkg/package.json",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/pkg/package.json"
-    },
-    {
-      "anchor": "Initialize the client (WASM needs relays; relay-URL InvalidInput, requestTimeout u64)",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-sdk/bindings/js/src/client/constructor.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/src/client/constructor.rs"
+      "anchor": "Initialize the client",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/sdk-js.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
     },
     {
       "anchor": "Quick example",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "snippets/js/src/quick-start-getting-started.ts",
-      "sha": "main",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/sdk-js.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
       "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/quick-start-getting-started.ts"
     },
     {
-      "anchor": "Sign up and sign in (signin no-arg, signinBlocking, session.info, drift note)",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "snippets/js/src/sdk.ts",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/sdk.ts"
+      "anchor": "Identity and key formats",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/sdk-js.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
     },
     {
-      "anchor": "Storage operations / Listing and pagination / stats shape / path rules",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-sdk/bindings/js/pkg/tests/storage.ts",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/pkg/tests/storage.ts"
+      "anchor": "Sign up and sign in",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/sdk-js.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
     },
     {
-      "anchor": "Error handling (PubkyError shape, 6-name PubkyErrorName union, setLogLevel, raw fetch / resolvePubky)",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-sdk/bindings/js/pkg/README.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/pkg/README.md"
+      "anchor": "Storage operations",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/sdk-js.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
     },
     {
-      "anchor": "Error handling (statusCodeOf + 429 retry idioms)",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "snippets/js/src/troubleshooting.ts",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/troubleshooting.ts"
+      "anchor": "Listing and pagination",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/sdk-js.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
     },
     {
-      "anchor": "Error handling (HTTP 401/403/404 meanings) / Node version",
-      "repo": "pubky/pubky-core",
-      "path": "examples/javascript/README.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/examples/javascript/README.md"
+      "anchor": "Error handling",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/sdk-js.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
+    },
+    {
+      "anchor": "Logging and low-level access",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/sdk-js.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
     }
   ],
   "snippet": {
@@ -94,11 +101,11 @@
     "failing": []
   },
   "factCheck": {
-    "supported": 33,
+    "supported": 32,
     "refuted": 0,
-    "caveated": 4,
+    "caveated": 0,
     "unsupported": 0
   },
   "guardrailViolations": [],
-  "wordCount": 1563
+  "wordCount": 1613
 }

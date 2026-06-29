@@ -1,0 +1,61 @@
+{
+  "path": "skills/pubky/references/advanced-messaging-payments.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-noise",
+      "sha": "be472b914ac98ced838c16e59b659d82c667f245"
+    },
+    {
+      "repo": "paykit-rs",
+      "sha": "5f860da46c78a05abd2a737216c3c953a2e47e43"
+    }
+  ],
+  "provenance": [
+    {
+      "repo": "https://github.com/pubky/agent-skills.git",
+      "path": "skills/pubky/references/advanced-messaging-payments.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "anchor": "pubky-noise (E2E messaging)",
+      "url": "https://github.com/pubky/pubky-noise/blob/be472b9/pubky-noise/README.md"
+    },
+    {
+      "repo": "https://github.com/pubky/agent-skills.git",
+      "path": "skills/pubky/references/advanced-messaging-payments.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "anchor": "S1-noise-quickstart code snippet",
+      "url": "https://github.com/pubky/pubky-noise/blob/be472b9/pubky-noise/src/lib.rs"
+    },
+    {
+      "repo": "https://github.com/pubky/agent-skills.git",
+      "path": "skills/pubky/references/advanced-messaging-payments.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "anchor": "S2-noise-path-derivation code snippet",
+      "url": "https://github.com/pubky/pubky-noise/blob/be472b9/pubky-noise/src/path_derivation.rs"
+    },
+    {
+      "repo": "https://github.com/pubky/agent-skills.git",
+      "path": "skills/pubky/references/advanced-messaging-payments.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "anchor": "paykit (cross-app payment discovery)",
+      "url": "https://github.com/pubky/paykit-rs/blob/5f860da/AGENTS.md"
+    }
+  ],
+  "snippet": {
+    "total": 2,
+    "pass": 2,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 27,
+    "refuted": 0,
+    "caveated": 1,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 1946
+}

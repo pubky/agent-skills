@@ -1,0 +1,84 @@
+{
+  "path": "skills/pubky/references/shipped-vs-planned.md",
+  "role": "canonical",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-ai-kit",
+      "sha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
+    },
+    {
+      "repo": "pubky-core",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    },
+    {
+      "repo": "pubky-app-specs",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "the-split-shipped-vs-planned",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
+    },
+    {
+      "anchor": "everything-is-v0",
+      "repo": "pubky/pubky-app-specs",
+      "path": "README.md",
+      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
+      "url": "https://github.com/pubky/pubky-core/blob/main/docs/migration-v0.10.md"
+    },
+    {
+      "anchor": "everything-is-v0--nexus-snippet",
+      "repo": "pubky/pubky-nexus",
+      "path": "nexus-webapi/src/routes/v0/endpoints.rs",
+      "sha": "60d4ac625528f61bdac39d376066b836a4c60e70",
+      "url": "https://nexus.pubky.app/api-docs/v0/openapi.json"
+    },
+    {
+      "anchor": "no-private-encrypted-or-guarded-storage",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/openapi.yml",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
+    },
+    {
+      "anchor": "backup-restore-and-mirroring",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
+    },
+    {
+      "anchor": "shipped-with-rough-edges",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/persistence/files/events/events_service.rs",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+      "url": "https://github.com/pubky/pubky-core/issues/122"
+    }
+  ],
+  "snippet": {
+    "total": 1,
+    "pass": 0,
+    "fail": 1,
+    "unverifiable": 0,
+    "failing": [
+      "nexus-v0-fetch"
+    ]
+  },
+  "factCheck": {
+    "supported": 22,
+    "refuted": 1,
+    "caveated": 0,
+    "unsupported": 0
+  },
+  "guardrailViolations": [
+    "Mirrored/fabricated Nexus API detail: line 59 hardcodes a nonexistent endpoint, `fetch(\"https://nexus.pubky.app/v0/feeds/global\")`. It 404s live and is absent from the Nexus route table and OpenAPI (real global feed = /v0/stream/posts). This is exactly the 'do not hardcode Nexus shapes' failure the surrounding prose warns against, and contradicts the file's own 'Swagger UI is the source of truth' guidance. It was copied verbatim from a stale KB snippet.",
+    "Canonical-not-copy (repo CLAUDE.md rule #2): the 'Shipped, with rough edges' section duplicates event-stream API detail (PUT/DEL, cursor, Blake3 hash, 50-user SSE cap, 1000/batch) and PostgreSQL metadata detail that are canonical in concepts.md (lines 221-225, 265-270). It does link to concepts.md, but also restates the detail rather than only summarizing the shipped/planned line — prefer linking to avoid drift."
+  ],
+  "wordCount": 1133
+}

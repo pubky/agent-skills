@@ -3,17 +3,17 @@
 > **CANONICAL.** Single source of truth for this material. The `pubky-mobile` and `pubky-infra` skills link here — never copy.
 
 Pubky is an open protocol for **per-public-key backends** that make censorship-resistant web
-apps possible. It pairs a public-key-based alternative to DNS ([PKARR](#pkarr-resolution))
-with ordinary web tech, so users own their identity and data while developers get web-app
-availability without operating a central database. Its tagline frames the goal: *"The Web,
-long centralized, must decentralize; Long decentralized, must centralize."*
+apps possible. It pairs [PKARR](#pkarr-resolution) — a public-key-based, censorship-resistant
+alternative to DNS — with ordinary web tech, so users own their identity and data while
+developers get web-app availability without operating a central database.
 
 Pubky Core has three parts:
 
 1. **The open protocol spec** — public-key auth, capability-based authorization, key/value
    storage semantics, homeserver discovery via PKARR, and a RESTful API.
-2. **The homeserver implementation** — hosts one user's data per public key, exposes the
-   RESTful HTTP API, manages auth/sessions, and publishes its own PKARR record.
+2. **The homeserver implementation** — hosts one user's data per public key, exposes the RESTful
+   HTTP API, manages auth/sessions, publishes its own PKARR record, and stores files separately
+   from its PostgreSQL-backed metadata.
 3. **The SDKs** — Rust (native), JavaScript/WASM, and iOS/Android native bindings.
 
 ## The one mental model
@@ -33,26 +33,24 @@ follows its PKARR record to wherever that user's homeserver currently lives.
 
 ## Identity: the Ed25519 keypair
 
-A Pubky identity **is** an Ed25519 keypair the user fully controls — there is no account,
-no password, and no server-side recovery path:
+A Pubky identity **is** an Ed25519 keypair the user fully controls — there is no account, no
+password, and no server-side recovery path:
 
 - The **private key** (a 12-word mnemonic / recovery seed) never leaves the user's device.
-- The **public key** is the user's sovereign, publicly addressable domain.
-- Lose both the device and the mnemonic and that identity is gone for good — this is
-  self-custody, like Bitcoin. Each pubky has its own mnemonic.
+- The **public key** is the user's publicly addressable domain.
+- Lose both the device and the mnemonic and that identity is gone for good — self-custody, like
+  Bitcoin. Each pubky has its own mnemonic.
 
-In the SDK, `Keypair` wraps `pkarr::Keypair` and `PublicKey` wraps `pkarr::PublicKey`. Mint a
-fresh identity with `Keypair::random()` (Rust) / `Keypair.random()` (JS). `pubky.signer(keypair)`
-yields a `PubkySigner` (the key holder that signs); signing in or up yields a `PubkySession`
-(the per-identity, stateful API driver). See [`sdk-rust.md`](sdk-rust.md) /
-[`sdk-js.md`](sdk-js.md) for the full surface, and [docs.rs/pubky](https://docs.rs/pubky) for
-the authoritative (drift-prone) Rust API.
+Mint a fresh identity with `Keypair::random()` (Rust) / `Keypair.random()` (JS).
+`pubky.signer(keypair)` yields a `PubkySigner` (the key holder that signs); signing in or up
+yields a `PubkySession` (the per-identity, stateful API driver). See
+[`sdk-rust.md`](sdk-rust.md) / [`sdk-js.md`](sdk-js.md) for the full surface and
+[docs.rs/pubky](https://docs.rs/pubky) for the authoritative (drift-prone) Rust API.
 
-Keys are backed up as **passphrase-encrypted recovery files**. In `pubky-common` the helpers
-are `create_recovery_file(&keypair, &passphrase)` and its decrypt inverse; each SDK exposes
-equivalent bindings. The recovery file is encrypted with the user's passphrase; note that
-native session files (`.sess`) are *bearer credentials* — treat them like passwords. The
-full auth/recovery handshake lives in [`auth.md`](auth.md).
+Keys are backed up as **passphrase-encrypted recovery files**. In `pubky-common` the helpers are
+`create_recovery_file(&keypair, &passphrase)` and `decrypt_recovery_file`; each SDK exposes
+equivalent bindings (React Native: `createRecoveryFile` / `decryptRecoveryFile`, returning
+Base64). The full auth/recovery handshake lives in [`auth.md`](auth.md).
 
 ```rust
 use pubky_common::crypto::Keypair;
@@ -78,7 +76,7 @@ Two renderings of the same key, used in different places — **do not mix them**
 | `publicKey.toString()` | display form `pubky<z32>` | UI, logs, human-facing references |
 | `publicKey.z32()` | raw z-base-32 string | hostnames, `_pubky.<z32>` DNS names, headers, query params, serde/JSON fields, DB keys |
 
-The raw z-base-32 public key is **52 characters**.
+The raw z-base-32 public key is **52 characters** (DNS-compatible).
 
 ## Addressing and the /pub tree
 
@@ -87,7 +85,7 @@ appear, all naming the same resource:
 
 | Form | Example | Where |
 | :-- | :-- | :-- |
-| Addressed (bare, no scheme) | `pubky<pk>/pub/app/file.json` | preferred public-storage address in SDK APIs and docs.rs examples |
+| Addressed (bare, no scheme) | `pubky<pk>/pub/app/file.json` | preferred public-storage address in SDK APIs |
 | URL / deeplink | `pubky://<pk>/pub/app/file.json` | accepted by SDK parsers; used by CI-verified KB snippets |
 | Session-relative | `/pub/app/file.json` | the *current* signed-in user's own storage |
 
@@ -108,13 +106,13 @@ them — Mapky writes `/pub/mapky.app/*` and reuses `/pub/pubky.app/*`; Bitkit w
 tags, follows…) is defined by **pubky-app-specs** — that on-wire data contract is canonical in
 [`app-specs.md`](app-specs.md), not here.
 
-**Reachability rules** on the homeserver tenant API:
+**Path constraints** on the homeserver tenant API:
 
-- Only `/pub/*` is reachable. Anything else (e.g. `/priv/*`) returns **403 Forbidden**
-  regardless of capability.
+- Paths must start with `/pub/`. Anything outside `/pub/*` is not reachable today — a
+  `/private/` prefix appears in the API docs only as a **planned (not shipped)** prefix.
 - `GET`/`HEAD` are public (unauthenticated); `PUT`/`DELETE` require a session with a write
   capability.
-- Path max length **1024 bytes**; allowed characters `a-z A-Z 0-9 - _ / .`.
+- Max path length **1024 bytes**; allowed characters `a-z A-Z 0-9 - _ / .`.
 
 > The `/pub` layout itself is **not stabilized** — treat the path conventions above as current
 > practice, not a frozen contract.
@@ -141,26 +139,25 @@ let text = resp.text().await?;
 ## PKARR resolution
 
 **PKARR** (Public-Key Addressable Resource Records) lets self-issued public keys act as
-sovereign, publicly addressable domains:
+publicly addressable domains by bridging DNS and p2p overlay networks:
 
-- **Publish:** create a small signed DNS packet and store it on the **Mainline DHT** (directly
-  or via an HTTP relay).
+- **Publish:** create a small signed DNS packet (`<=1000` bytes) and store it on the **Mainline
+  DHT** (directly or via an HTTP relay).
 - **Resolve:** query the DHT (directly or via relay) for the key and verify the Ed25519
   signature yourself.
 - Apps unaware of PKARR can still reach records via **DNS-over-HTTPS (DoH)** to PKARR/PKDNS
   servers. Clients and servers cache records heavily to spare the DHT.
 
 **SignedPacket layout** — `public-key(32) + signature(64) + timestamp(8) + dns-packet(<=1000)`,
-max **1104 bytes** total. Public keys are encoded as 52-char z-base-32 for DNS compatibility.
-Every packet is Ed25519-signed (authenticity + integrity), published to the DHT as a **BEP44
-mutable item**, and queried by the SHA1 hash of the public key. Supported record types: A,
-AAAA, CNAME, TXT, and HTTPS/SVCB (RFC 9460).
+max **1104 bytes** total. Every packet is Ed25519-signed (authenticity + integrity), published
+to the DHT as a **BEP44 mutable item**, and queried by the SHA1 hash of the public key.
+Supported record types: A, AAAA, CNAME, TXT, and HTTPS/SVCB (RFC 9460).
 
 > DHT (BEP44) storage is **ephemeral** — records degrade over hours to days and must be
 > **republished** (~hourly). Homeservers and relays run republishers (`pkarr-republisher`) to
 > keep user and server keys alive. The DHT is not a storage platform and is heavily cached, so
-> updates are **not real-time**. At ~10 million nodes (15+ years of BitTorrent), it provides
-> censorship resistance and Sybil resistance (via BEP42).
+> updates are **not real-time**. Backed by Mainline's ~10M-node DHT (BitTorrent), it provides
+> censorship and Sybil resistance (BEP42).
 
 **Homeserver discovery uses two records.** Resolving a user chains through both:
 
@@ -185,30 +182,30 @@ _pubky HTTPS 0 <homeserver-public-key>
 **Relays and clouds.** Browsers and any UDP-less / firewalled environment must publish and
 resolve through an **HTTP relay** (the DHT runs over UDP). Relays are also needed in major
 clouds (AWS/GCP/Azure) whose IP ranges DHT nodes commonly block — running pkarr/mainline
-directly there often fails, and the fix is relays hosted in smaller providers. The JS client
-takes a `pkarr.relays` config. **PKDNS** is the DNS-server bridge that resolves 52-char
-public-key domains from the DHT (with ICANN fallback) and supports DoH.
+directly there often fails, and the fix is relays hosted in smaller providers. **PKDNS** is the
+DNS-server bridge that resolves 52-char public-key domains from the DHT (with ICANN fallback)
+and supports DoH.
 
 **In practice the SDK resolves transparently** — hand it a Pubky URL/resource and it resolves
 the record, picks a transport, and adds the `pubky-host` header. To resolve a user's homeserver
-key explicitly: `pubky.get_homeserver_of(&user)` (Rust, returns `Option`) /
-`pubky.getHomeserverOf(publicKey)` (JS). `signin_blocking()` / `signinBlocking()` waits ~3–5s
-for PKDNS discoverability, whereas `signin()` refreshes PKDNS in the background.
+key explicitly use `pubky.get_homeserver_of(&user)` (Rust, returns `Option`).
+`signin_blocking()` / `signinBlocking()` waits ~3–5s for PKDNS discoverability, whereas
+`signin()` refreshes PKDNS in the background.
 
-PKARR spec, the full `SignedPacket` format, and the reference implementation live at
+The PKARR spec, the full `SignedPacket` format, and the reference implementation live at
 [github.com/pubky/pkarr](https://github.com/pubky/pkarr); see also
 [pkdns](https://github.com/pubky/pkdns) and the [mainline](https://github.com/pubky/mainline)
 DHT client ([docs.rs/mainline](https://docs.rs/mainline)).
 
 ## The homeserver model
 
-A **homeserver** is a user's personal data store and agent on the Internet: it provides data
-availability and HTTP endpoints, validates auth tokens, and manages exactly one user's data per
-public key. The network deliberately allows **many independent homeservers** — that's what
-improves censorship resistance and prevents walled gardens. A user can relocate at will by
-updating their PKARR record. Anyone can run a homeserver on their own terms; the network is
-currently bootstrapped by Synonym's first homeserver and needs more independent operators to
-fully decentralize. (Operating one is the [`pubky-infra`] skill's domain.)
+A **homeserver** is a user's personal data store: it provides data availability and HTTP
+endpoints, validates auth tokens, and manages exactly one user's data per public key. The
+network deliberately allows **many independent homeservers** — that's what improves censorship
+resistance and prevents walled gardens. A user can relocate at will by updating their PKARR
+record. Anyone can run a homeserver on their own terms; the network is currently bootstrapped by
+Synonym's first homeserver and needs more independent operators to fully decentralize. (Operating
+one is the [`pubky-infra`] skill's domain.)
 
 **The app-facing API is file storage only:** HTTP `PUT`/`GET`/`DELETE` (plus `LIST` with
 pagination, `HEAD`/exists, and stats) against `pubky://<pk>/pub/...` paths. Each entry is an
@@ -216,33 +213,39 @@ pagination, `HEAD`/exists, and stats) against `pubky://<pk>/pub/...` paths. Each
 images, audio, video, PDFs, ciphertext, anything; there is no protocol-level content-type
 restriction. The default per-request payload limit is **10 MB** (`413` past that), independent
 of operator-defined per-user quotas (Synonym's public homeserver: 1 GB/user, 10 MB/file).
-Homeservers may rate-limit — treat `429` as normal and retry with backoff.
+`LIST` defaults to **100** entries (max **1000**). Homeservers may rate-limit — treat `429` as
+normal and retry with backoff.
 
 **Internally**, a homeserver uses **PostgreSQL for its own metadata only** — users (Ed25519
 pubkey + quota), sessions (capability-scoped auth), entries (per-file path, Blake3 hash, length,
 MIME, timestamps), events (the `PUT`/`DEL` stream consumed by Nexus, Pubky Backup, and other
 subscribers), and signup codes. **User file content is stored separately in a filesystem under
 `/pub/`.** Applications never connect to PostgreSQL — they only ever see the file API.
+PostgreSQL-backed homeservers are a **shipped** feature.
 
 **Two transports.** A homeserver exposes a **PubkyTLS direct endpoint** (TLS with Raw Public
-Keys, RFC 7250 — the public key *is* the identity, no CA chain) and an **ICANN endpoint** behind
-a reverse proxy with standard X.509 TLS. Native SDK targets (Rust / native mobile) prefer the
-PubkyTLS endpoint and auto-fall back to ICANN when the direct one is unreachable (NAT, tunnels);
-browsers/WASM use the ICANN HTTPS path from the start. During ICANN fallback the request goes to
-the ICANN domain with the user public key preserved in the **`pubky-host`** header.
+Keys, RFC 7250 — the public key *is* the identity, no CA chain; verified directly against the
+public key from PKARR) and an **ICANN endpoint** behind a reverse proxy with standard X.509 TLS.
+Native SDK targets (Rust / native mobile, **not** browser/WASM) prefer the PubkyTLS endpoint and
+auto-fall back to ICANN when the direct one is unreachable (NAT, tunnels); browsers/WASM use the
+ICANN HTTPS path from the start. During ICANN fallback the request goes to the ICANN domain with
+the user public key preserved in the **`pubky-host`** header. (PubkyTLS default port in examples:
+`6287`.)
 
 > **Public data only, today.** Current homeservers support only public, unencrypted data under
 > `/pub`. Encrypted data and guarded (access-controlled) storage are **planned, not shipped** —
 > never present `/priv`, encrypted, or guarded storage as available. A trusted operator can
-> currently read, tamper with, or deny-serve all user data; this is mitigated by **credible
-> exit**, not by cryptography yet. See [`shipped-vs-planned.md`](shipped-vs-planned.md).
+> currently read, tamper with, or deny-serve all user data (no data signing yet); this is
+> mitigated by **credible exit**, not by cryptography. See
+> [`shipped-vs-planned.md`](shipped-vs-planned.md).
 
 **Credible exit** is built into the architecture: identity follows the keys, not the server.
 PKARR is the authoritative source of truth for identity resolution — the moment a user repoints
 their PKARR record at a new homeserver, the old one **loses authority immediately** and cannot
 impersonate them. Migration today means: sign up on a new homeserver, re-upload data (manual —
-restore and mirroring are planned, not shipped), then update the PKARR record. **Pubky Backup**
-keeps local one-way copies/snapshots of public `/pub` data to lower the cost of leaving.
+restore and homeserver mirroring are planned, not shipped), then update the PKARR record. **Pubky
+Backup** keeps local one-way copies/snapshots of public `/pub` data to lower the cost of leaving
+(no automatic restore, no tamper detection yet).
 
 ## Homeserver-write vs Nexus-read
 
@@ -262,22 +265,27 @@ Nexus indexes it. The SDK encodes the split as two storage objects: **`SessionSt
 (reads any user's public data, unauthenticated). Rust: `session.storage()` vs.
 `pubky.public_storage()`. JS: `session.storage` vs. `pubky.publicStorage`.
 
-**Event streams are the glue.** On each `PUT` the homeserver emits a `PUT` event carrying a
-cursor and a Blake3 content hash; `DELETE` emits `DEL`. Subscribers (Nexus, Pubky Backup,
-watchers) consume the stream from a persisted cursor — they do **not** poll or recursively list
-`/pub`. Two endpoints: `GET /events-stream` (SSE, per-user + path filters, up to 50 users — the
-primary client API) and `GET /events/` (paginated feed of all users, 1000/batch — for indexers
-and aggregators).
+**Event streams are the glue** between homeservers and indexers/backups. On each `PUT` the
+homeserver emits a `PUT` event carrying a cursor (`u64`) and a base64-encoded Blake3 content
+hash (32 bytes); `DELETE` emits `DEL`. Subscribers (Nexus, Pubky Backup, watchers) consume the
+stream from a persisted cursor — they do **not** poll or recursively list `/pub`. Two endpoints:
+`GET /events-stream` (SSE; per-user + path filters, up to 50 users, `user=<z32>:<cursor>` resume
+and `live=true` — the primary client API) and `GET /events/` (paginated feed of all users,
+1000/batch — for indexers and aggregators).
 
-**Pubky-Nexus** is a backend aggregation service that indexes and caches data from many
-homeservers and exposes a higher-level REST API for social apps. Components: `nexus-watcher`,
-`nexus-webapi`, `nexus-common`, `nexusd`; backing stores Neo4j (the social graph) + Redis
-(caching). It powers the *Semantic Social Graph* (weighted, tagged relationships). The concrete
-`/v0` endpoint catalog is drift-prone and lives in [`nexus-api.md`](nexus-api.md); the Swagger
-UI is the source of truth: <https://nexus.pubky.app/swagger-ui/>.
+**Pubky-Nexus** is the production-grade indexing/aggregation service that ingests homeserver
+event streams into a high-performance social-graph API powering Pubky App's social features
+(feeds, search, recommendations, notifications, web-of-trust). Components: `nexus-watcher` (event
+aggregator subscribing to homeserver streams), `nexus-webapi` (REST API server, formerly
+`nexus-service`), `nexus-common` (shared lib), `nexusd` (orchestration daemon); backing stores
+Neo4j (the social graph) + Redis (caching); built in Rust on Axum. Clients may optionally verify
+content authenticity directly with homeservers. The concrete `/v0` endpoint catalog is
+drift-prone and lives in [`nexus-api.md`](nexus-api.md); the Swagger UI is the source of truth:
+<https://nexus.pubky.app/swagger-ui/> (staging: <https://nexus.staging.pubky.app/swagger-ui/>).
 
-> The Nexus `/v0` API is explicitly **unstable and breaking-change-prone**. Do not hardcode its
-> shapes — link the Swagger and treat responses defensively.
+> The Nexus `/v0` API is explicitly **unstable and breaking-change-prone** (the `/v0` prefix
+> signals instability). Do not hardcode its shapes — link the Swagger and treat responses
+> defensively.
 
 **End-to-end social flow:**
 
@@ -315,28 +323,42 @@ const profile = await session.storage.getJson("/pub/myapp/profile");
 <sub>Source: [`pubky-knowledge-base-v2/snippets/js/src/quick-start-intro.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/quick-start-intro.ts)</sub>
 
 **Clients.** Prefer **one shared `Pubky` facade** per app/process rather than a new client per
-request. Construct mainnet with `new Pubky()` / `Pubky::new()`, testnet with `Pubky.testnet()` /
-`Pubky::testnet()`, or wrap a custom client (e.g. JS
-`new Client({ pkarr: { relays: [...], requestTimeout } })` then `Pubky.withClient(client)`). Use
-testnet for development, mainnet for production — see [`testing-and-testnet.md`](testing-and-testnet.md).
+request. Construct mainnet with `new Pubky()` / `Pubky::new()`, testnet with
+`Pubky.testnet(<relay-url>)` / `Pubky::testnet()`. Use testnet for development, mainnet for
+production — see [`testing-and-testnet.md`](testing-and-testnet.md). docs.rs/pubky (v0.9.3)
+confirms the surface: `Pubky::new()`, `testnet()`, `signer()`, `public_storage()`,
+`get_homeserver_of()`, `start_auth_flow()`, `client()`; `PubkySigner::signup()`, `signin()`,
+`approve_auth()`, `pkdns()`; `PubkySession::storage()`, `info()`.
+
+## Authentication
+
+Authentication uses **AuthTokens** — signed, time-limited, capability-scoped tokens proving
+public-key ownership, valid for a **~3-minute window** (clock-drift / replay protection). The
+`PUBKY:AUTH` namespace prevents cross-protocol replay. Capability format is `<path>:<rights>`,
+e.g. `/pub/my-app/:rw`, `/pub/file.txt:r`, `/:rw` (avoid root). **Third-party apps should use the
+SDK auth flows** (`start_auth_flow` produces a `pubkyauth://` URL for Pubky Ring) — never ask
+users to paste keys or mnemonics. Mnemonic-fallback auth (entering a 12-word mnemonic directly
+into a 3rd-party app) is a known security risk and should only happen on trusted infrastructure
+(Ring or the user's own homeserver). The full auth flow and token wire layout live in
+[`auth.md`](auth.md).
 
 ## Stability and known limits
 
-- **Shipped vs. planned** is a hard guardrail: public `/pub` storage, capability-scoped
-  sessions, PKARR identity/discovery, and event streams ship today; `/priv`, encrypted/guarded
+- **Shipped vs. planned** is a hard guardrail: public `/pub` storage, capability-scoped sessions,
+  PKARR identity/discovery, pubky-app-specs models, resumable `pubkyauth` flows, event streams,
+  local Pubky Backup, and PostgreSQL-backed homeservers ship today; `/priv`, encrypted/guarded
   storage, homeserver mirroring, and backup *restore* do not. Never present a planned item as
   available — full canonical list: [`shipped-vs-planned.md`](shipped-vs-planned.md).
 - **Pre-1.0 churn:** the `/pub` path layout is not stabilized, the Nexus `/v0` API is
   breaking-change-prone, and app-specs are v0.x. PKARR DHT records are ephemeral (republished)
   and DHT reads are heavily cached / not real-time.
 - **Single session cookie** ([pubky-core#122](https://github.com/pubky/pubky-core/issues/122)):
-  all sessions currently share one auth cookie, so signing into App B overwrites App A's
-  session; a JWT-based rework is in progress. AuthTokens are valid for a **~3-minute window**
-  (clock-drift / replay protection). The full auth flow lives in [`auth.md`](auth.md).
+  all sessions currently share one auth cookie, so signing into App B overwrites App A's session;
+  a JWT-based session-management rework is in progress.
 
 ## Upstream references
 
-- **Rust SDK API** (authoritative, drift-prone): [docs.rs/pubky](https://docs.rs/pubky)
+- **Rust SDK API** (authoritative, drift-prone; currently v0.9.3): [docs.rs/pubky](https://docs.rs/pubky)
 - **JS/WASM SDK:** [`@synonymdev/pubky`](https://www.npmjs.com/package/@synonymdev/pubky) ·
   **React Native binding:** [`@synonymdev/react-native-pubky`](https://www.npmjs.com/package/@synonymdev/react-native-pubky)
 - **Pubky Core docs** (protocol / homeserver / API): [pubky.github.io/pubky-core](https://pubky.github.io/pubky-core/) ·

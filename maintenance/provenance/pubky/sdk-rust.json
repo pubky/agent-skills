@@ -1,0 +1,127 @@
+{
+  "path": "skills/pubky/references/sdk-rust.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-knowledge-base-v2",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "repo": "pubky-core",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    },
+    {
+      "repo": "docs.rs/pubky",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    },
+    {
+      "repo": "crate:pubky",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "Version drift (signin / start_auth_flow)",
+      "repo": "pubky-core",
+      "path": "examples/rust/4-storage/write.rs",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    },
+    {
+      "anchor": "Install and runtime",
+      "repo": "pubky-knowledge-base-v2",
+      "path": "snippets/rust/Cargo.toml",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "anchor": "Initialize the client",
+      "repo": "pubky-knowledge-base-v2",
+      "path": "snippets/rust/src/lib.rs",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "anchor": "Sign up and sign in",
+      "repo": "pubky-knowledge-base-v2",
+      "path": "snippets/rust/src/lib.rs",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "anchor": "Storage operations",
+      "repo": "pubky-knowledge-base-v2",
+      "path": "snippets/rust/src/lib.rs",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "anchor": "Error handling",
+      "repo": "pubky-core",
+      "path": "pubky-client/src/errors.rs",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+      "url": "https://docs.rs/pubky/0.9.3/pubky/errors/enum.Error.html"
+    },
+    {
+      "anchor": "Sessions: info, signout, persistence",
+      "repo": "pubky-knowledge-base-v2",
+      "path": "snippets/rust/src/lib.rs",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "anchor": "Event streams",
+      "repo": "pubky-knowledge-base-v2",
+      "path": "snippets/rust/src/lib.rs",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "anchor": "pubkyauth flow",
+      "repo": "pubky-knowledge-base-v2",
+      "path": "snippets/rust/src/lib.rs",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "anchor": "End-to-end: typed records",
+      "repo": "pubky-knowledge-base-v2",
+      "path": "snippets/rust/src/lib.rs",
+      "sha": "c9981c6501456f9305918820017134af40d278c0",
+      "url": "https://docs.rs/pubky/0.9.3/pubky/"
+    },
+    {
+      "anchor": "Escape hatch: raw requests",
+      "repo": "pubky-core",
+      "path": "examples/rust/5-request/main.rs",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    },
+    {
+      "anchor": "Crate map (PublicKey pubky-prefix Display)",
+      "repo": "pubky-core",
+      "path": "pubky-common/src/keys.rs",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    },
+    {
+      "anchor": "Crate map (examples directory listing)",
+      "repo": "pubky-core",
+      "path": "examples/rust",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    },
+    {
+      "anchor": "Testnet roundtrip pointer",
+      "repo": "pubky-core",
+      "path": "examples/rust/1-testnet/main.rs",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    }
+  ],
+  "snippet": {
+    "total": 19,
+    "pass": 19,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 38,
+    "refuted": 0,
+    "caveated": 2,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 1490
+}
