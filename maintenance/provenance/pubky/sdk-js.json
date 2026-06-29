@@ -1,0 +1,104 @@
+{
+  "path": "skills/pubky/references/sdk-js.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T09:22:36.374Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-knowledge-base-v2",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "repo": "pubky-core",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    },
+    {
+      "repo": "pubky-ai-kit",
+      "sha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
+    },
+    {
+      "repo": "npm:@synonymdev/pubky",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "Install and runtime / Initialize the client",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-sdk/bindings/js/pkg/README.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/pkg/README.md"
+    },
+    {
+      "anchor": "Install and runtime (module system + node version)",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-sdk/bindings/js/pkg/package.json",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/pkg/package.json"
+    },
+    {
+      "anchor": "Initialize the client (WASM needs relays; relay-URL InvalidInput, requestTimeout u64)",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-sdk/bindings/js/src/client/constructor.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/src/client/constructor.rs"
+    },
+    {
+      "anchor": "Quick example",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/js/src/quick-start-getting-started.ts",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/quick-start-getting-started.ts"
+    },
+    {
+      "anchor": "Sign up and sign in (signin no-arg, signinBlocking, session.info, drift note)",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/js/src/sdk.ts",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/sdk.ts"
+    },
+    {
+      "anchor": "Storage operations / Listing and pagination / stats shape / path rules",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-sdk/bindings/js/pkg/tests/storage.ts",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/pkg/tests/storage.ts"
+    },
+    {
+      "anchor": "Error handling (PubkyError shape, 6-name PubkyErrorName union, setLogLevel, raw fetch / resolvePubky)",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-sdk/bindings/js/pkg/README.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/pkg/README.md"
+    },
+    {
+      "anchor": "Error handling (statusCodeOf + 429 retry idioms)",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/js/src/troubleshooting.ts",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/troubleshooting.ts"
+    },
+    {
+      "anchor": "Error handling (HTTP 401/403/404 meanings) / Node version",
+      "repo": "pubky/pubky-core",
+      "path": "examples/javascript/README.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/examples/javascript/README.md"
+    }
+  ],
+  "snippet": {
+    "total": 13,
+    "pass": 13,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 33,
+    "refuted": 0,
+    "caveated": 4,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 1563
+}

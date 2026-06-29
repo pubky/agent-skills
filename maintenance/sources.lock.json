@@ -6,7 +6,7 @@
     "pubky-core": {
       "url": "https://github.com/pubky/pubky-core",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
       "pathsOfInterest": [
         "README.md",
         "docs/AUTH.md",
@@ -24,121 +24,181 @@
       "branch": "main",
       "lastSeenSha": null,
       "authoritative": true,
-      "pathsOfInterest": ["README.md", "src/models/**", "src/**"]
+      "pathsOfInterest": [
+        "README.md",
+        "src/models/**",
+        "src/**"
+      ]
     },
     "pubky-nexus": {
       "url": "https://github.com/pubky/pubky-nexus",
       "branch": "main",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md", "docker/**", "**/config*.toml", "config/**"]
+      "pathsOfInterest": [
+        "README.md",
+        "docker/**",
+        "**/config*.toml",
+        "config/**"
+      ]
     },
     "react-native-pubky": {
       "url": "https://github.com/pubky/react-native-pubky",
       "branch": "main",
       "lastSeenSha": null,
       "npmScope": "@synonymdev/react-native-pubky",
-      "pathsOfInterest": ["README.md", "src/**"]
+      "pathsOfInterest": [
+        "README.md",
+        "src/**"
+      ]
     },
     "pubky-core-ffi": {
       "url": "https://github.com/pubky/pubky-core-ffi",
       "branch": "main",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md", "build.sh", "src/**", "bindings/**"]
+      "pathsOfInterest": [
+        "README.md",
+        "build.sh",
+        "src/**",
+        "bindings/**"
+      ]
     },
     "pubky-ring": {
       "url": "https://github.com/pubky/pubky-ring",
       "branch": "main",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md", "docs/**"]
+      "pathsOfInterest": [
+        "README.md",
+        "docs/**"
+      ]
     },
     "pubky-docker": {
       "url": "https://github.com/pubky/pubky-docker",
       "branch": "main",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md", "**/*.yml", "**/*.yaml", "*.sh", ".env*"]
+      "pathsOfInterest": [
+        "README.md",
+        "**/*.yml",
+        "**/*.yaml",
+        "*.sh",
+        ".env*"
+      ]
     },
     "homegate": {
       "url": "https://github.com/pubky/homegate",
       "branch": "master",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md", "openapi.yaml", "openapi.yml"]
+      "pathsOfInterest": [
+        "README.md",
+        "openapi.yaml",
+        "openapi.yml"
+      ]
     },
     "pkdns": {
       "url": "https://github.com/pubky/pkdns",
       "branch": "master",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md", "docs/**"]
+      "pathsOfInterest": [
+        "README.md",
+        "docs/**"
+      ]
     },
     "pkarr": {
       "url": "https://github.com/pubky/pkarr",
       "branch": "main",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md", "**/relay/**", "relay/**"]
+      "pathsOfInterest": [
+        "README.md",
+        "**/relay/**",
+        "relay/**"
+      ]
     },
     "mainline": {
       "url": "https://github.com/pubky/mainline",
       "branch": "main",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md"]
+      "pathsOfInterest": [
+        "README.md"
+      ]
     },
     "http-relay": {
       "url": "https://github.com/pubky/http-relay",
       "branch": "main",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md"]
+      "pathsOfInterest": [
+        "README.md"
+      ]
     },
     "pubky-cli": {
       "url": "https://github.com/pubky/pubky-cli",
       "branch": "main",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md"]
+      "pathsOfInterest": [
+        "README.md"
+      ]
     },
     "pubky-noise": {
       "url": "https://github.com/pubky/pubky-noise",
       "branch": "master",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md"]
+      "pathsOfInterest": [
+        "README.md"
+      ]
     },
     "paykit-rs": {
       "url": "https://github.com/pubky/paykit-rs",
       "branch": "master",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md"]
+      "pathsOfInterest": [
+        "README.md"
+      ]
     },
     "homeserver-dashboard": {
       "url": "https://github.com/pubky/homeserver-dashboard",
       "branch": "main",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md"]
+      "pathsOfInterest": [
+        "README.md"
+      ]
     },
     "umbrel-app-store": {
       "url": "https://github.com/pubky/umbrel-app-store",
       "branch": "master",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md", "**/pubky*/**"]
+      "pathsOfInterest": [
+        "README.md",
+        "**/pubky*/**"
+      ]
     },
     "pubky-app": {
       "url": "https://github.com/pubky/pubky-app",
       "branch": "dev",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md", "src/**"]
+      "pathsOfInterest": [
+        "README.md",
+        "src/**"
+      ]
     },
     "pubky-explorer": {
       "url": "https://github.com/pubky/pubky-explorer",
       "branch": "main",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md", "src/**"]
+      "pathsOfInterest": [
+        "README.md",
+        "src/**"
+      ]
     },
     "workshop": {
       "url": "https://github.com/pubky/workshop",
       "branch": "spanish",
       "lastSeenSha": null,
-      "pathsOfInterest": ["README.md"]
+      "pathsOfInterest": [
+        "README.md"
+      ]
     },
     "pubky-knowledge-base-v2": {
       "url": "https://github.com/pubky/pubky-knowledge-base-v2",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "c9981c6501456f9305918820017134af40d278c0",
       "rulesFile": ".ai-rules.md",
       "verifiedSnippets": true,
       "pathsOfInterest": [
@@ -152,12 +212,13 @@
     "pubky-ai-kit": {
       "url": "https://github.com/pubky/pubky-ai-kit",
       "branch": "main",
-      "lastSeenSha": null,
+      "lastSeenSha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
       "kind": "migration-source",
       "note": "The retiring monolith. Secondary seed for structure/wording only; prefer upstream truth.",
-      "pathsOfInterest": ["pubky-dev-context.md"]
+      "pathsOfInterest": [
+        "pubky-dev-context.md"
+      ]
     },
-
     "docs.rs/pubky": {
       "kind": "docs",
       "url": "https://docs.rs/pubky",
@@ -176,7 +237,7 @@
       "url": "https://www.npmjs.com/package/@synonymdev/pubky",
       "tracksRepo": "pubky-core",
       "pinnedVersion": "0.9.3",
-      "lastSeenSha": null
+      "lastSeenSha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
     "npm:@synonymdev/react-native-pubky": {
       "kind": "registry",
@@ -200,25 +261,54 @@
       "lastSeenSha": null
     }
   },
-
   "references": {
     "skills/pubky/references/concepts.md": {
       "role": "canonical",
       "covers": "Keypair identity; pubky:// addressing and /pub paths; pkarr resolution; the homeserver model; the homeserver-write vs Nexus-read split.",
       "sources": [
-        { "repo": "pubky-ai-kit", "paths": ["pubky-dev-context.md#core-architecture"] },
-        { "repo": "pubky-knowledge-base-v2", "paths": ["src/content/docs/explore/concepts/**", "src/content/docs/explore/technologies/{key-pair,dht,dns,doh,https}/**"] },
-        { "repo": "pubky-core", "paths": ["README.md"] }
+        {
+          "repo": "pubky-ai-kit",
+          "paths": [
+            "pubky-dev-context.md#core-architecture"
+          ]
+        },
+        {
+          "repo": "pubky-knowledge-base-v2",
+          "paths": [
+            "src/content/docs/explore/concepts/**",
+            "src/content/docs/explore/technologies/{key-pair,dht,dns,doh,https}/**"
+          ]
+        },
+        {
+          "repo": "pubky-core",
+          "paths": [
+            "README.md"
+          ]
+        }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
+        "pubky-knowledge-base-v2": "c9981c6501456f9305918820017134af40d278c0",
+        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+      }
     },
     "skills/pubky/references/auth.md": {
       "role": "normal",
       "covers": "pubkyauth handshake; capabilities; pubkyauth:// URLs; relays; recovery files; signup tokens; session lifecycle.",
       "sources": [
-        { "repo": "pubky-ai-kit", "paths": ["pubky-dev-context.md#authentication"] },
-        { "repo": "pubky-core", "paths": ["docs/AUTH.md"] }
+        {
+          "repo": "pubky-ai-kit",
+          "paths": [
+            "pubky-dev-context.md#authentication"
+          ]
+        },
+        {
+          "repo": "pubky-core",
+          "paths": [
+            "docs/AUTH.md"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -227,9 +317,23 @@
       "role": "canonical",
       "covers": "PubkyAppUser, Post (short/long/image/video/link/file/collection), Tag, Bookmark, Follow, Feed, File; /pub/pubky.app/ paths; Timestamp vs Blake3 Hash IDs; validation limits; the [DELETED] keyword.",
       "sources": [
-        { "repo": "pubky-app-specs", "paths": ["src/models/**", "README.md"] },
-        { "repo": "pubky-ai-kit", "paths": ["pubky-dev-context.md#app-specs"] },
-        { "repo": "npm:pubky-app-specs", "paths": [] }
+        {
+          "repo": "pubky-app-specs",
+          "paths": [
+            "src/models/**",
+            "README.md"
+          ]
+        },
+        {
+          "repo": "pubky-ai-kit",
+          "paths": [
+            "pubky-dev-context.md#app-specs"
+          ]
+        },
+        {
+          "repo": "npm:pubky-app-specs",
+          "paths": []
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -238,22 +342,63 @@
       "role": "normal",
       "covers": "@synonymdev/pubky: install, WASM init, sign up / sign in, put/get/list/delete, pagination; the WASM-needs-relays caveat; JS error idioms.",
       "sources": [
-        { "repo": "pubky-knowledge-base-v2", "paths": ["snippets/js/**"] },
-        { "repo": "pubky-core", "paths": ["examples/javascript/**", "pubky-sdk/bindings/js/**"] },
-        { "repo": "pubky-ai-kit", "paths": ["pubky-dev-context.md#client-init", "pubky-dev-context.md#data-operations"] },
-        { "repo": "npm:@synonymdev/pubky", "paths": [] }
+        {
+          "repo": "pubky-knowledge-base-v2",
+          "paths": [
+            "snippets/js/**"
+          ]
+        },
+        {
+          "repo": "pubky-core",
+          "paths": [
+            "examples/javascript/**",
+            "pubky-sdk/bindings/js/**"
+          ]
+        },
+        {
+          "repo": "pubky-ai-kit",
+          "paths": [
+            "pubky-dev-context.md#client-init",
+            "pubky-dev-context.md#data-operations"
+          ]
+        },
+        {
+          "repo": "npm:@synonymdev/pubky",
+          "paths": []
+        }
       ],
       "linksTo": [],
-      "lastGeneratedSha": {}
+      "lastGeneratedSha": {
+        "pubky-knowledge-base-v2": "c9981c6501456f9305918820017134af40d278c0",
+        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
+        "npm:@synonymdev/pubky": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+      }
     },
     "skills/pubky/references/sdk-rust.md": {
       "role": "normal",
       "covers": "The pubky crate: cargo add, client setup, idiomatic data ops and error handling; docs.rs pointer.",
       "sources": [
-        { "repo": "pubky-knowledge-base-v2", "paths": ["snippets/rust/**"] },
-        { "repo": "pubky-core", "paths": ["examples/rust/**"] },
-        { "repo": "docs.rs/pubky", "paths": [] },
-        { "repo": "crate:pubky", "paths": [] }
+        {
+          "repo": "pubky-knowledge-base-v2",
+          "paths": [
+            "snippets/rust/**"
+          ]
+        },
+        {
+          "repo": "pubky-core",
+          "paths": [
+            "examples/rust/**"
+          ]
+        },
+        {
+          "repo": "docs.rs/pubky",
+          "paths": []
+        },
+        {
+          "repo": "crate:pubky",
+          "paths": []
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -262,9 +407,22 @@
       "role": "normal",
       "covers": "Consuming the hosted Nexus /v0 REST API for social-graph data (posts, users, tags, follows, feeds); Swagger UI; the unstable-/v0 guardrail.",
       "sources": [
-        { "repo": "nexus-swagger", "paths": [] },
-        { "repo": "pubky-nexus", "paths": ["README.md"] },
-        { "repo": "pubky-ai-kit", "paths": ["pubky-dev-context.md#nexus"] }
+        {
+          "repo": "nexus-swagger",
+          "paths": []
+        },
+        {
+          "repo": "pubky-nexus",
+          "paths": [
+            "README.md"
+          ]
+        },
+        {
+          "repo": "pubky-ai-kit",
+          "paths": [
+            "pubky-dev-context.md#nexus"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -273,8 +431,20 @@
       "role": "normal",
       "covers": "pubky-testnet; npm run testnet; scripting with pubky-cli for app-dev; pointer to the pubky-infra skill for the full self-hosted stack.",
       "sources": [
-        { "repo": "pubky-core", "paths": ["docs/DEV_TESTING_GUIDES.md", "pubky-testnet/**", "examples/**"] },
-        { "repo": "pubky-ai-kit", "paths": ["pubky-dev-context.md#testing"] }
+        {
+          "repo": "pubky-core",
+          "paths": [
+            "docs/DEV_TESTING_GUIDES.md",
+            "pubky-testnet/**",
+            "examples/**"
+          ]
+        },
+        {
+          "repo": "pubky-ai-kit",
+          "paths": [
+            "pubky-dev-context.md#testing"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -283,11 +453,38 @@
       "role": "normal",
       "covers": "pubky.app structure; the explorer read pattern; the workshop end-to-end flow; local-first data and error-handling patterns.",
       "sources": [
-        { "repo": "pubky-app", "paths": ["README.md", "src/**"] },
-        { "repo": "pubky-explorer", "paths": ["README.md", "src/**"] },
-        { "repo": "workshop", "paths": ["README.md"] },
-        { "repo": "pubky-knowledge-base-v2", "paths": ["src/content/docs/explore/pubky-apps/**"] },
-        { "repo": "pubky-ai-kit", "paths": ["pubky-dev-context.md#react"] }
+        {
+          "repo": "pubky-app",
+          "paths": [
+            "README.md",
+            "src/**"
+          ]
+        },
+        {
+          "repo": "pubky-explorer",
+          "paths": [
+            "README.md",
+            "src/**"
+          ]
+        },
+        {
+          "repo": "workshop",
+          "paths": [
+            "README.md"
+          ]
+        },
+        {
+          "repo": "pubky-knowledge-base-v2",
+          "paths": [
+            "src/content/docs/explore/pubky-apps/**"
+          ]
+        },
+        {
+          "repo": "pubky-ai-kit",
+          "paths": [
+            "pubky-dev-context.md#react"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -296,8 +493,18 @@
       "role": "normal",
       "covers": "When to reach for pubky-noise (E2E messaging) and paykit (cross-app payments) — pointers, not full guides.",
       "sources": [
-        { "repo": "pubky-noise", "paths": ["README.md"] },
-        { "repo": "paykit-rs", "paths": ["README.md"] }
+        {
+          "repo": "pubky-noise",
+          "paths": [
+            "README.md"
+          ]
+        },
+        {
+          "repo": "paykit-rs",
+          "paths": [
+            "README.md"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -306,21 +513,50 @@
       "role": "canonical",
       "covers": "Production-ready vs placeholder: v0 instability; /pub path non-stabilization; Nexus /v0 breaking changes; no /priv; no homeserver mirroring / backup-restore / cloud-backup.",
       "sources": [
-        { "repo": "pubky-ai-kit", "paths": ["pubky-dev-context.md#shipped-vs-planned"] },
-        { "repo": "pubky-core", "paths": ["README.md", "docs/**"] },
-        { "repo": "pubky-app-specs", "paths": ["README.md"] }
+        {
+          "repo": "pubky-ai-kit",
+          "paths": [
+            "pubky-dev-context.md#shipped-vs-planned"
+          ]
+        },
+        {
+          "repo": "pubky-core",
+          "paths": [
+            "README.md",
+            "docs/**"
+          ]
+        },
+        {
+          "repo": "pubky-app-specs",
+          "paths": [
+            "README.md"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
     },
-
     "skills/pubky-mobile/references/react-native.md": {
       "role": "normal",
       "covers": "@synonymdev/react-native-pubky method surface: auth/Ring, homeserver lifecycle, key management, data ops, pkarr publish/resolve, isErr()/value handling.",
       "sources": [
-        { "repo": "react-native-pubky", "paths": ["README.md", "src/**"] },
-        { "repo": "pubky-knowledge-base-v2", "paths": ["snippets/react-native/**"] },
-        { "repo": "npm:@synonymdev/react-native-pubky", "paths": [] }
+        {
+          "repo": "react-native-pubky",
+          "paths": [
+            "README.md",
+            "src/**"
+          ]
+        },
+        {
+          "repo": "pubky-knowledge-base-v2",
+          "paths": [
+            "snippets/react-native/**"
+          ]
+        },
+        {
+          "repo": "npm:@synonymdev/react-native-pubky",
+          "paths": []
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -329,7 +565,15 @@
       "role": "normal",
       "covers": "pubky-core-ffi: per-platform build, XCFramework / Kotlin+JNI consumption, String Contracts, the [error,data] convention, the <z32>:<cookie> session-secret format, and the MANDATORY Android rustls init startup step.",
       "sources": [
-        { "repo": "pubky-core-ffi", "paths": ["README.md", "build.sh", "src/**", "bindings/**"] }
+        {
+          "repo": "pubky-core-ffi",
+          "paths": [
+            "README.md",
+            "build.sh",
+            "src/**",
+            "bindings/**"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -338,10 +582,23 @@
       "role": "normal",
       "covers": "Integrating the Pubky Ring authenticator: pubkyauth:// / pubkyring:// deeplinks, capabilities, relay+secret, QR/animated-frame input, session revoke/migrate.",
       "sources": [
-        { "repo": "pubky-ring", "paths": ["README.md", "docs/**"] },
-        { "repo": "pubky-core", "paths": ["docs/AUTH.md"] }
+        {
+          "repo": "pubky-ring",
+          "paths": [
+            "README.md",
+            "docs/**"
+          ]
+        },
+        {
+          "repo": "pubky-core",
+          "paths": [
+            "docs/AUTH.md"
+          ]
+        }
       ],
-      "linksTo": ["skills/pubky/references/auth.md"],
+      "linksTo": [
+        "skills/pubky/references/auth.md"
+      ],
       "lastGeneratedSha": {}
     },
     "skills/pubky-mobile/references/concepts-pointer.md": {
@@ -355,15 +612,35 @@
       ],
       "lastGeneratedSha": {}
     },
-
     "skills/pubky-infra/references/homeserver.md": {
       "role": "normal",
       "covers": "Run via Docker/cargo; admin/client/metrics endpoints (admin API on :6288); config.toml; signup/invite tokens; enable/disable users; the homeserver-dashboard; Cloudflare-tunnel exposure; Umbrel vs standalone.",
       "sources": [
-        { "repo": "pubky-core", "paths": ["pubky-homeserver/**"] },
-        { "repo": "pubky-docker", "paths": ["README.md"] },
-        { "repo": "homeserver-dashboard", "paths": ["README.md"] },
-        { "repo": "umbrel-app-store", "paths": ["README.md", "**/pubky*/**"] }
+        {
+          "repo": "pubky-core",
+          "paths": [
+            "pubky-homeserver/**"
+          ]
+        },
+        {
+          "repo": "pubky-docker",
+          "paths": [
+            "README.md"
+          ]
+        },
+        {
+          "repo": "homeserver-dashboard",
+          "paths": [
+            "README.md"
+          ]
+        },
+        {
+          "repo": "umbrel-app-store",
+          "paths": [
+            "README.md",
+            "**/pubky*/**"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -372,7 +649,14 @@
       "role": "normal",
       "covers": "nexusd api/watcher/db subcommands; Neo4j + Redis; config.toml; the Migration Manager (dual-write/backfill/cutover/cleanup); OpenTelemetry/Signoz; watcher event ingestion from homeservers.",
       "sources": [
-        { "repo": "pubky-nexus", "paths": ["README.md", "docker/**", "**/config*.toml"] }
+        {
+          "repo": "pubky-nexus",
+          "paths": [
+            "README.md",
+            "docker/**",
+            "**/config*.toml"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -381,7 +665,15 @@
       "role": "normal",
       "covers": "pubky-docker compose profiles (--profile backend vs pubky-app); .env image tags; pubky-docker-cli.sh; local-development-only warning.",
       "sources": [
-        { "repo": "pubky-docker", "paths": ["README.md", "**/*.yml", "*.sh", ".env*"] }
+        {
+          "repo": "pubky-docker",
+          "paths": [
+            "README.md",
+            "**/*.yml",
+            "*.sh",
+            ".env*"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -390,7 +682,14 @@
       "role": "normal",
       "covers": "Homegate signup-gating routes (SMS/Lightning/IP); the pepper secret; PostgreSQL backing; openapi.yaml.",
       "sources": [
-        { "repo": "homegate", "paths": ["README.md", "openapi.yaml", "openapi.yml"] }
+        {
+          "repo": "homegate",
+          "paths": [
+            "README.md",
+            "openapi.yaml",
+            "openapi.yml"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -399,9 +698,26 @@
       "role": "normal",
       "covers": "pkdns resolver + DoH; running a pkarr-relay; why browsers/WASM need relays; mainline DHT background (BEP44, republish/TTL).",
       "sources": [
-        { "repo": "pkdns", "paths": ["README.md", "docs/**"] },
-        { "repo": "pkarr", "paths": ["README.md", "relay/**"] },
-        { "repo": "mainline", "paths": ["README.md"] }
+        {
+          "repo": "pkdns",
+          "paths": [
+            "README.md",
+            "docs/**"
+          ]
+        },
+        {
+          "repo": "pkarr",
+          "paths": [
+            "README.md",
+            "relay/**"
+          ]
+        },
+        {
+          "repo": "mainline",
+          "paths": [
+            "README.md"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -410,7 +726,12 @@
       "role": "normal",
       "covers": "Run the http-relay binary/Docker; the inbox API; TTL/persistence/CORS flags; inbox IDs are bearer secrets.",
       "sources": [
-        { "repo": "http-relay", "paths": ["README.md"] }
+        {
+          "repo": "http-relay",
+          "paths": [
+            "README.md"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}
@@ -419,7 +740,12 @@
       "role": "normal",
       "covers": "pubky-cli admin flows: invite/signup tokens, server stats, enable/disable users, WebDAV admin.",
       "sources": [
-        { "repo": "pubky-cli", "paths": ["README.md"] }
+        {
+          "repo": "pubky-cli",
+          "paths": [
+            "README.md"
+          ]
+        }
       ],
       "linksTo": [],
       "lastGeneratedSha": {}

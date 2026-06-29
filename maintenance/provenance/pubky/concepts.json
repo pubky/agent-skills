@@ -1,0 +1,107 @@
+{
+  "path": "skills/pubky/references/concepts.md",
+  "role": "canonical",
+  "accept": true,
+  "generatedAt": "2026-06-29T09:22:36.374Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-ai-kit",
+      "sha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
+    },
+    {
+      "repo": "pubky-knowledge-base-v2",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "repo": "pubky-core",
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "pubky-core-concepts",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "db5db19ed699bbe8d8f4179b9d09b644753ed0ef",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/pubkycore/introduction.md"
+    },
+    {
+      "anchor": "the-one-mental-model",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "db5db19ed699bbe8d8f4179b9d09b644753ed0ef",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/pubkycore/introduction.md"
+    },
+    {
+      "anchor": "identity-the-ed25519-keypair",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "db5db19ed699bbe8d8f4179b9d09b644753ed0ef",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-common/src/keys.rs"
+    },
+    {
+      "anchor": "public-key-string-formats",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "db5db19ed699bbe8d8f4179b9d09b644753ed0ef",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-common/src/keys.rs"
+    },
+    {
+      "anchor": "addressing-and-the-pub-tree",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "db5db19ed699bbe8d8f4179b9d09b644753ed0ef",
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
+    },
+    {
+      "anchor": "pkarr-resolution",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "db5db19ed699bbe8d8f4179b9d09b644753ed0ef",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/pubkycore/pkarr/architecture.md"
+    },
+    {
+      "anchor": "the-homeserver-model",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "db5db19ed699bbe8d8f4179b9d09b644753ed0ef",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/pubkycore/homeserver.md"
+    },
+    {
+      "anchor": "homeserver-write-vs-nexus-read",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "db5db19ed699bbe8d8f4179b9d09b644753ed0ef",
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
+    },
+    {
+      "anchor": "stability-and-known-limits",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "db5db19ed699bbe8d8f4179b9d09b644753ed0ef",
+      "url": "https://github.com/pubky/pubky-core/issues/122"
+    },
+    {
+      "anchor": "upstream-references",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "db5db19ed699bbe8d8f4179b9d09b644753ed0ef",
+      "url": "https://docs.rs/pubky"
+    }
+  ],
+  "snippet": {
+    "total": 4,
+    "pass": 4,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 41,
+    "refuted": 0,
+    "caveated": 1,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 2569
+}
