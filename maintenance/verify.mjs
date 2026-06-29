@@ -174,10 +174,20 @@ if (canonTexts.length) add('ok', 'canonical-copy', `canonical-copy checked (thre
 
 // --- 7. external links (opt-in) --------------------------------------------
 if (CHECK_LINKS) {
+  // npm/crates web pages bot-block (403/404) even when the package exists — verify via their
+  // registry APIs instead so we still catch real typos without false positives.
+  const apiFor = (url) => {
+    let m
+    if ((m = url.match(/^https?:\/\/(?:www\.)?npmjs\.com\/package\/(@?[^/?#]+(?:\/[^/?#]+)?)/))) return `https://registry.npmjs.org/${m[1]}`
+    if ((m = url.match(/^https?:\/\/crates\.io\/crates\/([^/?#]+)/))) return `https://crates.io/api/v1/crates/${m[1]}`
+    return url
+  }
   for (const url of externalUrls) {
+    const target = apiFor(url)
     try {
-      const code = execFileSync('curl', ['-sS', '-o', '/dev/null', '-w', '%{http_code}', '-I', '-L', '--max-time', '20', url], { encoding: 'utf8' }).trim()
-      if (Number(code) >= 400) add('warn', 'ext-link', `${url} -> HTTP ${code}`)
+      const code = Number(execFileSync('curl', ['-sS', '-o', '/dev/null', '-w', '%{http_code}', '-L', '--max-time', '20',
+        '-A', 'Mozilla/5.0 (compatible; pubky-agent-skills link-check)', '-r', '0-0', target], { encoding: 'utf8' }).trim())
+      if (code >= 400) add('warn', 'ext-link', `${url} -> HTTP ${code}${target !== url ? ` (via ${target})` : ''}`)
     } catch { add('warn', 'ext-link', `${url} -> unreachable`) }
   }
   add('ok', 'ext-link', `external links checked (${externalUrls.size})`)
