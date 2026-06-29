@@ -16,8 +16,13 @@ deliberately. Derived from the repo `CLAUDE.md` and the pubky-knowledge-base `.a
    to it (relative path), never restate it. A `pointer` file is a thin map only.
 3. **Only document what exists.** Never invent features. Honor the shipped-vs-planned guardrail
    below; never present a planned item as available.
-4. **Be concise and to the point.** Cut filler. Prefer a link + one-line summary over a restated
-   table. Include accurate code snippets only where they earn their place.
+4. **Optimize for the reader: a coding agent, on demand.** These files are loaded by AI agents
+   while writing Pubky code, not by humans browsing docs. Maximize *actionable density* — the
+   things that change what an agent writes. KEEP every API signature, gotcha/caveat that prevents
+   broken code, tested code snippet, and decision table ("own vs other", error names, format
+   choice). CUT motivational/marketing prose, taglines, and narrative flavor. Prefer imperative
+   "do X, not Y". Lead with code and the technical model. Never drop a correctness caveat to save
+   words — a verified snippet or a gotcha is worth more to an agent than any prose.
 5. **Public-key string formats matter.** `publicKey.toString()` → `pubky<z32>` (display);
    `publicKey.z32()` → raw z-base-32 (hostnames, DNS, headers, URL params, DB keys). Don't mix
    them up; flag misuse.

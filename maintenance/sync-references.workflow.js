@@ -351,7 +351,11 @@ const perFile = await pipeline(
       `SNIPPET RESULTS (replace any failing snippet with its correctedCode; if a snippet is unverifiable, keep it but add a one-line caveat; annotate executed snippets are run against a local testnet):\n${JSON.stringify((snippetResults && snippetResults.results) || [], null, 1)}\n\n` +
       `FACT-CHECK (apply fixes; drop unsupported claims; add required caveats; demote mirrored detail to links):\n${JSON.stringify(factcheck, null, 1)}\n\n` +
       `AUTHORING RULES:\n${RULES}\n\n` +
-      `Concision pass: cut anything duplicating a canonical file, cut filler, prefer links over restated API tables. ` +
+      `Concision pass — AUDIENCE IS A CODING AGENT loading this on demand. Maximize actionable density: ` +
+      `KEEP every API signature, correctness gotcha/caveat, tested snippet, and decision table; ` +
+      `CUT motivational/marketing prose, taglines, and narrative flavor; prefer imperative "do X, not Y"; ` +
+      `lead with code and the technical model; drop anything duplicating a canonical file (link instead). ` +
+      `Never remove a correctness caveat or a verified snippet to save words. ` +
       `Then GATE: accept=true only if the stub scaffolding is gone, COVERS is satisfied, links are well-formed, role constraints hold, and no unfixed mustFix remains. ` +
       `Return the final file body as finalMarkdown plus per-section provenance.`,
       { schema: FINAL_SCHEMA, phase: 'Finalize', label: `finalize:${f.path.split('/').pop()}` }
