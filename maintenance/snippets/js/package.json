@@ -1,0 +1,16 @@
+{
+  "name": "pubky-snippet-harness-js",
+  "private": true,
+  "type": "module",
+  "description": "Template the snippet-test agent copies into a temp dir to type-check (tsc) and execute (node) JS snippets against the pinned, published @synonymdev/pubky and a running shared testnet. Mirrors pubky-knowledge-base-v2/snippets/js.",
+  "scripts": {
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@synonymdev/pubky": "0.9.3",
+    "pubky-app-specs": "0.5.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

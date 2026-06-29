@@ -1,0 +1,14 @@
+# Template the snippet-test agent copies into a temp dir to clippy/build (compiled tier)
+# and run (executed tier) Rust snippets against the pinned, published `pubky` crate and a
+# running shared testnet. The testnet itself is started separately (see ../testnet.sh) — a
+# snippet only needs the client pointed at the testnet relays, not the pubky-testnet crate.
+[package]
+name = "pubky-snippet-harness-rust"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+pubky = { version = "=0.9.3", features = ["json"] }
+tokio = { version = "1", features = ["full"] }
+anyhow = "1"
