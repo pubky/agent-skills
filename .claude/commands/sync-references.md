@@ -45,8 +45,9 @@ report "nothing to update" and stop (after stopping the testnet).
 
 ## 4. Run the workflow
 Invoke the **Workflow** tool with `scriptPath: "maintenance/sync-references.workflow.js"` and
-`args` set to the **parsed contents** of `/tmp/sync-manifest.json`. For `--resume <runId>` pass
-`resumeFromRunId`. Save the returned report object to `/tmp/sync-report.json`.
+`args: { "manifestPath": "/tmp/sync-manifest.json" }` (the workflow loads the manifest off disk
+via a bootstrap agent — do not inline the manifest). For `--resume <runId>` pass `resumeFromRunId`.
+Save the returned report object to `/tmp/sync-report.json`.
 
 ## 5. Apply results
 `node maintenance/apply-run.mjs --report /tmp/sync-report.json --manifest /tmp/sync-manifest.json`

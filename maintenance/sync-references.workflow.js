@@ -30,7 +30,18 @@ export const meta = {
 // Returns: { mode, reconciliation, files: [...perFileResult], copyCheck, spend }
 // ---------------------------------------------------------------------------
 
-const A = args || {}
+// args is either the full manifest inline, or { manifestPath } — in which case a bootstrap
+// agent reads it off disk (the manifest is too large to pass inline at scale). A schema'd
+// return guarantees clean JSON text regardless of any agent chatter/fences.
+let A = args || {}
+if (A.manifestPath && !A.files) {
+  const loaded = await agent(
+    `Run \`cat ${A.manifestPath}\` and return its exact stdout verbatim as the string field 'contents'. It is a JSON document; do not alter, summarize, or re-indent it.`,
+    { schema: { type: 'object', additionalProperties: false, required: ['contents'], properties: { contents: { type: 'string' } } },
+      label: 'load-manifest', phase: 'Reconcile' }
+  )
+  A = JSON.parse(loaded.contents)
+}
 const FILES = A.files || []
 const RULES = A.rulesText || ''
 const GUARDRAIL = A.shippedVsPlannedText || ''
