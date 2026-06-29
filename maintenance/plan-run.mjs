@@ -63,6 +63,8 @@ if (onlyFiles) {
   inScope = onlyFiles.filter(p => refs[p])
   const missing = onlyFiles.filter(p => !refs[p])
   if (missing.length) { console.error(`unknown reference(s): ${missing.join(', ')}`); process.exit(1) }
+} else if (mode === 'initial' && !forceRepos) {
+  inScope = Object.keys(refs)   // --initial regenerates every reference, regardless of recorded SHAs
 } else {
   inScope = Object.keys(refs).filter(p => {
     const ref = refs[p]
