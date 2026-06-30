@@ -140,6 +140,29 @@ A Pubky MCP server (homeserver / Nexus tools) will live in its own repo (mirrori
 a root `.mcp.json` that points at the hosted endpoint — no separate install step for users. The
 server source stays out of this repo.
 
+## Updating the skill content from upstream
+
+The reference files are **generated from upstream Pubky repos, not hand-edited**. To refresh
+them after upstream changes, run this in Claude Code from the repo root:
+
+```sh
+/sync-references
+```
+
+It fetches the tracked source repos, regenerates only the references whose sources changed
+(executing/verifying every code snippet against a local testnet), and opens a signed **draft
+PR**. For a full rebuild of all 21 references, run `/sync-references --initial`.
+
+One-time prerequisite — a local Postgres 18 for the snippet testnet (no Docker needed):
+
+```sh
+brew install postgresql@18 && brew services start postgresql@18
+```
+
+(This regenerates the *content*; the **Updates** section above is about how the published
+skills reach installed tools.) See [`maintenance/README.md`](./maintenance/README.md) for how
+the pipeline works.
+
 ## Maintaining this repo
 
 See [CLAUDE.md](./CLAUDE.md). The load-bearing rule: **shared concepts live in exactly one
