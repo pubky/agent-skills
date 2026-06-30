@@ -13,7 +13,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
-import { checkReference } from './lib.mjs'
+import { checkReference, selectComparisonSet } from './lib.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const argv = process.argv.slice(2)
@@ -152,6 +152,25 @@ const files = inScope.map(path => {
   }
 })
 
+// cross-file consistency inputs: for each in-scope file, the small set it could contradict;
+// plus the on-disk content of any set member NOT regenerated this run (the workflow compares
+// in-scope files against fresh output and the rest against this corpus). The sandbox can't read
+// fs, so we hand it everything it needs.
+const inScopeSet = new Set(inScope)
+const comparisonSets = {}
+const corpusPaths = new Set()
+for (const p of inScope) {
+  const set = selectComparisonSet(p, refs)
+  comparisonSets[p] = set
+  for (const q of set) if (!inScopeSet.has(q)) corpusPaths.add(q)
+}
+const comparisonCorpus = {}
+for (const q of corpusPaths) {
+  const abs = join(ROOT, q)
+  if (existsSync(abs)) comparisonCorpus[q] = { markdown: readFileSync(abs, 'utf8'), role: (refs[q] || {}).role || 'normal' }
+}
+const canonicalPaths = Object.keys(refs).filter(p => refs[p].role === 'canonical')
+
 // testnet status (the command starts it before invoking the workflow)
 let testnet = { up: false }
 try {
@@ -167,6 +186,7 @@ const manifest = {
   snippetHarnessDir: join(ROOT, 'maintenance/snippets'),
   rulesText, shippedVsPlannedText, testnet,
   layout: Object.keys(refs),
+  comparisonSets, comparisonCorpus, canonicalPaths,
   files,
 }
 

@@ -9,6 +9,7 @@ export const meta = {
     { title: 'Snippet', detail: 'execute JS/Rust against the shared testnet; compile RN/Swift/Kotlin; surface-check Nexus' },
     { title: 'FactCheck', detail: 'adversarially falsify each claim; enforce shipped-vs-planned guardrail' },
     { title: 'Finalize', detail: 'revise + concision pass; per-file gate; capture provenance' },
+    { title: 'Consistency', detail: 'cross-file contradiction detection; auto-gate canonical conflicts' },
   ],
 }
 
@@ -21,6 +22,9 @@ export const meta = {
 //   shippedVsPlannedText,     // canonical guardrail text (may be '' on first run)
 //   testnet: { up: bool, pkarrRelay, httpRelay, homeserverPubky } | null,
 //   layout: [ "skills/pubky/references/concepts.md", ... ],  // all current ref paths
+//   comparisonSets: { "<path>": ["<path>", ...] },     // per-file cross-file consistency set
+//   comparisonCorpus: { "<path>": { markdown, role } },// content of set members not regenerated
+//   canonicalPaths: [ "<path>", ... ],                 // role==='canonical' references
 //   files: [ {
 //     path, role, covers, linksTo[],
 //     sources: [ { repo, kind, paths[], cachePath, sha, branch, url } ],
@@ -127,6 +131,30 @@ const SNIPPET_SCHEMA = {
           reason: { type: 'string' },
           correctedCode: { type: 'string' },
           command: { type: 'string', description: 'the exact command/run that produced this verdict' },
+          evidence: { type: 'string', description: 'captured stdout/stderr/exit excerpt — required to corroborate an executed/compiled pass' },
+        },
+      },
+    },
+  },
+}
+
+const CONTRADICTION_SCHEMA = {
+  type: 'object', additionalProperties: false,
+  required: ['contradictions'],
+  properties: {
+    contradictions: {
+      type: 'array',
+      items: {
+        type: 'object', additionalProperties: false,
+        required: ['otherPath', 'topic', 'thisClaim', 'otherClaim', 'weaker', 'confidence', 'reason'],
+        properties: {
+          otherPath: { type: 'string' },
+          topic: { type: 'string' },
+          thisClaim: { type: 'string' },
+          otherClaim: { type: 'string' },
+          weaker: { enum: ['this', 'other', 'unclear'], description: 'which side is less authoritative by provenance strength' },
+          confidence: { type: 'number' },
+          reason: { type: 'string' },
         },
       },
     },
@@ -252,6 +280,49 @@ function stubReasons(md, reportedWordCount) {
   return reasons
 }
 
+// The next three mirror maintenance/lib.mjs (the sandbox can't import it) — keep in sync.
+const TIER_RANK = { lint: 0, surface: 1, compiled: 2, executed: 3 }
+function auditSnippets(results, draftSnippets) {
+  const expected = Object.fromEntries((draftSnippets || []).map(s => [s.id, s.expectedTier]))
+  const notes = []
+  const audited = (results || []).map(r => {
+    const out = { ...r }
+    const corroborated = r.command && r.command.trim() && r.evidence && r.evidence.trim()
+    if (r.status === 'pass' && (r.tier === 'executed' || r.tier === 'compiled') && !corroborated) {
+      out.status = 'unverifiable'
+      notes.push(`${r.id}: claimed ${r.tier}/pass without command+evidence — demoted to unverifiable`)
+    }
+    if (r.status === 'pass' && r.lang === 'bash' && r.tier === 'surface')
+      notes.push(`${r.id}: bash command only surface-checked — invoke the real tool to validate flags`)
+    const exp = expected[r.id]
+    if (exp && TIER_RANK[r.tier] < TIER_RANK[exp]) notes.push(`${r.id}: tier ${r.tier} below expected ${exp}`)
+    return out
+  })
+  return { results: audited, notes }
+}
+function dedupeContradictions(list) {
+  const byKey = new Map()
+  for (const c of list || []) {
+    const key = JSON.stringify([[c.aPath, c.bPath].sort(), c.topic || ''])
+    const prev = byKey.get(key)
+    if (!prev || (c.confidence || 0) > (prev.confidence || 0)) byKey.set(key, c)
+  }
+  return Array.from(byKey.values())
+}
+function consistencyGate(contradictions, canonicalPaths, minConfidence = 0.7) {
+  const canon = new Set(canonicalPaths || [])
+  const gate = new Map(), flags = []
+  for (const c of contradictions || []) {
+    const involvesCanon = canon.has(c.aPath) || canon.has(c.bPath)
+    const weaker = c.weakerPath
+    if (involvesCanon && weaker && !canon.has(weaker) && (c.confidence || 0) >= minConfidence) {
+      const other = weaker === c.aPath ? c.bPath : c.aPath
+      if (!gate.has(weaker)) gate.set(weaker, `contradicts canonical ${other} on "${c.topic}": ${c.reason}`)
+    } else flags.push(c)
+  }
+  return { gate, flags }
+}
+
 // ===========================================================================
 // PHASE: Reconcile (structure drift) — conservative; proposals only
 // ===========================================================================
@@ -332,11 +403,20 @@ const perFile = await pipeline(
       `- compiled: tsc --noEmit (js/react-native), cargo clippy/build (rust), swift build, gradle compileDebugKotlin against the pinned bindings.\n` +
       `- surface: http/Nexus — validate method+path+schema against the OpenAPI doc (+ optional read-only curl).\n` +
       `- lint: react-native/swift/kotlin contract checks — bare 52-char z-base32 keys, pk:<z32> URIs, and (CRITICAL) any Android networking snippet MUST call RustlsInit.initPlatformVerifier before a handshake.\n\n` +
+      `RIGOR — do NOT self-grade a pass you didn't earn:\n` +
+      `- 'surface' is NOT acceptable for a CLI/bash command whose tool is on PATH. You MUST invoke the real tool so its OWN parser validates flags/subcommands — run it, or \`--help\` / \`--dry-run\` / \`compose config\` / \`-n\`. (This is exactly how a missing \`--\` separator, a bad flag, or an unparseable arg gets caught.)\n` +
+      `- For install/version claims (\`cargo install\`, \`npm i\`), query the registry (crates.io / npmjs API) to confirm the EXACT version resolves — a crate published only as a pre-release will NOT install without \`--version\`.\n` +
+      `- Capture the real stdout/stderr/exit excerpt in 'evidence' for every pass. A pass at executed/compiled tier WITHOUT a 'command' and 'evidence' will be demoted to unverifiable downstream.\n\n` +
       `SNIPPETS:\n${JSON.stringify(snippets, null, 1)}\n\n` +
       `For prose snippets that use placeholder context (declare const ...), materialize a runnable harness with real values to execute them. ` +
-      `Use signinBlocking / retries for PKDNS timing. If a snippet is wrong, return correctedCode. Report the exact command per snippet.`,
+      `Use signinBlocking / retries for PKDNS timing. If a snippet is wrong, return correctedCode. Report the exact command and evidence per snippet.`,
       { schema: SNIPPET_SCHEMA, phase: 'Snippet', label: `snippet:${f.path.split('/').pop()}` }
-    ).then(s => ({ ...prev, snippetResults: s }))
+    ).then(s => {
+      // deterministic audit — distrust the self-graded tier (mirrors the substance gate)
+      const { results, notes } = auditSnippets((s && s.results) || [], snippets)
+      if (notes.length) log(`snippet-audit ${f.path}: ${notes.join(' | ')}`)
+      return { ...prev, snippetResults: { results }, snippetAudit: notes }
+    })
   },
 
   // --- Stage 4: adversarial fact-check + guardrail ------------------------
@@ -361,7 +441,7 @@ const perFile = await pipeline(
   // --- Stage 5+6: revise + concision, then gate ---------------------------
   (prev) => {
     if (!prev) return null
-    const { f, draft, snippetResults, factcheck } = prev
+    const { f, draft, snippetResults, factcheck, snippetAudit } = prev
     return agent(
       `Finalize ${f.path}. Apply every fix, then a concision/altitude pass, then gate.\n\n` +
       `${roleInstruction(f.role)}\nCOVERS: ${f.covers}\n\n` +
@@ -389,7 +469,7 @@ const perFile = await pipeline(
         guardrailViolations: (factcheck && factcheck.guardrailViolations) || [],
         accept: Boolean(fin.accept) && stub.length === 0,
         blocking: [...(fin.blocking || []), ...stub.map(s => `substance: ${s}`)],
-        nonBlocking: fin.nonBlocking || [],
+        nonBlocking: [...(fin.nonBlocking || []), ...(snippetAudit || []).map(n => `snippet-audit: ${n}`)],
         wordCount: md.split(/\s+/).filter(Boolean).length,   // real count, never the self-report
         finalMarkdown: md, provenance: fin.provenance || [],
       }
@@ -431,6 +511,50 @@ for (const r of good) {
 if (copyCheck.flags.length) log(`canonical-copy: ${copyCheck.flags.length} file(s) flagged for review`)
 else log('canonical-copy: clean')
 
+// ===========================================================================
+// PHASE: Consistency — adaptive cross-file contradiction detection. Each finalized
+// file is compared (by an agent) against the canonical files + its related set
+// (linksTo / shared-source), read from fresh output or the comparison corpus. No
+// Pubky facts are hardcoded; the agent judges which side is weaker by provenance
+// strength. A high-confidence contradiction with a canonical file auto-gates the
+// weaker (non-canonical) file; everything else is flagged for human review.
+// ===========================================================================
+phase('Consistency')
+const SETS = A.comparisonSets || {}                 // {path: [paths]} from plan-run
+const CORPUS = A.comparisonCorpus || {}             // {path: {markdown, role}} for files not regenerated
+const canonicalPaths = A.canonicalPaths || good.filter(r => r.role === 'canonical').map(r => r.path)
+const byPath = Object.fromEntries(good.map(r => [r.path, r]))
+const sideMd = (p) => (byPath[p] && byPath[p].finalMarkdown) || (CORPUS[p] && CORPUS[p].markdown) || null
+const sideRole = (p) => (byPath[p] && byPath[p].role) || (CORPUS[p] && CORPUS[p].role) || 'normal'
+
+const rawContradictions = (await parallel(good.map(r => () => {
+  const setPaths = (SETS[r.path] || []).filter(p => sideMd(p))
+  if (!setPaths.length) return Promise.resolve(null)
+  const others = setPaths.map(p => `### ${p} (role=${sideRole(p)})\n${sideMd(p)}`).join('\n\n')
+  return agent(
+    `Find FACTUAL CONTRADICTIONS between THIS Pubky reference file and the RELATED files below — places where they state incompatible things about the SAME feature, API behaviour, protocol model, endpoint, port, or version. ` +
+    `Ignore stylistic differences and merely-complementary detail; report only genuine contradictions.\n\n` +
+    `For each, judge which side is WEAKER by evidentiary strength: a canonical file (role=canonical), or a claim citing primary source code/docs, OUTRANKS an inference. If you cannot tell, weaker="unclear".\n\n` +
+    `THIS FILE — ${r.path} (role=${r.role}):\n${r.finalMarkdown}\n\n` +
+    `RELATED FILES:\n${others}`,
+    { schema: CONTRADICTION_SCHEMA, phase: 'Consistency', label: `consistency:${r.path.split('/').pop()}` }
+  ).then(res => ((res && res.contradictions) || []).map(c => ({
+    aPath: r.path, bPath: c.otherPath, topic: c.topic, aClaim: c.thisClaim, bClaim: c.otherClaim,
+    weakerPath: c.weaker === 'this' ? r.path : c.weaker === 'other' ? c.otherPath : null,
+    confidence: c.confidence, reason: c.reason,
+  })))
+}))).filter(Boolean).flat()
+
+const contradictions = dedupeContradictions(rawContradictions)
+const { gate, flags } = consistencyGate(contradictions, canonicalPaths)
+for (const [p, reason] of gate) {
+  const rec = byPath[p]
+  if (rec && rec.accept) { rec.accept = false; rec.blocking = [...(rec.blocking || []), `consistency: ${reason}`] }
+}
+if (gate.size) log(`consistency: auto-gated ${gate.size} file(s) (canonical contradiction): ${Array.from(gate.keys()).join(', ')}`)
+if (flags.length) log(`consistency: ${flags.length} contradiction(s) flagged for human review`)
+const consistency = { contradictions, gated: Array.from(gate.keys()), flags }
+
 const failed = good.filter(r => !r.accept).map(r => r.path)
 if (failed.length) log(`gate: ${failed.length} file(s) need human attention: ${failed.join(', ')}`)
 
@@ -439,5 +563,6 @@ return {
   reconciliation,
   files: good,
   copyCheck,
+  consistency,
   spend: { agentOutputTokens: budget.spent ? budget.spent() : null },
 }

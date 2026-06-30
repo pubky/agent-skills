@@ -103,3 +103,8 @@ if (report.reconciliation?.proposals?.filter(p => p.type !== 'none').length) {
   console.log(`\nreconciliation proposals (human decision — trigger edits NOT auto-applied):`)
   for (const p of report.reconciliation.proposals) if (p.type !== 'none') console.log(`  - [${p.type}] ${p.targetFile}: ${p.rationale}`)
 }
+if (report.consistency?.gated?.length || report.consistency?.flags?.length) {
+  console.log(`\ncross-file consistency:`)
+  for (const p of report.consistency.gated || []) console.log(`  ✗ ${p} (auto-gated — contradicts a canonical file; parked, SHA held)`)
+  for (const c of report.consistency.flags || []) console.log(`  - ${c.aPath} ~ ${c.bPath} on "${c.topic}" (review): ${c.reason}`)
+}
