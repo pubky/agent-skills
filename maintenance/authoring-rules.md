@@ -15,7 +15,9 @@ deliberately. Derived from the repo `CLAUDE.md` and the pubky-knowledge-base `.a
    `skills/pubky/references/{concepts,app-specs,shipped-vs-planned}.md`. Other references LINK
    to it (relative path), never restate it. A `pointer` file is a thin map only.
 3. **Only document what exists.** Never invent features. Honor the shipped-vs-planned guardrail
-   below; never present a planned item as available.
+   below; never present a planned item as available. A symbol, route, or config key merely
+   *existing* in upstream code is NOT evidence it is a shipped, supported feature — verify intent
+   (docs, tests, the guardrail) before presenting it as available. Code-presence ≠ availability.
 4. **Optimize for the reader: a coding agent, on demand.** These files are loaded by AI agents
    while writing Pubky code, not by humans browsing docs. Maximize *actionable density* — the
    things that change what an agent writes. KEEP every API signature, gotcha/caveat that prevents
