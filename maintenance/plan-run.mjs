@@ -9,7 +9,7 @@
 //
 // Reads current SHAs from clones under cacheDir; clones must already exist (the command clones).
 
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync, existsSync, writeFileSync, mkdirSync, rmSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
@@ -189,6 +189,33 @@ const manifest = {
   comparisonSets, comparisonCorpus, canonicalPaths,
   files,
 }
+
+// --- write split workflow inputs --------------------------------------------
+// The workflow ingests its manifest through agents, and a single agent cannot echo a blob larger
+// than its per-response token budget (~25k tokens). The full manifest (comparisonCorpus alone is
+// 100k+ chars) blows past that, so hand the workflow a slim header plus per-corpus side files it
+// loads concurrently. priorMarkdown/priorProvenance are dropped here: the research stage regenerates
+// from sources and never reads the prior file, so they are dead weight for the workflow.
+const wfDir = (val('--wf-dir') || '/tmp/sync-wf')
+rmSync(wfDir, { recursive: true, force: true })
+mkdirSync(wfDir, { recursive: true })
+const corpusSlices = {}
+let corpusIdx = 0
+for (const [p, v] of Object.entries(comparisonCorpus)) {
+  const fn = `corpus-${corpusIdx++}.json`
+  writeFileSync(join(wfDir, fn), JSON.stringify({ path: p, markdown: v.markdown, role: v.role }))
+  corpusSlices[p] = fn
+}
+const wfHeader = {
+  mode, repoRoot: ROOT, cacheDir,
+  snippetHarnessDir: join(ROOT, 'maintenance/snippets'),
+  rulesText, shippedVsPlannedText, testnet,
+  layout: Object.keys(refs),
+  comparisonSets, canonicalPaths, corpusSlices,
+  files: files.map(({ priorMarkdown, priorProvenance, ...rest }) => rest),
+}
+writeFileSync(join(wfDir, 'header.json'), JSON.stringify(wfHeader, null, 2))
+console.error(`wf split: header ${(JSON.stringify(wfHeader).length / 1024).toFixed(1)}KB + ${corpusIdx} corpus slice(s) -> ${wfDir}`)
 
 // summary to stderr (stdout is pure JSON for piping)
 console.error(`mode=${mode}  in-scope=${files.length}/${Object.keys(refs).length}  testnet=${testnet.up ? 'up' : 'down'}`)
