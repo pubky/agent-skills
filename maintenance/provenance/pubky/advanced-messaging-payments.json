@@ -2,7 +2,7 @@
   "path": "skills/pubky/references/advanced-messaging-payments.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "generatedAt": "2026-06-30T12:59:21.584Z",
   "sourcesUsed": [
     {
       "repo": "pubky-noise",
@@ -15,47 +15,57 @@
   ],
   "provenance": [
     {
-      "repo": "https://github.com/pubky/agent-skills.git",
+      "anchor": "advanced-messaging-payments.md (finalized file body)",
+      "repo": "pubky/agent-skills",
       "path": "skills/pubky/references/advanced-messaging-payments.md",
-      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
-      "anchor": "pubky-noise (E2E messaging)",
-      "url": "https://github.com/pubky/pubky-noise/blob/be472b9/pubky-noise/README.md"
+      "sha": "f024337f81f79d5beea14220c21873c801140e4b"
     },
     {
-      "repo": "https://github.com/pubky/agent-skills.git",
-      "path": "skills/pubky/references/advanced-messaging-payments.md",
-      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
-      "anchor": "S1-noise-quickstart code snippet",
-      "url": "https://github.com/pubky/pubky-noise/blob/be472b9/pubky-noise/src/lib.rs"
+      "anchor": "Status & guardrails / paykit — cross-app payments",
+      "repo": "pubky/paykit-rs",
+      "path": "README.md",
+      "sha": "5f860da",
+      "url": "https://github.com/pubky/paykit-rs"
     },
     {
-      "repo": "https://github.com/pubky/agent-skills.git",
-      "path": "skills/pubky/references/advanced-messaging-payments.md",
-      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
-      "anchor": "S2-noise-path-derivation code snippet",
-      "url": "https://github.com/pubky/pubky-noise/blob/be472b9/pubky-noise/src/path_derivation.rs"
+      "anchor": "Public Payment Endpoints / paykit-lib signatures",
+      "repo": "pubky/paykit-rs",
+      "path": "paykit-lib/README.md",
+      "sha": "5f860da",
+      "url": "https://github.com/pubky/paykit-rs"
     },
     {
-      "repo": "https://github.com/pubky/agent-skills.git",
-      "path": "skills/pubky/references/advanced-messaging-payments.md",
-      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
-      "anchor": "paykit (cross-app payment discovery)",
-      "url": "https://github.com/pubky/paykit-rs/blob/5f860da/AGENTS.md"
+      "anchor": "pubky-noise — E2E messaging",
+      "repo": "pubky/pubky-noise",
+      "path": "pubky-noise/README.md",
+      "sha": "0.1.0-rc5",
+      "url": "https://github.com/pubky/pubky-noise"
+    },
+    {
+      "anchor": "Bindings (React Native)",
+      "repo": "pubky/paykit-rs",
+      "path": "paykit-react-native/src/index.tsx",
+      "sha": "0.1.0",
+      "url": "https://github.com/pubky/paykit-rs"
     }
   ],
   "snippet": {
-    "total": 2,
-    "pass": 2,
+    "total": 3,
+    "pass": 3,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 27,
+    "supported": 33,
     "refuted": 0,
-    "caveated": 1,
+    "caveated": 0,
     "unsupported": 0
   },
   "guardrailViolations": [],
-  "wordCount": 1946
+  "wordCount": 2090,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  }
 }

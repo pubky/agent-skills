@@ -2,11 +2,11 @@
   "path": "skills/pubky/references/reference-apps.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "generatedAt": "2026-06-30T12:59:21.584Z",
   "sourcesUsed": [
     {
       "repo": "pubky-app",
-      "sha": "57d41baa6daea4430a15aaa807f260765cae0960"
+      "sha": "3a819f0aa857c40fe4aa7d91466276d96f9ebc6f"
     },
     {
       "repo": "pubky-explorer",
@@ -27,53 +27,46 @@
   ],
   "provenance": [
     {
-      "anchor": "pubky.app structure",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-apps/reference-app/pubky-app.md",
-      "sha": "c9981c650145",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/c9981c650145/src/content/docs/explore/pubky-apps/reference-app/pubky-app.md"
-    },
-    {
-      "anchor": "App architectures: which reference to copy",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-apps/app-architectures/custom-backend.md",
-      "sha": "c9981c650145",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/c9981c650145/src/content/docs/explore/pubky-apps/app-architectures/custom-backend.md"
+      "anchor": "pubky.app structure / tech stack",
+      "repo": "pubky/pubky-app",
+      "path": "package.json",
+      "sha": "3a819f0aa857",
+      "url": "https://github.com/pubky/pubky-app/blob/3a819f0aa857/package.json"
     },
     {
       "anchor": "pubky.app: layered core architecture",
       "repo": "pubky/pubky-app",
       "path": "docs/architecture.md",
-      "sha": "57d41baa6dae",
-      "url": "https://github.com/pubky/pubky-app/blob/57d41baa6dae/docs/architecture.md"
+      "sha": "3a819f0aa857",
+      "url": "https://github.com/pubky/pubky-app/blob/3a819f0aa857/docs/architecture.md"
     },
     {
-      "anchor": "pubky.app: layered core architecture (hard constraints)",
+      "anchor": "Data-model tables / user_connections",
       "repo": "pubky/pubky-app",
-      "path": "AGENTS.md",
-      "sha": "57d41baa6dae",
-      "url": "https://github.com/pubky/pubky-app/blob/57d41baa6dae/AGENTS.md"
+      "path": "src/core/database/franky/franky.ts",
+      "sha": "3a819f0aa857",
+      "url": "https://github.com/pubky/pubky-app/blob/3a819f0aa857/src/core/database/franky/franky.ts"
     },
     {
       "anchor": "pubky.app: local-first data flow",
       "repo": "pubky/pubky-app",
       "path": "docs/local-first.md",
-      "sha": "57d41baa6dae",
-      "url": "https://github.com/pubky/pubky-app/blob/57d41baa6dae/docs/local-first.md"
+      "sha": "3a819f0aa857",
+      "url": "https://github.com/pubky/pubky-app/blob/3a819f0aa857/docs/local-first.md"
     },
     {
       "anchor": "pubky.app: caching, IDs, and pipes",
       "repo": "pubky/pubky-app",
       "path": "docs/data-patterns.md",
-      "sha": "57d41baa6dae",
-      "url": "https://github.com/pubky/pubky-app/blob/57d41baa6dae/docs/data-patterns.md"
+      "sha": "3a819f0aa857",
+      "url": "https://github.com/pubky/pubky-app/blob/3a819f0aa857/docs/data-patterns.md"
     },
     {
       "anchor": "pubky.app: error handling",
       "repo": "pubky/pubky-app",
       "path": "docs/error-handling.md",
-      "sha": "57d41baa6dae",
-      "url": "https://github.com/pubky/pubky-app/blob/57d41baa6dae/docs/error-handling.md"
+      "sha": "3a819f0aa857",
+      "url": "https://github.com/pubky/pubky-app/blob/3a819f0aa857/docs/error-handling.md"
     },
     {
       "anchor": "Pubky Explorer: read-only public-data browser",
@@ -83,7 +76,7 @@
       "url": "https://github.com/pubky/pubky-explorer/blob/aa04d4914350/src/state.ts"
     },
     {
-      "anchor": "Pubky Explorer: read-side robustness patterns (infinite scroll)",
+      "anchor": "Explorer infinite scroll / IntersectionObserver",
       "repo": "pubky/pubky-explorer",
       "path": "src/Explorer.tsx",
       "sha": "aa04d4914350",
@@ -97,7 +90,7 @@
       "url": "https://github.com/pubky/workshop/blob/b952363b519a/workshop.mjs"
     },
     {
-      "anchor": "Workshop: verify your writes (URLs)",
+      "anchor": "Workshop: verify your writes / URL builders",
       "repo": "pubky/workshop",
       "path": "utils.mjs",
       "sha": "b952363b519a",
@@ -109,21 +102,39 @@
       "path": "pubky-dev-context.md",
       "sha": "5654d0d27218",
       "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md"
+    },
+    {
+      "anchor": "App architectures spectrum / Nexus custom backend",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "src/content/docs/explore/pubky-apps/app-architectures/introduction.md",
+      "sha": "c9981c650145",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/c9981c650145/src/content/docs/explore/pubky-apps/app-architectures/introduction.md"
+    },
+    {
+      "anchor": "0.6.0 surface callout / get_homeserver_of attribution",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "a53b42f",
+      "url": "https://github.com/pubky/agent-skills/blob/a53b42f/skills/pubky/references/concepts.md"
     }
   ],
   "snippet": {
-    "total": 10,
-    "pass": 10,
+    "total": 12,
+    "pass": 12,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 32,
+    "supported": 40,
     "refuted": 0,
-    "caveated": 1,
+    "caveated": 2,
     "unsupported": 0
   },
   "guardrailViolations": [],
-  "wordCount": 3023
+  "wordCount": 3360,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  }
 }

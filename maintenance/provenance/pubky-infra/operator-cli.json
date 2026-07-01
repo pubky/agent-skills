@@ -2,7 +2,7 @@
   "path": "skills/pubky-infra/references/operator-cli.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "generatedAt": "2026-06-30T12:59:21.584Z",
   "sourcesUsed": [
     {
       "repo": "pubky-cli",
@@ -11,131 +11,88 @@
   ],
   "provenance": [
     {
-      "anchor": "Install & run",
+      "repo": "pubky/pubky-cli",
+      "path": "src/main.rs",
+      "sha": "3f23d8340f83130ee5a3349041d12662adb582ac",
+      "anchor": "operator--admin-cli-pubky-cli",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/main.rs"
+    },
+    {
+      "repo": "pubky/pubky-cli",
+      "path": "src/admin.rs",
+      "sha": "3f23d8340f83130ee5a3349041d12662adb582ac",
+      "anchor": "admin-command-tree",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs"
+    },
+    {
       "repo": "pubky/pubky-cli",
       "path": "Cargo.toml",
-      "sha": "main",
+      "sha": "3f23d8340f83130ee5a3349041d12662adb582ac",
+      "anchor": "install--run",
       "url": "https://github.com/pubky/pubky-cli/blob/main/Cargo.toml"
     },
     {
-      "anchor": "Install & run",
+      "repo": "pubky/pubky-cli",
+      "path": "Cargo.lock",
+      "sha": "3f23d8340f83130ee5a3349041d12662adb582ac",
+      "anchor": "public-key-wire-format-z32-not-the-js-pubkyz32-display-form",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/Cargo.lock"
+    },
+    {
       "repo": "pubky/pubky-cli",
       "path": "README.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/README.md#L18-L38"
+      "sha": "3f23d8340f83130ee5a3349041d12662adb582ac",
+      "anchor": "admin-generate-token--mint-a-signupinvite-token",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/README.md"
     },
     {
-      "anchor": "Connection & auth (shared by every admin subcommand)",
-      "repo": "pubky/pubky-cli",
-      "path": "src/admin.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L10-L18"
-    },
-    {
-      "anchor": "Connection & auth (shared by every admin subcommand)",
-      "repo": "pubky/pubky-cli",
-      "path": "src/admin.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L134-L144"
-    },
-    {
-      "anchor": "Connection & auth (shared by every admin subcommand)",
       "repo": "pubky/pubky-cli",
       "path": "src/util.rs",
-      "sha": "main",
+      "sha": "3f23d8340f83130ee5a3349041d12662adb582ac",
+      "anchor": "connection--auth-shared-by-every-admin-subcommand",
       "url": "https://github.com/pubky/pubky-cli/blob/main/src/util.rs"
     },
     {
-      "anchor": "Admin command tree",
       "repo": "pubky/pubky-cli",
-      "path": "src/admin.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L20-L60"
+      "path": "tests/integration.rs",
+      "sha": "3f23d8340f83130ee5a3349041d12662adb582ac",
+      "anchor": "ci-verified-invocation-ordering",
+      "url": "https://github.com/pubky/pubky-cli/blob/main/tests/integration.rs"
     },
     {
-      "anchor": "admin info — server stats",
-      "repo": "pubky/pubky-cli",
-      "path": "src/admin.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L107-L179"
-    },
-    {
-      "anchor": "admin info — server stats",
       "repo": "pubky/pubky-core",
       "path": "pubky-homeserver/openapi.yml",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/openapi.yml#L689"
-    },
-    {
-      "anchor": "admin generate-token — mint a signup/invite token",
-      "repo": "pubky/pubky-cli",
-      "path": "src/admin.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L181-L188"
-    },
-    {
-      "anchor": "admin generate-token — mint a signup/invite token",
-      "repo": "pubky/pubky-cli",
-      "path": "src/user.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/src/user.rs#L13-L24"
-    },
-    {
-      "anchor": "admin generate-token — mint a signup/invite token",
-      "repo": "pubky/pubky-cli",
-      "path": "README.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/README.md#L37"
-    },
-    {
-      "anchor": "admin user disable|enable — gate a user",
-      "repo": "pubky/pubky-cli",
-      "path": "src/admin.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L190-L210"
-    },
-    {
-      "anchor": "admin storage delete — remove one WebDAV entry",
-      "repo": "pubky/pubky-cli",
-      "path": "src/admin.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/src/admin.rs#L212-L231"
-    },
-    {
-      "anchor": "Public-key wire format (z32, not the JS pubky<z32> display form)",
-      "repo": "pubky/pkarr",
-      "path": "pkarr/src/types/keys.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pkarr/blob/main/pkarr/src/types/keys.rs#L297-L305"
-    },
-    {
-      "anchor": "Coverage vs the full admin API",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-homeserver/src/admin_server/app.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/src/admin_server/app.rs"
-    },
-    {
-      "anchor": "Coverage vs the full admin API",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-homeserver/openapi.yml",
-      "sha": "main",
+      "sha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811",
+      "anchor": "coverage-vs-the-full-admin-api",
       "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/openapi.yml"
+    },
+    {
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "a53b42f",
+      "anchor": "public-key-string-formats",
+      "url": "https://github.com/pubky/agent-skills/blob/main/skills/pubky/references/concepts.md"
     }
   ],
   "snippet": {
-    "total": 4,
-    "pass": 4,
-    "fail": 0,
+    "total": 7,
+    "pass": 6,
+    "fail": 1,
     "unverifiable": 0,
-    "failing": []
+    "failing": [
+      "install"
+    ]
   },
   "factCheck": {
-    "supported": 21,
-    "refuted": 0,
-    "caveated": 0,
+    "supported": 18,
+    "refuted": 1,
+    "caveated": 3,
     "unsupported": 0
   },
   "guardrailViolations": [],
-  "wordCount": 880
+  "wordCount": 1633,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  }
 }

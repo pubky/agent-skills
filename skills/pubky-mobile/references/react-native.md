@@ -2,8 +2,7 @@
 
 `@synonymdev/react-native-pubky` is the React Native binding for Pubky: auth/Ring, homeserver
 lifecycle, key management, `pubky://` data ops, and PKARR publish/resolve over a native bridge
-module. This page is the method surface plus mobile gotchas; protocol theory is linked, not
-restated:
+module. Method surface plus mobile gotchas; protocol theory is linked, not restated:
 
 - Identity, `pubky://` addressing, the `/pub` tree, public-key string formats, PKARR /
   Mainline-DHT, the homeserver model, and the write-vs-Nexus-read split →
@@ -13,9 +12,9 @@ restated:
   files, signup tokens, session lifecycle → [`../../pubky/references/auth.md`](../../pubky/references/auth.md).
 - The `pubky-app-specs` on-wire data shapes (profile/posts/tags/follows, paths, IDs) →
   [`../../pubky/references/app-specs.md`](../../pubky/references/app-specs.md).
-- The underlying native `[error, data]` String Contract, the `<z32>:<cookie>` session-secret
-  format, and the **mandatory Android `rustls` TLS init at startup** →
-  [`native-ffi.md`](./native-ffi.md).
+- The underlying native `[error, data]` String Contract and the `<z32>:<cookie>` session-secret
+  format → [`native-ffi.md`](./native-ffi.md). Unlike the bare UniFFI path, this package runs the
+  **Android `rustls` TLS init automatically** — see [Install and linking](#install-and-linking).
 - Pubky Ring deeplink mechanics (`pubkyauth://` / `pubkyring://`, QR / animated frames,
   relay+secret transport, session revoke) → [`ring-auth.md`](./ring-auth.md).
 
@@ -41,6 +40,11 @@ npm install @synonymdev/react-native-pubky
   **not** a pure-JS package. On iOS run `pod install` and **rebuild the app** after installing.
 - **Does not work in Expo Go** — it needs a custom dev client / bare workflow. If the native
   module is unlinked, every call throws `LINKING_ERROR`.
+- **Android `rustls` init is automatic.** The native `PubkyModule` calls `RustlsInit.ensure(...)`
+  inside its constructor (idempotent), so pkarr's relay TLS is initialized for you — you do
+  **not** call it yourself. If you ever see `Expect rustls-platform-verifier to be initialized`,
+  the native module was not constructed; see the underlying mechanism in
+  [`native-ffi.md`](./native-ffi.md). iOS/macOS use `Security.framework` and need no init.
 - **Only `/pub` operations are exposed.** There are no `/priv` / private-storage methods — do
   not invent them (see [Shipped vs planned](#shipped-vs-planned)).
 
@@ -91,20 +95,21 @@ Do not conflate these:
 
 All return `Promise<Result<…>>`:
 
-- `generateSecretKey() → Result<IGenerateSecretKey>` — read `.value.secret_key`.
+- `generateSecretKey() → Result<IGenerateSecretKey>` — read `.value.secret_key` (the value also
+  carries `public_key` / `uri`).
 - `getPublicKeyFromSecretKey(secretKey) → Result<IPublicKeyInfo>` — read `.value.public_key`.
 - `createRecoveryFile(secretKey, passphrase) → Result<string>` — base64 recovery file.
 - `decryptRecoveryFile(recoveryFile, passphrase) → Result<string>` — recovered secret key.
-- `getHomeserver(pubky) → Result<string>`.
-- **BIP39 helpers** (exported + exercised in the example app, absent from the README):
+- `getHomeserver(pubky) → Result<string>` — resolve a homeserver URL from a bare-z32 public key.
+- **BIP39 helpers** (exported + exercised in the example app, **absent from the README**):
   `generateMnemonicPhrase() → Result<string>`,
   `mnemonicPhraseToKeypair(phrase) → Result<IGenerateSecretKey>`,
-  `generateMnemonicPhraseAndKeypair() → Result<IMnemonicKeypair>`,
+  `generateMnemonicPhraseAndKeypair() → Result<IMnemonicKeypair>` (adds `.mnemonic`),
   `validateMnemonicPhrase(phrase) → Result<boolean>`.
 
-RN passes **bare z-base-32** public-key strings (e.g. `z4e8s17c…`) in URLs and returns
-`{ public_key, uri }` objects. There are **no** `.toString()` / `.z32()` key methods here —
-those belong to the WASM SDK. (Formats:
+The recovery file is the shipped **local-backup** primitive. RN passes **bare z-base-32**
+public-key strings (e.g. `z4e8s17c…`) in URLs and returns `{ public_key, uri }` objects. There
+are **no** `.toString()` / `.z32()` key methods here — those belong to the WASM SDK. (Formats:
 [`concepts.md#public-key-string-formats`](../../pubky/references/concepts.md#public-key-string-formats).)
 
 ```react-native
@@ -145,10 +150,11 @@ const recoveredKey = decryptRes.value;
   secret key (see [README discrepancies](#readme-discrepancies-trust-src-over-readme)).
 - `revalidateSession(sessionSecret) → Result<SessionInfo>` — the exported session check.
   `session(...)` from the README is **not** exported; use `revalidateSession` + `getHomeserver`.
-- `republishHomeserver(secretKey, homeserver) → Result<string>`.
+- `republishHomeserver(secretKey, homeserver) → Result<string>` — republish homeserver info to
+  the DHT.
 - `getSignupToken(homeserverPubky, adminPassword) → Result<string>` — `homeserverPubky` is
-  **bare z32** (no scheme). This is the homeserver **admin** path; for operating that side, see
-  the `pubky-infra` skill.
+  **bare z32** (no scheme); returns a `signupToken` for `signUp`. This is the homeserver **admin**
+  path; for operating that side, see the `pubky-infra` skill.
 
 ```react-native
 import {
@@ -185,7 +191,7 @@ const homeserverRes = await getHomeserver(publicKey);
   wrapper `JSON.stringify`s for you (do **not** pre-stringify). The 3rd arg is **required**.
 - `get(url) → Result<string>` — returns the raw native string (see
   [Decoding get output](#decoding-get-output)).
-- `list(url) → Result<string[]>` — array of `pubky://` URLs.
+- `list(url) → Result<string[]>` — array of `pubky://` URLs for files under the path.
 - `deleteFile(url, secretKey) → Result<string[]>` — the exported name is **`deleteFile`**, not
   `delete`.
 
@@ -260,7 +266,8 @@ App side: `startAuthFlow(caps)` → present the returned URL to the user via Pub
 
 - `startAuthFlow(capabilities: string) → Result<string>` — begin the Ring flow; returns an auth
   URL to present to the user.
-- `awaitAuthApproval() → Result<SessionInfo>` — resolves once the user approves.
+- `awaitAuthApproval() → Result<SessionInfo>` — resolves once the user approves, yielding
+  `{ pubky, capabilities, session_secret }`.
 - `parseAuthUrl(url: string) → Result<PubkyAuthDetails>` — decode a `pubkyauth://` URL.
 - `auth(url: string, secretKey: string) → Result<string[]>` — authenticator side: approve an
   incoming `pubkyauth://` URL with a held key.
@@ -290,9 +297,12 @@ in [`../../pubky/references/auth.md`](../../pubky/references/auth.md). Do not re
 ## PKARR publish and resolve
 
 - `publish(recordName, recordContent, secretKey) → Result<string[]>` /
-  `resolve(publicKey) → Result<IDNSPacket>` — raw signed DNS packets (TXT records).
+  `resolve(publicKey) → Result<IDNSPacket>` — raw signed DNS packets (TXT records); `IDNSPacket`
+  carries `signed_packet`, `signature`, `timestamp`, `dns_packet`, and `records: ITxt[]`.
 - `publishHttps(recordName, target, secretKey) → Result<string[]>` /
-  `resolveHttps(publicKey) → Result<IHttpsResolveResult>` — HTTPS records.
+  `resolveHttps(publicKey) → Result<IHttpsResolveResult>` — HTTPS records
+  (`{ public_key, https_records: IHttpsRecord[] }`, each with `target`, `priority`, optional
+  `port` / `alpn`).
 - `resolve` / `resolveHttps` take a **bare z32** public key.
 
 See the PKARR / Mainline-DHT model in
@@ -350,7 +360,8 @@ const savedProfile = JSON.parse(getRes.value);
 
 ## Homeserver event stream
 
-The mobile surface for the homeserver event stream (a shipped feature):
+The mobile surface for the shipped homeserver event stream. On native, the module emits
+`PubkyEvent` via the device event emitter:
 
 - `setEventListener(callback: (eventData: string) => void) → Result<void>` — calls
   `Pubky.setEventListener()` then registers `callback` on the `PubkyEvent` channel of a
@@ -390,7 +401,9 @@ signup-flavored `pubkyauth` deeplinks and are **absent** against pre-0.9.1 nativ
 
 ## README discrepancies (trust src over README)
 
-The README ships stale examples; treat `src/index.tsx` + `example/src/App.tsx` as ground truth:
+The README ships stale examples; treat `src/index.tsx` + `example/src/App.tsx` as ground truth.
+The iOS bridge even exports a native `session:` method, but it is **not** exported from
+`src/index.tsx`, so it is unreachable from JS — another reason `src/index.tsx` is the contract:
 
 - **`signOut`** — the README labels its arg `// Secret Key` and passes a 64-hex key; the real
   signature is `signOut(sessionSecret)`, and `App.tsx` passes `signInRes.value.session_secret`.

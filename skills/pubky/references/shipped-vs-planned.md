@@ -17,7 +17,7 @@ only owns the shipped-vs-planned line.
 
 | Shipped — safe to document as available | Planned / NOT shipped — never present as available |
 | :-- | :-- |
-| Public `/pub` storage (unauthenticated `GET`/`HEAD`, capability-gated `PUT`/`DELETE`) | `/priv` (or any non-`/pub` root) — returns **403** today |
+| Public `/pub` storage (unauthenticated `GET`/`HEAD`, capability-gated `PUT`/`DELETE`) | `/priv` storage — **implemented & tested in `main`, not in the latest release** (a released homeserver `403`s non-`/pub` writes); access-controlled, *not* encrypted |
 | Capability-scoped sessions | Encrypted data / guarded (access-controlled) storage as a general app primitive |
 | PKARR identity & homeserver discovery | Homeserver-to-homeserver **mirroring** |
 | pubky-app-specs data models | Backup **restore** (writing a backup back to a homeserver) |
@@ -69,22 +69,22 @@ shapes, paths, or API surfaces; isolate them behind your own adapters and pin ve
 
 ## No private, encrypted, or guarded storage
 
-Homeservers serve **only public, unencrypted data under `/pub`**, today. This is a guardrail,
-not a documentation gap:
+The **latest release** serves only public, unencrypted data under `/pub`. `/priv` has since
+**landed in `main`**, so state its status precisely — it is real code, but not yet available to
+release users:
 
-- **`/priv` is a reserved placeholder, not a feature.** The protocol leaves room for other
-  top-level roots — `/priv` for private/encrypted data is the long-standing placeholder — but
-  none have been formalized. Do not describe `/priv` as available or near-term.
-- **The homeserver actively rejects it.** Only `/pub/*` is reachable on the tenant API: `GET`/
-  `HEAD` are public, `PUT`/`DELETE` need a write capability, and **anything else (e.g. `/priv/*`)
-  returns `403 Forbidden` regardless of capability.** *"More granular permission models may be
-  implemented in the future."* So `/priv` is not merely undocumented — code that writes there
-  fails at runtime.
-- **No cryptographic confidentiality yet.** Encrypted and guarded (access-controlled) storage are
-  **planned, not shipped**, as general app primitives. A trusted operator can currently read,
-  tamper with, or deny-serve all of a user's data. The mitigation today is **credible exit**
-  (identity follows the keys, not the server), **not cryptography**. Never tell a user their data
-  is private or encrypted on a homeserver.
+- **`/priv` is implemented and tested in `main`, not a placeholder.** `pubky-homeserver` defines
+  `PRIVATE_ROOT = "/priv/"` and enforces it in `authorization.rs` (401 anonymous read, 403
+  wrong-tenant / under-scoped), with unit tests. It is a real storage root there.
+- **…but it is not in the latest release.** The published SDK types paths as `/pub/…` only, so a
+  release client cannot even form a `/priv` path, and a released homeserver `403`s non-`/pub`
+  writes. **Do not build on `/priv` from released code** — pin to `main` if you need it, and always
+  carry an "unreleased" caveat.
+- **`/priv` is access-controlled, *not* encrypted.** Even where enforced it is gated by session
+  capability, not cryptography — a trusted operator can still read, tamper with, or deny-serve the
+  data. Encrypted / confidential storage as a general app primitive is **still planned, not
+  shipped**; the confidentiality mitigation today is **credible exit** (identity follows the keys,
+  not the server). Never tell a user their `/priv` data is private or encrypted from the operator.
 
 (Apps may of course store their own ciphertext as opaque bytes under `/pub` — but that is the
 app's own crypto, not a Pubky-provided primitive, and the blob is still publicly readable.)

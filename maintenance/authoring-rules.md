@@ -38,9 +38,13 @@ deliberately. Derived from the repo `CLAUDE.md` and the pubky-knowledge-base `.a
 PKARR identity/discovery; pubky-app-specs data models; resumable `pubkyauth` flows; homeserver
 event streams; local Pubky Backup; PostgreSQL-backed homeservers.
 
-**Planned / NOT shipped (never present as available):** `/priv` private storage;
-encrypted/guarded data as a general primitive; homeserver mirroring; backup *restore*; cloud
-backup; two-way backup sync.
+**Planned / NOT shipped (never present as available):** encrypted/guarded data as a general
+primitive; homeserver mirroring; backup *restore*; cloud backup; two-way backup sync.
+
+**Implemented in `main` but NOT released (don't present as available to release users):** `/priv`
+private storage — auth-scoped and access-controlled, *not* encrypted; enforced in
+`pubky-homeserver` (`PRIVATE_ROOT`, `authorization.rs`, with tests), but the released SDK types
+`/pub` paths only. Document it only with an explicit "unreleased, `main`-only" caveat.
 
 **Stability caveats to keep:** the `/pub` path layout is not stabilized; the Nexus `/v0` REST
 API is unstable and breaking-change-prone; app-specs are v0.x. Any stable-sounding claim about
