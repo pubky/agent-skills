@@ -1,0 +1,96 @@
+{
+  "path": "skills/pubky/references/sdk-js.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-30T12:59:21.584Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-knowledge-base-v2",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "repo": "pubky-core",
+      "sha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
+    },
+    {
+      "repo": "pubky-ai-kit",
+      "sha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
+    },
+    {
+      "repo": "npm:@synonymdev/pubky",
+      "sha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "Version drift — do NOT code against this",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-sdk/bindings/js/src/actors/signer.rs",
+      "sha": "d6c5afc",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/src/actors/signer.rs"
+    },
+    {
+      "anchor": "Initialize the facade",
+      "repo": "pubky/pubky-core",
+      "path": "examples/javascript/0-check-testnet.mjs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/examples/javascript/0-check-testnet.mjs"
+    },
+    {
+      "anchor": "Sign up and sign in",
+      "repo": "synonymdev/pubky",
+      "path": "pubky.d.ts",
+      "sha": "0.9.3",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
+    },
+    {
+      "anchor": "Pagination",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-sdk/bindings/js/src/actors/storage/utils.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/src/actors/storage/utils.rs"
+    },
+    {
+      "anchor": "Metadata: exists and stats",
+      "repo": "synonymdev/pubky",
+      "path": "pubky.d.ts",
+      "sha": "0.9.3",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
+    },
+    {
+      "anchor": "Error handling",
+      "repo": "synonymdev/pubky",
+      "path": "pubky.d.ts",
+      "sha": "0.9.3",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
+    },
+    {
+      "anchor": "Session persistence",
+      "repo": "synonymdev/pubky",
+      "path": "pubky.d.ts",
+      "sha": "0.9.3",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts"
+    }
+  ],
+  "snippet": {
+    "total": 15,
+    "pass": 14,
+    "fail": 1,
+    "unverifiable": 0,
+    "failing": [
+      "s3"
+    ]
+  },
+  "factCheck": {
+    "supported": 37,
+    "refuted": 1,
+    "caveated": 1,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 1856,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  }
+}

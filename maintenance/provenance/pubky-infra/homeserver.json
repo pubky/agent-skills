@@ -1,0 +1,158 @@
+{
+  "path": "skills/pubky-infra/references/homeserver.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-30T12:59:21.584Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-core",
+      "sha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
+    },
+    {
+      "repo": "pubky-docker",
+      "sha": "a5544e6247c1f7195ae116586a578d6a8a007a67"
+    },
+    {
+      "repo": "homeserver-dashboard",
+      "sha": "b3be93d8d2a9d93a9670983f28bed5fb380431af"
+    },
+    {
+      "repo": "umbrel-app-store",
+      "sha": "d0b96adf0a217dd4f682d364100d9c460a9b9c7b"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "Run it",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/main.rs",
+      "sha": "d6c5afc",
+      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/main.rs"
+    },
+    {
+      "anchor": "Three servers, four sockets",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/data_directory/config_toml.rs",
+      "sha": "d6c5afc",
+      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/data_directory/config_toml.rs"
+    },
+    {
+      "anchor": "config.toml",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/config.sample.toml",
+      "sha": "d6c5afc",
+      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/config.sample.toml"
+    },
+    {
+      "anchor": "config.toml",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/data_directory/config.default.toml",
+      "sha": "d6c5afc",
+      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/data_directory/config.default.toml"
+    },
+    {
+      "anchor": "Admin API (:6288)",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/admin_server/app.rs",
+      "sha": "d6c5afc",
+      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/admin_server/app.rs"
+    },
+    {
+      "anchor": "Signup tokens and quotas",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/persistence/sql/entities/signup_code.rs",
+      "sha": "d6c5afc",
+      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/persistence/sql/entities/signup_code.rs"
+    },
+    {
+      "anchor": "Enable and disable users",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/admin_server/routes/disable_users.rs",
+      "sha": "d6c5afc",
+      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/admin_server/routes/disable_users.rs"
+    },
+    {
+      "anchor": "Metrics (:6289)",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/metrics_server/mod.rs",
+      "sha": "d6c5afc",
+      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/metrics_server/mod.rs"
+    },
+    {
+      "anchor": "Event streams (client server)",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/client_server/routes/events.rs",
+      "sha": "d6c5afc",
+      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/client_server/routes/events.rs"
+    },
+    {
+      "anchor": "homeserver-dashboard",
+      "repo": "pubky/homeserver-dashboard",
+      "path": "README.md",
+      "sha": "b3be93d",
+      "url": "https://github.com/pubky/homeserver-dashboard/blob/b3be93d/README.md"
+    },
+    {
+      "anchor": "Cloudflare-tunnel exposure",
+      "repo": "pubky/homeserver-dashboard",
+      "path": "CLOUDFLARE_TUNNEL.md",
+      "sha": "b3be93d",
+      "url": "https://github.com/pubky/homeserver-dashboard/blob/b3be93d/CLOUDFLARE_TUNNEL.md"
+    },
+    {
+      "anchor": "Umbrel vs standalone",
+      "repo": "pubky/umbrel-app-store",
+      "path": "pubky-homeserver/docker-compose.yml",
+      "sha": "d0b96ad",
+      "url": "https://github.com/pubky/umbrel-app-store/blob/d0b96ad/pubky-homeserver/docker-compose.yml"
+    },
+    {
+      "anchor": "Umbrel vs standalone",
+      "repo": "pubky/umbrel-app-store",
+      "path": "pubky-homeserver/umbrel-app.yml",
+      "sha": "d0b96ad",
+      "url": "https://github.com/pubky/umbrel-app-store/blob/d0b96ad/pubky-homeserver/umbrel-app.yml"
+    },
+    {
+      "anchor": "Umbrel vs standalone",
+      "repo": "pubky/umbrel-app-store",
+      "path": "pubky-homeserver/exports.sh",
+      "sha": "d0b96ad",
+      "url": "https://github.com/pubky/umbrel-app-store/blob/d0b96ad/pubky-homeserver/exports.sh"
+    },
+    {
+      "anchor": "Security guardrails",
+      "repo": "pubky/pubky-core",
+      "path": "pubky-homeserver/src/client_server/auth/authorization.rs",
+      "sha": "d6c5afc",
+      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/client_server/auth/authorization.rs"
+    },
+    {
+      "anchor": "Security guardrails",
+      "repo": "pubky/pubky-docker",
+      "path": "README.md",
+      "sha": "a5544e6",
+      "url": "https://github.com/pubky/pubky-docker/blob/a5544e6/README.md"
+    }
+  ],
+  "snippet": {
+    "total": 5,
+    "pass": 5,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 40,
+    "refuted": 0,
+    "caveated": 0,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 3137,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  },
+  "promotion": "human-promoted after reconciling canonical shipped-vs-planned.md (/priv: implemented in main, not released); consistency auto-gate resolved by making canonical + this file agree"
+}

@@ -1,0 +1,92 @@
+{
+  "path": "skills/pubky-mobile/references/native-ffi.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "pubky-core-ffi",
+      "sha": "782d6c0c842c793b1a43ecc0931d2127e9bba841"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "The crate",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "Cargo.toml",
+      "sha": "782d6c0c842c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/Cargo.toml"
+    },
+    {
+      "anchor": "Building the bindings",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "build.sh",
+      "sha": "782d6c0c842c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/build.sh"
+    },
+    {
+      "anchor": "iOS — build_ios.sh",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "build_ios.sh",
+      "sha": "782d6c0c842c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/build_ios.sh"
+    },
+    {
+      "anchor": "Android — build_android.sh",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "build_android.sh",
+      "sha": "782d6c0c842c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/build_android.sh"
+    },
+    {
+      "anchor": "MANDATORY: initialize rustls on Android",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/rustls_init.rs",
+      "sha": "782d6c0c842c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/rustls_init.rs"
+    },
+    {
+      "anchor": "The [error, data] convention",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/utils.rs",
+      "sha": "782d6c0c842c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/utils.rs"
+    },
+    {
+      "anchor": "Session-secret format",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/utils.rs",
+      "sha": "782d6c0c842c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/utils.rs"
+    },
+    {
+      "anchor": "Exported function surface",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "782d6c0c842c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/lib.rs"
+    },
+    {
+      "anchor": "pubkyauth functions",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/auth.rs",
+      "sha": "782d6c0c842c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/auth.rs"
+    }
+  ],
+  "snippet": {
+    "total": 9,
+    "pass": 9,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 29,
+    "refuted": 0,
+    "caveated": 3,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 1520
+}

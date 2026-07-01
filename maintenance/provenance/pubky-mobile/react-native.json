@@ -1,0 +1,69 @@
+{
+  "path": "skills/pubky-mobile/references/react-native.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-30T12:59:21.584Z",
+  "sourcesUsed": [
+    {
+      "repo": "react-native-pubky",
+      "sha": "84ec77af1dd52c5cb37648467954c159aba5719e"
+    },
+    {
+      "repo": "pubky-knowledge-base-v2",
+      "sha": "c9981c6501456f9305918820017134af40d278c0"
+    },
+    {
+      "repo": "npm:@synonymdev/react-native-pubky",
+      "sha": "84ec77af1dd52c5cb37648467954c159aba5719e"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "Result envelope / method signatures",
+      "repo": "pubky/react-native-pubky",
+      "path": "src/index.tsx",
+      "sha": "main",
+      "url": "https://github.com/pubky/react-native-pubky/blob/main/src/index.tsx"
+    },
+    {
+      "anchor": "Android rustls auto-init",
+      "repo": "pubky/react-native-pubky",
+      "path": "android/src/main/java/com/pubky/PubkyModule.kt",
+      "sha": "main",
+      "url": "https://github.com/pubky/react-native-pubky/blob/main/android/src/main/java/com/pubky/PubkyModule.kt"
+    },
+    {
+      "anchor": "iOS native session: method unreachable from JS",
+      "repo": "pubky/react-native-pubky",
+      "path": "ios/Pubky.mm",
+      "sha": "main",
+      "url": "https://github.com/pubky/react-native-pubky/blob/main/ios/Pubky.mm"
+    },
+    {
+      "anchor": "canonical public-key string formats",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "f024337f81f79d5beea14220c21873c801140e4b",
+      "url": "skills/pubky/references/concepts.md#public-key-string-formats"
+    }
+  ],
+  "snippet": {
+    "total": 10,
+    "pass": 10,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 37,
+    "refuted": 0,
+    "caveated": 0,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 2013,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  }
+}

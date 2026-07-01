@@ -1,0 +1,132 @@
+{
+  "path": "skills/pubky-infra/references/http-relay.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "http-relay",
+      "sha": "e4f3d9e33d438aba5b889af41e20d76209fb10d8"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "Run the relay (CLI)",
+      "repo": "pubky/http-relay",
+      "path": "src/main.rs",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/src/main.rs#L14-L63"
+    },
+    {
+      "anchor": "Run in Docker",
+      "repo": "pubky/http-relay",
+      "path": "Dockerfile",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/Dockerfile"
+    },
+    {
+      "anchor": "Embed as a Rust library",
+      "repo": "pubky/http-relay",
+      "path": "README.md",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/README.md"
+    },
+    {
+      "anchor": "The inbox API",
+      "repo": "pubky/http-relay",
+      "path": "src/http_relay/server.rs",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/src/http_relay/server.rs#L187-L216"
+    },
+    {
+      "anchor": "The inbox API (handlers/status codes)",
+      "repo": "pubky/http-relay",
+      "path": "src/http_relay/inbox_handler.rs",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/src/http_relay/inbox_handler.rs#L26-L124"
+    },
+    {
+      "anchor": "The inbox API (waiter cap)",
+      "repo": "pubky/http-relay",
+      "path": "src/http_relay/waiting_list.rs",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/src/http_relay/waiting_list.rs#L15-L17"
+    },
+    {
+      "anchor": "Delivery semantics and client patterns",
+      "repo": "pubky/http-relay",
+      "path": "README.md",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/README.md"
+    },
+    {
+      "anchor": "Security: inbox IDs are bearer secrets",
+      "repo": "pubky/http-relay",
+      "path": "src/http_relay/inbox_handler.rs",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/src/http_relay/inbox_handler.rs#L1-L11"
+    },
+    {
+      "anchor": "Persistence, CORS, and limits (persistence backend)",
+      "repo": "pubky/http-relay",
+      "path": "src/http_relay/persistence.rs",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/src/http_relay/persistence.rs#L35-L41"
+    },
+    {
+      "anchor": "Persistence, CORS, and limits (CORS/limits)",
+      "repo": "pubky/http-relay",
+      "path": "src/http_relay/server.rs",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/src/http_relay/server.rs#L1-L7"
+    },
+    {
+      "anchor": "Persistence, CORS, and limits (max ID/body)",
+      "repo": "pubky/http-relay",
+      "path": "src/http_relay/response.rs",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/src/http_relay/response.rs#L23-L30"
+    },
+    {
+      "anchor": "Cargo features",
+      "repo": "pubky/http-relay",
+      "path": "Cargo.toml",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/Cargo.toml#L31-L55"
+    },
+    {
+      "anchor": "Legacy /link endpoint (deprecated)",
+      "repo": "pubky/http-relay",
+      "path": "src/http_relay/link_handler.rs",
+      "sha": "e4f3d9e",
+      "url": "https://github.com/pubky/http-relay/blob/e4f3d9e/src/http_relay/link_handler.rs"
+    },
+    {
+      "anchor": "Version note (MSRV/crates.io)",
+      "repo": "pubky/http-relay",
+      "path": "Cargo.toml",
+      "sha": "e4f3d9e",
+      "url": "https://crates.io/api/v1/crates/http-relay"
+    }
+  ],
+  "snippet": {
+    "total": 6,
+    "pass": 5,
+    "fail": 1,
+    "unverifiable": 0,
+    "failing": [
+      "c7"
+    ]
+  },
+  "factCheck": {
+    "supported": 16,
+    "refuted": 1,
+    "caveated": 3,
+    "unsupported": 0
+  },
+  "guardrailViolations": [
+    "Link-don't-mirror (repo CLAUDE.md §4 'Do not re-copy drift-prone API detail'): the draft reproduces several upstream artifacts verbatim rather than linking + summarizing. Strongest case is the full bundled Dockerfile — which is now demonstrably broken at HEAD (rust:1.84 builder vs MSRV 1.85), the exact failure mode this rule guards against; it should be a link plus a short 'pass flags as args / bump base image' note. The complete CLI flags table and the ~90-line verbatim JS producer/consumer patterns are likewise mirrored detail. All are commit-pinned (e4f3d9e) and sourced, which mitigates, but they remain drift-prone. Advisory, not a factual error.",
+    "No shipped-vs-planned violations: the file documents only http-relay (no /priv private storage, encrypted-data-as-primitive, homeserver mirroring, backup restore, cloud backup, or two-way sync presented as available). No uncaveated stable-sounding claims about /pub paths or Nexus /v0. Every section carries a <sub>Source</sub> provenance line. No publicKey toString()/z32() usage in this file (no key-display code)."
+  ],
+  "wordCount": 2003
+}

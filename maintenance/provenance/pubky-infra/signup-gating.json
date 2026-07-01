@@ -1,0 +1,148 @@
+{
+  "path": "skills/pubky-infra/references/signup-gating.md",
+  "role": "normal",
+  "accept": true,
+  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "sourcesUsed": [
+    {
+      "repo": "homegate",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8"
+    }
+  ],
+  "provenance": [
+    {
+      "anchor": "Three optional routes / startup homeserver check",
+      "repo": "pubky/homegate",
+      "path": "src/infrastructure/http/server.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/http/server.rs"
+    },
+    {
+      "anchor": "Configuration (data-dir, config.toml template, required keys)",
+      "repo": "pubky/homegate",
+      "path": "src/infrastructure/config.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/config.rs"
+    },
+    {
+      "anchor": "Configuration top-level example",
+      "repo": "pubky/homegate",
+      "path": "config.toml.example",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/config.toml.example"
+    },
+    {
+      "anchor": "PostgreSQL backing (auto-migrations on startup)",
+      "repo": "pubky/homegate",
+      "path": "src/infrastructure/sql/sql_db.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/sql/sql_db.rs"
+    },
+    {
+      "anchor": "PostgreSQL backing (three tables / columns)",
+      "repo": "pubky/homegate",
+      "path": "src/infrastructure/sql/migrations",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/tree/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/sql/migrations"
+    },
+    {
+      "anchor": "The pepper secret / Argon2id params",
+      "repo": "pubky/homegate",
+      "path": "src/shared/hasher_argon2id.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/shared/hasher_argon2id.rs"
+    },
+    {
+      "anchor": "Homeserver admin API (generate_signup_token, GET /info)",
+      "repo": "pubky/homegate",
+      "path": "src/shared/homeserver_admin_api.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/shared/homeserver_admin_api.rs"
+    },
+    {
+      "anchor": "SMS (Prelude) flow / config",
+      "repo": "pubky/homegate",
+      "path": "src/sms_verification/types.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/sms_verification/types.rs"
+    },
+    {
+      "anchor": "Lightning (phoenixd) flow / await timeout",
+      "repo": "pubky/homegate",
+      "path": "src/ln_verification/http.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/ln_verification/http.rs"
+    },
+    {
+      "anchor": "IP flow / status codes / signup_quota",
+      "repo": "pubky/homegate",
+      "path": "src/ip_verification/http.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/ip_verification/http.rs"
+    },
+    {
+      "anchor": "IP advisory-lock concurrency / rate-limit windows",
+      "repo": "pubky/homegate",
+      "path": "src/ip_verification/service.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/ip_verification/service.rs"
+    },
+    {
+      "anchor": "IP security weakness (three failure modes)",
+      "repo": "pubky/homegate",
+      "path": "src/ip_verification/mod.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/ip_verification/mod.rs"
+    },
+    {
+      "anchor": "Client IP determination (X-Forwarded-For rightmost)",
+      "repo": "pubky/homegate",
+      "path": "src/infrastructure/http/extractors/request_origin.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/http/extractors/request_origin.rs"
+    },
+    {
+      "anchor": "Operational notes / Deploy (Dockerfile)",
+      "repo": "pubky/homegate",
+      "path": "Dockerfile",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/Dockerfile"
+    },
+    {
+      "anchor": "openapi.yaml AI-generated warning / route shapes",
+      "repo": "pubky/homegate",
+      "path": "openapi.yaml",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/openapi.yaml"
+    },
+    {
+      "anchor": "Canonical link: signup token / homeserver-write model",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/agent-skills/blob/main/skills/pubky/references/concepts.md"
+    },
+    {
+      "anchor": "Canonical link: shipped-vs-planned guardrail (/pub)",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/shipped-vs-planned.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/agent-skills/blob/main/skills/pubky/references/shipped-vs-planned.md"
+    }
+  ],
+  "snippet": {
+    "total": 7,
+    "pass": 7,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 28,
+    "refuted": 0,
+    "caveated": 1,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 1480
+}

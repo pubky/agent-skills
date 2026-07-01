@@ -1,0 +1,84 @@
+{
+  "path": "skills/pubky-mobile/references/concepts-pointer.md",
+  "role": "pointer",
+  "accept": true,
+  "generatedAt": "2026-06-30T12:59:21.584Z",
+  "sourcesUsed": [],
+  "provenance": [
+    {
+      "anchor": "Two SDKs / versions (RN 0.13.0, sole dep @synonymdev/result)",
+      "repo": "pubky/react-native-pubky",
+      "path": "package.json",
+      "sha": "84ec77af1dd52c5cb37648467954c159aba5719e",
+      "url": "https://github.com/pubky/react-native-pubky/blob/84ec77af1dd5/package.json"
+    },
+    {
+      "anchor": "UniFFI bindings (pubkycore 0.3.1, pubky 0.9.3, Swift/Kotlin/Python)",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "Cargo.toml",
+      "sha": "782d6c0c842c793b1a43ecc0931d2127e9bba841",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/Cargo.toml"
+    },
+    {
+      "anchor": "snake_case->lowerCamelCase naming; method signatures; PKARR/auth surface",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "782d6c0c842c793b1a43ecc0931d2127e9bba841",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/lib.rs"
+    },
+    {
+      "anchor": "FFI [error,data] Vec<String> 'true'/'false' string convention",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/utils.rs",
+      "sha": "782d6c0c842c793b1a43ecc0931d2127e9bba841",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/utils.rs"
+    },
+    {
+      "anchor": "Write/read own /pub row: only put/deleteFile/*WithSession hard-error 'Invalid URL: must contain /pub/'; get/list use public_storage",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "782d6c0c842c793b1a43ecc0931d2127e9bba841",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/lib.rs"
+    },
+    {
+      "anchor": "RN returns Promise<Result<T>>; no switchNetwork export in v0.13.0",
+      "repo": "pubky/react-native-pubky",
+      "path": "src/index.tsx",
+      "sha": "84ec77af1dd52c5cb37648467954c159aba5719e",
+      "url": "https://github.com/pubky/react-native-pubky/blob/84ec77af1dd5/src/index.tsx"
+    },
+    {
+      "anchor": "Stale README 'Implemented Methods' (delete/session vs deleteFile/revalidateSession)",
+      "repo": "pubky/react-native-pubky",
+      "path": "README.md",
+      "sha": "84ec77af1dd52c5cb37648467954c159aba5719e",
+      "url": "https://github.com/pubky/react-native-pubky/blob/84ec77af1dd5/README.md"
+    },
+    {
+      "anchor": "Canonical reference link targets (concepts.md, auth.md, app-specs.md, nexus-api.md exist)",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "f024337f81f79d5beea14220c21873c801140e4b",
+      "url": "https://github.com/pubky/agent-skills/blob/feat/reference-content/skills/pubky/references/concepts.md"
+    }
+  ],
+  "snippet": {
+    "total": 0,
+    "pass": 0,
+    "fail": 0,
+    "unverifiable": 0,
+    "failing": []
+  },
+  "factCheck": {
+    "supported": 17,
+    "refuted": 1,
+    "caveated": 1,
+    "unsupported": 0
+  },
+  "guardrailViolations": [],
+  "wordCount": 876,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  }
+}
