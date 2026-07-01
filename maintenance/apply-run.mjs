@@ -6,8 +6,9 @@
 //   node maintenance/apply-run.mjs --report /tmp/report.json --manifest /tmp/manifest.json
 //   add --dry-run to print what would change without writing.
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
+import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { checkReference } from './lib.mjs'
 
@@ -24,6 +25,19 @@ const lock = JSON.parse(readFileSync(lockPath, 'utf8'))
 const manifestByPath = Object.fromEntries((manifest.files || []).map(f => [f.path, f]))
 const now = new Date().toISOString()
 const log = []
+
+// Restore a reference's live path to its committed state (or remove it if untracked/new). Used to
+// undo any in-run subagent pollution of a gated file — apply-run is the only writer we trust, so a
+// file that fails the gate must be left exactly as HEAD had it, not as a subagent left it on disk.
+function restoreToHead(relPath, abs) {
+  try { execFileSync('git', ['-C', ROOT, 'checkout', 'HEAD', '--', relPath], { stdio: 'pipe' }); return }
+  catch { /* path not in HEAD — a newly added file the run created */ }
+  try { if (existsSync(abs)) rmSync(abs) } catch { /* best effort */ }
+}
+
+// Snippet subagents run in temp dirs, but one occasionally leaks scratch (e.g. src/) into the repo
+// root; remove untracked scratch there so it can never be staged. (Only touches untracked files.)
+if (!DRY) { try { execFileSync('git', ['-C', ROOT, 'clean', '-fdq', 'src'], { stdio: 'pipe' }) } catch { /* best effort */ } }
 
 let written = 0, accepted = 0, rejected = 0, bumpedRepos = new Set()
 for (const r of report.files || []) {
@@ -56,6 +70,11 @@ for (const r of report.files || []) {
       rejected++
     }
   }
+
+  // 1b. Defense-in-depth: a subagent may have written a gated file straight to its live path during
+  // the run (observed once), which would let ungated content survive on disk. For any non-accepted
+  // file, restore the live path to HEAD (or remove it if new) so "parked/left stale" is literally true.
+  if (!accept && !DRY) restoreToHead(r.path, abs)
 
   // 2. provenance sidecar — record the EFFECTIVE accept and the REAL word count (computed from the
   // bytes, never the agent's self-report) so the sidecar can never disagree with the file on disk.
