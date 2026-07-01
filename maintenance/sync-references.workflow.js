@@ -41,14 +41,29 @@ export const meta = {
 let A = args || {}
 if (typeof A === 'string') { try { A = JSON.parse(A) } catch { A = {} } }  // tool may deliver args JSON-encoded
 log(`args: type=${typeof args} keys=${A && typeof A === 'object' ? Object.keys(A).join(',') : 'none'}`)
-const manifestPath = A.files ? null : (A.manifestPath || '/tmp/sync-manifest.json')
-if (manifestPath) {
-  const loaded = await agent(
-    `Run \`cat ${manifestPath}\` and return its exact stdout verbatim as the string field 'contents'. It is a JSON document; do not alter, summarize, or re-indent it.`,
-    { schema: { type: 'object', additionalProperties: false, required: ['contents'], properties: { contents: { type: 'string' } } },
-      label: 'load-manifest', phase: 'Reconcile' }
-  )
-  A = JSON.parse(loaded.contents)
+const catSchema = { type: 'object', additionalProperties: false, required: ['contents'], properties: { contents: { type: 'string' } } }
+const catJson = (p, label) => agent(
+  `Run \`cat ${p}\` and return its exact stdout verbatim as the string field 'contents'. It is a JSON document; do not alter, summarize, or re-indent it.`,
+  { schema: catSchema, label, phase: 'Reconcile' }
+).then(r => JSON.parse(r.contents))
+
+// Ingest the manifest WITHOUT exceeding any single agent's output budget. One agent cannot echo a
+// 300k+ char manifest verbatim (it blows past the per-response token cap), so plan-run splits it:
+// a slim header (files carry no prior* blobs — research regenerates from sources, never the old
+// file) loaded in one read, plus per-corpus side files loaded concurrently. Falls back to a single
+// whole-manifest load (small manifests) or inline args.
+const wfDir = A.files ? null : (A.wfDir || (A.manifestPath ? null : '/tmp/sync-wf'))
+if (wfDir) {
+  A = await catJson(`${wfDir}/header.json`, 'load-header')
+  const slices = A.corpusSlices || {}
+  const loaded = await parallel(Object.entries(slices).map(([p, fn]) => () =>
+    catJson(`${wfDir}/${fn}`, `load-corpus:${fn}`).then(o => ({ p, o }))))
+  const corpus = {}
+  for (const e of loaded) if (e && e.o) corpus[e.p] = { markdown: e.o.markdown, role: e.o.role }
+  A.comparisonCorpus = corpus
+  log(`manifest loaded (split): files=${(A.files || []).length} corpus=${Object.keys(corpus).length}`)
+} else if (A.manifestPath) {
+  A = await catJson(A.manifestPath, 'load-manifest')
   log(`manifest loaded: mode=${A.mode} files=${(A.files || []).length}`)
 }
 const FILES = A.files || []

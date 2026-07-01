@@ -45,9 +45,11 @@ report "nothing to update" and stop (after stopping the testnet).
 
 ## 4. Run the workflow
 Invoke the **Workflow** tool with `scriptPath: "maintenance/sync-references.workflow.js"` and
-`args: { "manifestPath": "/tmp/sync-manifest.json" }` (the workflow loads the manifest off disk
-via a bootstrap agent — do not inline the manifest). For `--resume <runId>` pass `resumeFromRunId`.
-Save the returned report object to `/tmp/sync-report.json`.
+`args: { "wfDir": "/tmp/sync-wf" }`. `plan-run` writes a *split* manifest there — a slim
+`header.json` plus per-corpus `corpus-*.json` side files — because a single agent cannot echo a
+300k+ char manifest verbatim (it exceeds the per-response token cap); the workflow loads the header
+in one read and fans out small concurrent corpus reads. Do **not** inline the manifest. For
+`--resume <runId>` pass `resumeFromRunId`. Save the returned report object to `/tmp/sync-report.json`.
 
 ## 5. Apply results
 `node maintenance/apply-run.mjs --report /tmp/sync-report.json --manifest /tmp/sync-manifest.json`
