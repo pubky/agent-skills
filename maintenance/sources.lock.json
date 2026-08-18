@@ -259,6 +259,57 @@
       "tracksRepo": "pubky-core",
       "pinnedVersion": "0.9.3",
       "lastSeenSha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+    },
+    "nexus-scout": {
+      "url": "https://github.com/pubky/nexus-scout",
+      "branch": "main",
+      "private": true,
+      "optional": true,
+      "note": "Private repo. Its SKILL.md is include_str!'d into the gateway binary and served at /llms.txt, so it cannot move here; we take a byte copy. Clone failures are non-fatal — the public endpoint fallback in vendoredSkills covers contributors without pubky-org access. lastSeenSha stays null on purpose: no reference file is generated from this repo, so nothing computes staleness from it — vendor-skills.mjs refreshes the copy unconditionally.",
+      "pathsOfInterest": [
+        "SKILL.md",
+        "README.md",
+        "docs/**"
+      ],
+      "lastSeenSha": null
+    },
+    "nexus-scout-pr": {
+      "url": "https://github.com/pubky/nexus-scout",
+      "branch": "implement-nexus-scout",
+      "private": true,
+      "optional": true,
+      "note": "TEMPORARY — the implementation lives on open PR #1; main holds only README + LICENSE. DELETE this entry (and its slot in vendoredSkills.from) once PR #1 merges into main. lastSeenSha stays null on purpose: no reference file is generated from this repo, so nothing computes staleness from it — vendor-skills.mjs refreshes the copy unconditionally.",
+      "pathsOfInterest": [
+        "SKILL.md",
+        "docs/**"
+      ],
+      "lastSeenSha": null
+    }
+  },
+  "vendoredSkills": {
+    "skills/nexus-scout/SKILL.md": {
+      "note": "Byte copy of upstream's SKILL.md body — never hand-edit and never run it through the reference-generation workflow. Only the YAML frontmatter below is local, because upstream's description lacks the 'NOT for …' cross-reference clause that verify.mjs requires, and its 'Neo4j' wording collides with pubky-infra trigger vocab.",
+      "from": [
+        {
+          "repo": "nexus-scout-pr",
+          "path": "SKILL.md"
+        },
+        {
+          "repo": "nexus-scout",
+          "path": "SKILL.md"
+        },
+        {
+          "endpoint": "https://nexus-scout.pubky.app/llms.txt"
+        }
+      ],
+      "frontmatter": {
+        "name": "nexus-scout",
+        "description": "Use when you need facts from the Pubky social graph - who follows whom, trending tags, thread/reply history, author reputation, trust distance between users. Query the graph with read-only Cypher over HTTP. NOT for building or debugging a Pubky app (use pubky), NOT for native iOS/Android or React Native apps (use pubky-mobile), and NOT for running or self-hosting Pubky services (use pubky-infra).",
+        "metadata": {
+          "author": "pubky",
+          "version": "0.1.0"
+        }
+      }
     }
   },
   "references": {
@@ -417,7 +468,7 @@
     },
     "skills/pubky/references/nexus-api.md": {
       "role": "normal",
-      "covers": "Consuming the hosted Nexus /v0 REST API for social-graph data (posts, users, tags, follows, feeds); Swagger UI; the unstable-/v0 guardrail.",
+      "covers": "Consuming the hosted Nexus /v0 REST API for social-graph data (posts, users, tags, follows, feeds); Swagger UI; the unstable-/v0 guardrail. Also points ad-hoc/analytical graph questions at the nexus-scout Cypher gateway (the nexus-scout skill) rather than /v0.",
       "sources": [
         {
           "repo": "nexus-swagger",

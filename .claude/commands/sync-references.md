@@ -26,12 +26,16 @@ clone if missing, else fetch + hard-reset to the tracked branch. Honor each repo
 (several are `master`; `pubky-app` is `dev`; `workshop` is `spanish`). Example loop:
 ```bash
 CACHE=~/.cache/pubky-agent-skills/upstream; mkdir -p "$CACHE"
-jq -r '.repos | to_entries[] | select(.value.kind!="docs" and .value.kind!="registry") | "\(.key)\t\(.value.url)\t\(.value.branch)"' maintenance/sources.lock.json |
-while IFS=$'\t' read -r name url branch; do
+jq -r '.repos | to_entries[] | select(.value.kind!="docs" and .value.kind!="registry") | "\(.key)\t\(.value.url)\t\(.value.branch)\t\(.value.optional // false)"' maintenance/sources.lock.json |
+while IFS=$'\t' read -r name url branch optional; do
   if [ -d "$CACHE/$name/.git" ]; then git -C "$CACHE/$name" fetch -q origin "$branch" && git -C "$CACHE/$name" reset -q --hard "origin/$branch";
-  else git clone -q --depth 1 -b "$branch" "$url" "$CACHE/$name"; fi
+  else git clone -q --depth 1 -b "$branch" "$url" "$CACHE/$name"; fi \
+    || { [ "$optional" = "true" ] && echo "skip $name (private/unavailable)" || exit 1; }
 done
 ```
+**`optional: true` repos are best-effort.** `nexus-scout` / `nexus-scout-pr` are **private**, so a
+contributor without pubky-org access cannot clone them — warn and continue rather than aborting.
+Step 3b falls back to the public endpoint and produces the identical file.
 For incremental diffs you need history: when a repo is in scope and shallow, `git -C "$CACHE/$name" fetch --unshallow -q` (or fetch enough depth) so `plan-run.mjs` can diff `lastGeneratedSha..HEAD`.
 
 ## 2. Start the shared testnet (one instance; fixed ports)
@@ -42,6 +46,18 @@ connect to it; they never start their own. (First build is slow; it's cached aft
 `node maintenance/plan-run.mjs $ARGUMENTS > /tmp/sync-manifest.json` (read the stderr summary —
 it lists mode, in-scope count, and testnet state). If in-scope is empty on an incremental run,
 report "nothing to update" and stop (after stopping the testnet).
+
+## 3b. Refresh vendored skills
+`node maintenance/vendor-skills.mjs` — byte-copies each `lock.vendoredSkills` entry (today
+`skills/nexus-scout/SKILL.md`) from the first available source, rewriting only its YAML frontmatter.
+Idempotent, so it is safe to run every time and reports `unchanged` when upstream hasn't moved. It
+is **not** part of the workflow: a vendored skill is upstream's hand-tuned document and must never
+be LLM-rewritten (see `CLAUDE.md` §7). If it reports a substance-gate or relative-link failure, the
+fetch was bad or upstream changed shape — investigate, don't bypass.
+
+**Cleanup trigger:** `nexus-scout-pr` pins open PR #1 on `pubky/nexus-scout` because `main` still
+holds only `README` + `LICENSE`. Once that PR merges, delete the `nexus-scout-pr` repo entry and its
+slot in `vendoredSkills[...].from`; `main` then serves the same file.
 
 ## 4. Run the workflow
 Invoke the **Workflow** tool with `scriptPath: "maintenance/sync-references.workflow.js"` and
@@ -67,8 +83,8 @@ row to the owning `SKILL.md` (keep it thin) and re-run verify.
 
 ## 8. Open a signed draft PR
 - Branch: `sync/references-<date-or-short-tag>` off `main` (never commit straight to `main`).
-- Stage only what the run produced: `skills/**`, `maintenance/sources.lock.json`,
-  `maintenance/provenance/**` (and any SKILL.md routing-row edits). Do **not** stage `/tmp/*` or the cache.
+- Stage only what the run produced: `skills/**` (including any vendored `SKILL.md` refresh),
+  `maintenance/sources.lock.json`, `maintenance/provenance/**` (and any SKILL.md routing-row edits). Do **not** stage `/tmp/*` or the cache.
 - Commit with a Conventional-Commit subject (`docs(references): …`, `< 72` chars). Body explains
   what changed and why. **GPG/SSH signing is on — let it fire; never pass `--no-gpg-sign`.**
   **Never add a `Co-Authored-By`, "Generated with", or any AI/tool attribution line.**

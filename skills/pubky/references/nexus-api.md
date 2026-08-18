@@ -7,6 +7,13 @@ via the SDK. This homeserver-write vs Nexus-read split is canonical in
 [`./concepts.md`](./concepts.md#homeserver-write-vs-nexus-read) — read it first; this file is
 only the `/v0` surface.
 
+**Building an app? This file. Answering a question about the graph? Not this file.** `/v0` serves
+fixed, app-shaped endpoints (a feed, a profile, a follower list). For ad-hoc questions that cut
+across the graph — mutual follows, a user's most-applied tags, a whole reply thread, follow
+distance between two people — use the **`nexus-scout`** skill instead: a public read-only Cypher
+gateway at `https://nexus-scout.pubky.app`, one HTTP call, no account or key. Same underlying
+graph, different question shape.
+
 > **`/v0` is unstable and breaking-change-prone.** The catalog and response shapes below are a
 > map for orientation, not a frozen contract — **confirm every endpoint and shape against the
 > live Swagger / OpenAPI before relying on it.** Do not hardcode response shapes; parse
