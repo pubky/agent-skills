@@ -24,7 +24,12 @@ const WORD_BUDGET = 800     // per SKILL.md (largest today is 604)
 const DESC_BUDGET = 1200    // frontmatter description chars
 const COPY_THRESHOLD = 0.18 // shingle-overlap ratio vs a canonical file
 
-const SKILLS = ['pubky', 'pubky-mobile', 'pubky-infra']
+const SKILLS = ['pubky', 'pubky-mobile', 'pubky-infra', 'nexus-scout']
+// Skills whose SKILL.md is a byte copy of an upstream-authored file (see maintenance/vendor-skills.mjs
+// and lock.vendoredSkills). The thinness budget is skipped for these: the whole point is that the body
+// survives verbatim, so trimming it to fit is not an option and a permanent warning would only mask
+// real regressions in the hand-written skills. CLAUDE.md rule 3 carries the same carve-out.
+const VENDORED = new Set(['nexus-scout'])
 const CANONICAL = [
   'skills/pubky/references/concepts.md',
   'skills/pubky/references/app-specs.md',
@@ -35,6 +40,9 @@ const CANONICAL = [
 const VOCAB = {
   'pubky-mobile': ['ios', 'android', 'swift', 'kotlin', 'react native', 'react-native', 'xcode', 'uniffi'],
   'pubky-infra': ['self-host', 'self-hosting', 'deploy', 'docker', 'nexusd', 'neo4j', 'umbrel', 'operating', 'operator'],
+  // Terms deliberately absent from the other three descriptions, so registering them here cannot
+  // retroactively flag an existing trigger. ('followers'/'social graph' would — pubky has near-matches.)
+  'nexus-scout': ['cypher', 'follow distance', 'trending tags'],
 }
 
 const findings = []
@@ -101,7 +109,9 @@ for (const skill of SKILLS) {
 
   // 3. thinness budget
   const lines = md.split('\n').length, words = md.split(/\s+/).filter(Boolean).length
-  if (lines > LINE_BUDGET || words > WORD_BUDGET)
+  if (VENDORED.has(skill))
+    add('info', 'thinness', `${skillPath}: ${lines} lines / ${words} words — vendored verbatim, budget not applied`)
+  else if (lines > LINE_BUDGET || words > WORD_BUDGET)
     add('warn', 'thinness', `${skillPath}: ${lines} lines / ${words} words exceeds budget ${LINE_BUDGET}/${WORD_BUDGET}`)
   else add('ok', 'thinness', `${skillPath}: ${lines} lines / ${words} words (budget ${LINE_BUDGET}/${WORD_BUDGET})`)
 

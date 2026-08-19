@@ -11,10 +11,15 @@
 	"plugins": [
 		{
 			"name": "pubky",
-			"description": "Build on and operate the Pubky protocol. Bundles three skills: `pubky` (build web/server apps with the @synonymdev/pubky JS/WASM and pubky Rust SDKs, pubky-app-specs, the pubkyauth flow, pubky:// /pub storage, and the Nexus read API), `pubky-mobile` (build native iOS/Android/React Native apps with react-native-pubky and pubky-core-ffi), and `pubky-infra` (run and self-host the homeserver, Nexus, pubky-docker stack, homegate, pkdns, and relays). Each skill auto-activates on its own triggers.",
+			"description": "Build on, operate, and query the Pubky protocol. Bundles four skills: `pubky` (build web/server apps with the @synonymdev/pubky JS/WASM and pubky Rust SDKs, pubky-app-specs, the pubkyauth flow, pubky:// /pub storage, and the Nexus read API), `pubky-mobile` (build native iOS/Android/React Native apps with react-native-pubky and pubky-core-ffi), `pubky-infra` (run and self-host the homeserver, Nexus, pubky-docker stack, homegate, pkdns, and relays), and `nexus-scout` (answer questions about the social graph with read-only Cypher over the public nexus-scout gateway). Each skill auto-activates on its own triggers.",
 			"source": "./",
 			"strict": false,
-			"skills": ["./skills/pubky", "./skills/pubky-mobile", "./skills/pubky-infra"]
+			"skills": [
+				"./skills/pubky",
+				"./skills/pubky-mobile",
+				"./skills/pubky-infra",
+				"./skills/nexus-scout"
+			]
 		}
 	]
 }

@@ -1,6 +1,6 @@
 ---
 name: pubky
-description: "Use when building or debugging an application on Pubky with the web/server SDKs: signing users up to a homeserver, authenticating with keypairs and the pubkyauth flow (capabilities, relays, recovery files, signup tokens, sessions), reading/writing data over pubky:// URLs (put/get/list/delete with pagination), constructing and validating spec-compliant social objects (users, posts, tags, bookmarks, follows, feeds, files) with pubky-app-specs and its Timestamp/Blake3-Hash IDs and canonical /pub/pubky.app paths, or querying the Nexus social-graph REST API. Covers the JavaScript/WASM client (@synonymdev/pubky) and the Rust client (the pubky crate), pubky:// addressing, pkarr identity resolution, error handling, and local pubky-testnet development. NOT for native iOS/Android or React Native apps (use pubky-mobile) and NOT for running or self-hosting homeserver/Nexus/DNS infrastructure (use pubky-infra)."
+description: "Use when building or debugging an application on Pubky with the web/server SDKs: signing users up to a homeserver, authenticating with keypairs and the pubkyauth flow (capabilities, relays, recovery files, signup tokens, sessions), reading/writing data over pubky:// URLs (put/get/list/delete with pagination), constructing and validating spec-compliant social objects (users, posts, tags, bookmarks, follows, feeds, files) with pubky-app-specs and its Timestamp/Blake3-Hash IDs and canonical /pub/pubky.app paths, or querying the Nexus social-graph REST API. Covers the JavaScript/WASM client (@synonymdev/pubky) and the Rust client (the pubky crate), pubky:// addressing, pkarr identity resolution, error handling, and local pubky-testnet development. NOT for native iOS/Android or React Native apps (use pubky-mobile) and NOT for running or self-hosting homeserver/Nexus/DNS infrastructure (use pubky-infra), and NOT for querying the social graph with read-only Cypher (use nexus-scout)."
 metadata:
   author: pubky
   version: "0.1.0"
@@ -60,3 +60,4 @@ it is an app-chosen **scope** (e.g. `/pub/pubky.app/*`).
 
 Building a **native mobile** app (iOS/Android/React Native)? Use the **`pubky-mobile`** skill.
 Running or self-hosting a homeserver, Nexus, or DNS? Use the **`pubky-infra`** skill.
+Need **facts out of the social graph** (followers, tags, threads)? Use the **`nexus-scout`** skill.

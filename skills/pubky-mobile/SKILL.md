@@ -1,6 +1,6 @@
 ---
 name: pubky-mobile
-description: "Use when building a native mobile app on Pubky for iOS or Android, via React Native (@synonymdev/react-native-pubky) or the UniFFI-generated Swift/Kotlin/Python bindings (pubky-core-ffi). Covers native module install/linking, key generation and recovery files, homeserver signUp/signIn/session lifecycle, pubky:// put/get/list/delete from mobile, the Result/isErr() and [error,data] response contracts, the documented FFI String Contracts (do not change output formats), the MANDATORY Android rustls TLS init at startup before any handshake, and integrating the Pubky Ring authenticator's pubkyauth:// and pubkyring:// deeplink authorization (capabilities, relay+secret, QR/animated-frame input, session revoke). NOT for web/server SDK usage (use pubky) and NOT for operating backend infrastructure (use pubky-infra)."
+description: "Use when building a native mobile app on Pubky for iOS or Android, via React Native (@synonymdev/react-native-pubky) or the UniFFI-generated Swift/Kotlin/Python bindings (pubky-core-ffi). Covers native module install/linking, key generation and recovery files, homeserver signUp/signIn/session lifecycle, pubky:// put/get/list/delete from mobile, the Result/isErr() and [error,data] response contracts, the documented FFI String Contracts (do not change output formats), the MANDATORY Android rustls TLS init at startup before any handshake, and integrating the Pubky Ring authenticator's pubkyauth:// and pubkyring:// deeplink authorization (capabilities, relay+secret, QR/animated-frame input, session revoke). NOT for web/server SDK usage (use pubky) and NOT for operating backend infrastructure (use pubky-infra), and NOT for querying the social graph with read-only Cypher (use nexus-scout)."
 metadata:
   author: pubky
   version: "0.1.0"
@@ -34,3 +34,4 @@ mobile-only gotchas that bite in production.
 
 For the shared protocol concepts, the `pubkyauth` flow, and the data spec, read the
 **`pubky`** skill's references — do not duplicate them here.
+Need **facts out of the social graph** (followers, tags, threads)? Use the **`nexus-scout`** skill.

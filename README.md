@@ -18,7 +18,7 @@ plugin marketplace.
 
 ## Skills
 
-One plugin (`pubky`), three skills split by **audience / task** — not by SDK language (every
+One plugin (`pubky`), four skills split by **audience / task** — not by SDK language (every
 SDK re-expresses the same protocol spine, so language is a reference-file dimension, not a
 skill boundary). Each skill auto-activates on its own triggers.
 
@@ -27,6 +27,7 @@ skill boundary). Each skill auto-activates on its own triggers.
 | **`pubky`** | Building web / server apps | `@synonymdev/pubky` (JS/WASM) + the `pubky` Rust crate, `pubky-app-specs`, the `pubkyauth` flow, `pubky://` `/pub` storage, consuming the Nexus read API, testnet |
 | **`pubky-mobile`** | Building native iOS / Android / React Native apps | `@synonymdev/react-native-pubky`, `pubky-core-ffi`, Pubky Ring deeplink auth, mobile-only safety gotchas |
 | **`pubky-infra`** | Operating / self-hosting | homeserver, Nexus indexer, `pubky-docker` stack, `homegate`, `pkdns`, relays |
+| **`nexus-scout`** | Asking questions *of* the social graph | read-only Cypher over the public [nexus-scout](https://nexus-scout.pubky.app) gateway: followers, tags, threads, reputation, follow distance. Vendored verbatim from upstream |
 
 ## Install
 
@@ -45,7 +46,7 @@ GitHub CLI (`gh skill`) installs straight into that tool's skills directory.
 
 Turn on auto-update so new commits flow in: `/plugin` → **Marketplaces** → `pubky-agent-skills`
 → **Enable auto-update** (off by default for third-party marketplaces). Claude Code then fetches
-updates at startup; run `/reload-plugins` to activate them. The three skills auto-activate on
+updates at startup; run `/reload-plugins` to activate them. The four skills auto-activate on
 their triggers; to invoke one manually it's namespaced, e.g. `/pubky:pubky-infra`.
 
 ### Codex CLI
@@ -102,6 +103,7 @@ updates with `gh skill update --all`.
 hermes skills install pubky/agent-skills/pubky
 hermes skills install pubky/agent-skills/pubky-mobile
 hermes skills install pubky/agent-skills/pubky-infra
+hermes skills install pubky/agent-skills/nexus-scout
 ```
 
 Update with `hermes skills update`.
@@ -131,6 +133,7 @@ marketplace source).
 gemini-extension.json             # Gemini CLI
 skills/<name>/SKILL.md            # thin, always-loaded: trigger + overview + routing table
 skills/<name>/references/*.md     # progressive-disclosure detail, loaded on demand
+skills/nexus-scout/SKILL.md       # EXCEPTION: byte copy of upstream's file — never hand-edit
 ```
 
 ## Future: MCP server
@@ -150,8 +153,15 @@ them after upstream changes, run this in Claude Code from the repo root:
 ```
 
 It fetches the tracked source repos, regenerates only the references whose sources changed
-(executing/verifying every code snippet against a local testnet), and opens a signed **draft
-PR**. For a full rebuild of all 21 references, run `/sync-references --initial`.
+(executing/verifying every code snippet against a local testnet), refreshes the vendored
+skills, and opens a signed **draft PR**. For a full rebuild of all 21 references, run
+`/sync-references --initial`.
+
+**`skills/nexus-scout/SKILL.md` is different: it is a byte copy**, not generated. It is authored
+upstream in [`pubky/nexus-scout`](https://github.com/pubky/nexus-scout) — which compiles it into
+the gateway binary and serves it at [`/llms.txt`](https://nexus-scout.pubky.app/llms.txt) — and
+refreshed here by `node maintenance/vendor-skills.mjs`. Editing it locally is pointless: the next
+sync overwrites it. Send corrections upstream.
 
 One-time prerequisite — a local Postgres 18 for the snippet testnet (no Docker needed):
 

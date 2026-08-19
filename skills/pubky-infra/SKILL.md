@@ -1,6 +1,6 @@
 ---
 name: pubky-infra
-description: "Use when running, deploying, configuring, or operating Pubky backend infrastructure rather than building an app: self-hosting a homeserver (Docker, admin API, config.toml, signup/invite tokens, enable/disable users, the homeserver-dashboard, Cloudflare-tunnel exposure, Umbrel vs standalone); operating the Nexus indexer (nexusd api/watcher/db subcommands, Neo4j + Redis, config.toml, the Migration Manager, OpenTelemetry/Signoz); spinning up the full local stack with pubky-docker compose profiles; gating signups with Homegate (SMS/Lightning/IP, PostgreSQL); running self-sovereign DNS (pkdns resolver + DoH, pkarr-relay, the Mainline DHT); or hosting http-relay for store-and-forward/auth flows. Includes operator/admin CLI workflows via pubky-cli. NOT for building apps that consume Pubky (use pubky or pubky-mobile)."
+description: "Use when running, deploying, configuring, or operating Pubky backend infrastructure rather than building an app: self-hosting a homeserver (Docker, admin API, config.toml, signup/invite tokens, enable/disable users, the homeserver-dashboard, Cloudflare-tunnel exposure, Umbrel vs standalone); operating the Nexus indexer (nexusd api/watcher/db subcommands, Neo4j + Redis, config.toml, the Migration Manager, OpenTelemetry/Signoz); spinning up the full local stack with pubky-docker compose profiles; gating signups with Homegate (SMS/Lightning/IP, PostgreSQL); running self-sovereign DNS (pkdns resolver + DoH, pkarr-relay, the Mainline DHT); or hosting http-relay for store-and-forward/auth flows. Includes operator/admin CLI workflows via pubky-cli. NOT for building apps that consume Pubky (use pubky or pubky-mobile), and NOT for querying the social graph with read-only Cypher (use nexus-scout)."
 metadata:
   author: pubky
   version: "0.1.0"
@@ -36,3 +36,4 @@ DNS), so this is **one** skill with per-component reference files.
 
 Building an app that **consumes** Pubky? Use the **`pubky`** (web/server) or **`pubky-mobile`**
 (native) skill instead.
+Querying the social graph rather than running it? Use the **`nexus-scout`** skill.

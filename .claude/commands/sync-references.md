@@ -43,6 +43,14 @@ connect to it; they never start their own. (First build is slow; it's cached aft
 it lists mode, in-scope count, and testnet state). If in-scope is empty on an incremental run,
 report "nothing to update" and stop (after stopping the testnet).
 
+## 3b. Refresh vendored skills
+`node maintenance/vendor-skills.mjs` — byte-copies each `lock.vendoredSkills` entry (today
+`skills/nexus-scout/SKILL.md`) from the first available source, rewriting only its YAML frontmatter.
+Idempotent, so it is safe to run every time and reports `unchanged` when upstream hasn't moved. It
+is **not** part of the workflow: a vendored skill is upstream's hand-tuned document and must never
+be LLM-rewritten (see `CLAUDE.md` §7). If it reports a substance-gate or relative-link failure, the
+fetch was bad or upstream changed shape — investigate, don't bypass.
+
 ## 4. Run the workflow
 Invoke the **Workflow** tool with `scriptPath: "maintenance/sync-references.workflow.js"` and
 `args: { "wfDir": "/tmp/sync-wf" }`. `plan-run` writes a *split* manifest there — a slim
@@ -67,8 +75,8 @@ row to the owning `SKILL.md` (keep it thin) and re-run verify.
 
 ## 8. Open a signed draft PR
 - Branch: `sync/references-<date-or-short-tag>` off `main` (never commit straight to `main`).
-- Stage only what the run produced: `skills/**`, `maintenance/sources.lock.json`,
-  `maintenance/provenance/**` (and any SKILL.md routing-row edits). Do **not** stage `/tmp/*` or the cache.
+- Stage only what the run produced: `skills/**` (including any vendored `SKILL.md` refresh),
+  `maintenance/sources.lock.json`, `maintenance/provenance/**` (and any SKILL.md routing-row edits). Do **not** stage `/tmp/*` or the cache.
 - Commit with a Conventional-Commit subject (`docs(references): …`, `< 72` chars). Body explains
   what changed and why. **GPG/SSH signing is on — let it fire; never pass `--no-gpg-sign`.**
   **Never add a `Co-Authored-By`, "Generated with", or any AI/tool attribution line.**
