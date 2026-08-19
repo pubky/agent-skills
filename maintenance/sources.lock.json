@@ -263,24 +263,11 @@
     "nexus-scout": {
       "url": "https://github.com/pubky/nexus-scout",
       "branch": "main",
-      "private": true,
-      "optional": true,
-      "note": "Private repo. Its SKILL.md is include_str!'d into the gateway binary and served at /llms.txt, so it cannot move here; we take a byte copy. Clone failures are non-fatal — the public endpoint fallback in vendoredSkills covers contributors without pubky-org access. lastSeenSha stays null on purpose: no reference file is generated from this repo, so nothing computes staleness from it — vendor-skills.mjs refreshes the copy unconditionally.",
+      "note": "Upstream home of skills/nexus-scout/SKILL.md. That file is include_str!'d into the gateway binary and served at /llms.txt, so it cannot move into this repo — we take a byte copy (see vendoredSkills). lastSeenSha stays null on purpose: no reference file is generated from this repo, so nothing computes staleness from it — vendor-skills.mjs refreshes the copy unconditionally.",
       "pathsOfInterest": [
         "SKILL.md",
         "README.md",
-        "docs/**"
-      ],
-      "lastSeenSha": null
-    },
-    "nexus-scout-pr": {
-      "url": "https://github.com/pubky/nexus-scout",
-      "branch": "implement-nexus-scout",
-      "private": true,
-      "optional": true,
-      "note": "TEMPORARY — the implementation lives on open PR #1; main holds only README + LICENSE. DELETE this entry (and its slot in vendoredSkills.from) once PR #1 merges into main. lastSeenSha stays null on purpose: no reference file is generated from this repo, so nothing computes staleness from it — vendor-skills.mjs refreshes the copy unconditionally.",
-      "pathsOfInterest": [
-        "SKILL.md",
+        "examples.md",
         "docs/**"
       ],
       "lastSeenSha": null
@@ -290,10 +277,6 @@
     "skills/nexus-scout/SKILL.md": {
       "note": "Byte copy of upstream's SKILL.md body — never hand-edit and never run it through the reference-generation workflow. Only the YAML frontmatter below is local, because upstream's description lacks the 'NOT for …' cross-reference clause that verify.mjs requires, and its 'Neo4j' wording collides with pubky-infra trigger vocab.",
       "from": [
-        {
-          "repo": "nexus-scout-pr",
-          "path": "SKILL.md"
-        },
         {
           "repo": "nexus-scout",
           "path": "SKILL.md"

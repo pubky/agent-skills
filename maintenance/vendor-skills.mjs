@@ -25,9 +25,9 @@ const lock = JSON.parse(readFileSync(join(ROOT, 'maintenance/sources.lock.json')
 const cacheDir = (lock.cacheDir || '~/.cache/pubky-agent-skills/upstream').replace(/^~/, process.env.HOME)
 
 // --- source resolution ------------------------------------------------------
-// Sources are tried in declared order: preferred git checkout first, public endpoint last. The
-// endpoint fallback is what lets a contributor without pubky-org access still produce the exact
-// same file, since the gateway serves the same bytes it compiles in.
+// Sources are tried in declared order: upstream checkout first, public endpoint last. The endpoint
+// fallback keeps the copy refreshable when the clone is missing or stale, and yields the exact same
+// file because the gateway serves the same bytes it compiles in.
 function fromGit(spec) {
   const clone = join(cacheDir, spec.repo)
   const file = join(clone, spec.path)

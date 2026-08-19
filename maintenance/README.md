@@ -79,9 +79,9 @@ the workflow's fact-check + consistency stages enforce the judgment ones.
 - It is hand-tuned against real agent failures, so running it through the research/draft/fact-check
   pipeline would paraphrase away the exact wording that makes it work.
 
-Mechanics: sources are tried in declared order (private repo checkout first, the public
-`/llms.txt` endpoint last, so a contributor without pubky-org access still gets the identical
-file). Upstream frontmatter is stripped and replaced with the local block in `sources.lock.json`,
+Mechanics: sources are tried in declared order — the upstream checkout first, the public
+`/llms.txt` endpoint last, so the copy still refreshes when the clone is missing or stale (the
+gateway serves the same bytes it compiles in, so both paths yield an identical file). Upstream frontmatter is stripped and replaced with the local block in `sources.lock.json`,
 which exists only to satisfy this repo's `NOT for …` cross-reference rule and to keep `neo4j` out
 of the trigger (it is `pubky-infra` vocab). Before writing, the body must pass `checkReference`
 and contain no relative markdown links — a bad fetch or an upstream shape change fails loudly
