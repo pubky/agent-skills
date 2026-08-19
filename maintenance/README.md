@@ -17,6 +17,7 @@ Run it with **`/sync-references`** (see `../.claude/commands/sync-references.md`
 | `lib.test.mjs` | Offline unit tests for `lib.mjs` (`node maintenance/lib.test.mjs`). |
 | `verify.mjs` | Deterministic, on-disk invariant checks (manifests, frontmatter, thinness budget, routing↔file bijection, "NOT for" cross-refs, disjoint triggers, **reference substance**, relative links **+ `#anchor` resolution**, canonical-copy, optional external-link check). Run after files are written. |
 | `vendor-skills.mjs` | Byte-copies upstream-authored `SKILL.md` files listed under `sources.lock.json` → `vendoredSkills`. **Not** part of the workflow — a vendored skill is upstream's hand-tuned document and must never be LLM-rewritten. Idempotent (no SHA bookkeeping); tries each declared source in order and falls back to a public endpoint. |
+| `vendor-skills.test.mjs` | Offline regression tests for the vendored-skill copier (`node maintenance/vendor-skills.test.mjs`), including stale and dirty checkout handling. |
 | `snippets/` | Snippet-verification templates + the shared-testnet manager. See `snippets/README.md`. |
 | `provenance/<skill>/<reference>.json` | Per-file provenance + `accept`/`substance` result + real word count, written after generation; makes the next incremental diff tractable and lets `plan-run` detect a bad last run. |
 
