@@ -34,22 +34,24 @@ done
 ```
 For incremental diffs you need history: when a repo is in scope and shallow, `git -C "$CACHE/$name" fetch --unshallow -q` (or fetch enough depth) so `plan-run.mjs` can diff `lastGeneratedSha..HEAD`.
 
+## 1b. Refresh vendored skills
+`node maintenance/vendor-skills.mjs` — byte-copies each `lock.vendoredSkills` entry (today
+`skills/nexus-scout/SKILL.md`) from the first available source, rewriting only its YAML frontmatter.
+Record whether it reports `created`/`updated` or `unchanged`. It is **not** part of the workflow: a
+vendored skill is upstream's hand-tuned document and must never be LLM-rewritten (see `CLAUDE.md`
+§7). If it reports a substance-gate or relative-link failure, the fetch was bad or upstream changed
+shape — investigate, don't bypass.
+
 ## 2. Start the shared testnet (one instance; fixed ports)
 `maintenance/snippets/testnet.sh start` — builds if needed, waits for readiness. Snippet agents
 connect to it; they never start their own. (First build is slow; it's cached after.)
 
 ## 3. Build the job manifest
 `node maintenance/plan-run.mjs $ARGUMENTS > /tmp/sync-manifest.json` (read the stderr summary —
-it lists mode, in-scope count, and testnet state). If in-scope is empty on an incremental run,
-report "nothing to update" and stop (after stopping the testnet).
-
-## 3b. Refresh vendored skills
-`node maintenance/vendor-skills.mjs` — byte-copies each `lock.vendoredSkills` entry (today
-`skills/nexus-scout/SKILL.md`) from the first available source, rewriting only its YAML frontmatter.
-Idempotent, so it is safe to run every time and reports `unchanged` when upstream hasn't moved. It
-is **not** part of the workflow: a vendored skill is upstream's hand-tuned document and must never
-be LLM-rewritten (see `CLAUDE.md` §7). If it reports a substance-gate or relative-link failure, the
-fetch was bad or upstream changed shape — investigate, don't bypass.
+it lists mode, in-scope count, and testnet state). If in-scope is empty on an incremental run, stop
+the testnet. If step 1b reported `unchanged`, report "nothing to update" and stop. If it created or
+updated a vendored skill, skip steps 4–5 and continue at step 6 so the vendored diff is verified and
+opened as a PR.
 
 ## 4. Run the workflow
 Invoke the **Workflow** tool with `scriptPath: "maintenance/sync-references.workflow.js"` and
@@ -83,4 +85,5 @@ row to the owning `SKILL.md` (keep it thin) and re-run verify.
 - `gh pr create --draft` (open as draft if `verify.mjs` had blocking failures). PR body = the
   workflow report: mode, repos fetched (old→new SHA), per-file table (snippet pass/fail, fact-check,
   guardrail violations, word count), the 7 invariant checks, files needing human attention, and
-  reconciliation proposals. Then summarize for the user and link the PR.
+  reconciliation proposals. For a vendor-only run that skipped the workflow, summarize the vendored
+  source, copier result, and invariant checks instead. Then summarize for the user and link the PR.
