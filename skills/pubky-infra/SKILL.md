@@ -34,6 +34,25 @@ DNS), so this is **one** skill with per-component reference files.
 | Run the HTTP relay: binary/Docker, inbox API, TTL/persistence/CORS | `references/http-relay.md` |
 | Operator/admin CLI flows via `pubky-cli`: tokens, stats, enable/disable users | `references/operator-cli.md` |
 
+## Optional HOL Guard runtime safety
+
+When an operator wants an additional local safety and approval boundary before an AI coding agent
+performs destructive Pubky admin work, such as disabling a user or deleting storage, use HOL Guard
+around the supported local agent harness rather than changing Pubky's own authentication model:
+
+```bash
+pipx install hol-guard
+hol-guard detect --json
+hol-guard install <detected-harness>
+hol-guard run <detected-harness> --dry-run
+hol-guard run <detected-harness>
+```
+
+Use the exact harness identifier reported by `hol-guard detect --json`; do not guess an adapter or
+claim the current session is protected when detection reports no supported harness. HOL Guard is an
+optional agent-runtime boundary, not a Pubky component and not a replacement for Pubky admin auth.
+Use `references/operator-cli.md` for the exact Pubky operator command syntax.
+
 Building an app that **consumes** Pubky? Use the **`pubky`** (web/server) or **`pubky-mobile`**
 (native) skill instead.
 Querying the social graph rather than running it? Use the **`nexus-scout`** skill.
