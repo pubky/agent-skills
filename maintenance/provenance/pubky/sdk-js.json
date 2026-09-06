@@ -9,7 +9,7 @@
       "sha": "c9981c6501456f9305918820017134af40d278c0"
     },
     {
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "sha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
     },
     {
@@ -24,17 +24,17 @@
   "provenance": [
     {
       "anchor": "Version drift — do NOT code against this",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/bindings/js/src/actors/signer.rs",
       "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/src/actors/signer.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/bindings/js/src/actors/signer.rs"
     },
     {
       "anchor": "Initialize the facade",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "examples/javascript/0-check-testnet.mjs",
       "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/examples/javascript/0-check-testnet.mjs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/examples/javascript/0-check-testnet.mjs"
     },
     {
       "anchor": "Sign up and sign in",
@@ -45,10 +45,10 @@
     },
     {
       "anchor": "Pagination",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/bindings/js/src/actors/storage/utils.rs",
       "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/src/actors/storage/utils.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/bindings/js/src/actors/storage/utils.rs"
     },
     {
       "anchor": "Metadata: exists and stats",

@@ -13,7 +13,7 @@
 set -euo pipefail
 
 CACHE_DIR="${CACHE_DIR:-$HOME/.cache/pubky-agent-skills/upstream}"
-CORE_DIR="$CACHE_DIR/pubky-core"
+CORE_DIR="$CACHE_DIR/pubky-homeserver"
 PIDFILE="${PIDFILE:-/tmp/pubky-testnet.pid}"
 LOGFILE="${LOGFILE:-/tmp/pubky-testnet.log}"
 export TEST_PUBKY_CONNECTION_STRING="${TEST_PUBKY_CONNECTION_STRING:-postgres://localhost:5432/postgres?pubky-test=true}"

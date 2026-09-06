@@ -3,15 +3,15 @@
   "description": "Source-of-truth for the /sync-references maintenance workflow. `repos` tracks each upstream source and its last-seen commit; `references` maps every skills/**/references/*.md file to the sources that feed it. A reference is regenerated iff any of its sources' current SHA differs from that reference's lastGeneratedSha[repo]. The reverse index (repo -> reference files) is derived in code, not stored. Do not hand-edit lastSeenSha / lastGeneratedSha; the workflow maintains them.",
   "cacheDir": "~/.cache/pubky-agent-skills/upstream",
   "repos": {
-    "pubky-core": {
-      "url": "https://github.com/pubky/pubky-core",
+    "pubky-homeserver": {
+      "url": "https://github.com/pubky/pubky-homeserver",
       "branch": "main",
       "lastSeenSha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811",
       "pathsOfInterest": [
         "README.md",
         "docs/AUTH.md",
-        "docs/DEV_TESTING_GUIDES.md",
-        "docs/migration-v0.10.md",
+        "docs/TESTING.md",
+        "docs/v0.10-migration/**",
         "examples/javascript/**",
         "examples/rust/**",
         "pubky-sdk/**",
@@ -222,7 +222,7 @@
     "docs.rs/pubky": {
       "kind": "docs",
       "url": "https://docs.rs/pubky",
-      "tracksRepo": "pubky-core",
+      "tracksRepo": "pubky-homeserver",
       "lastSeenSha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
     "nexus-swagger": {
@@ -235,7 +235,7 @@
     "npm:@synonymdev/pubky": {
       "kind": "registry",
       "url": "https://www.npmjs.com/package/@synonymdev/pubky",
-      "tracksRepo": "pubky-core",
+      "tracksRepo": "pubky-homeserver",
       "pinnedVersion": "0.9.3",
       "lastSeenSha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
     },
@@ -256,7 +256,7 @@
     "crate:pubky": {
       "kind": "registry",
       "url": "https://crates.io/crates/pubky",
-      "tracksRepo": "pubky-core",
+      "tracksRepo": "pubky-homeserver",
       "pinnedVersion": "0.9.3",
       "lastSeenSha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
@@ -314,7 +314,7 @@
           ]
         },
         {
-          "repo": "pubky-core",
+          "repo": "pubky-homeserver",
           "paths": [
             "README.md"
           ]
@@ -324,7 +324,7 @@
       "lastGeneratedSha": {
         "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
         "pubky-knowledge-base-v2": "c9981c6501456f9305918820017134af40d278c0",
-        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+        "pubky-homeserver": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
       }
     },
     "skills/pubky/references/auth.md": {
@@ -338,7 +338,7 @@
           ]
         },
         {
-          "repo": "pubky-core",
+          "repo": "pubky-homeserver",
           "paths": [
             "docs/AUTH.md"
           ]
@@ -347,7 +347,7 @@
       "linksTo": [],
       "lastGeneratedSha": {
         "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
-        "pubky-core": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
+        "pubky-homeserver": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
       }
     },
     "skills/pubky/references/app-specs.md": {
@@ -390,7 +390,7 @@
           ]
         },
         {
-          "repo": "pubky-core",
+          "repo": "pubky-homeserver",
           "paths": [
             "examples/javascript/**",
             "pubky-sdk/bindings/js/**"
@@ -411,9 +411,9 @@
       "linksTo": [],
       "lastGeneratedSha": {
         "pubky-knowledge-base-v2": "c9981c6501456f9305918820017134af40d278c0",
-        "pubky-core": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811",
         "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
-        "npm:@synonymdev/pubky": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
+        "npm:@synonymdev/pubky": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811",
+        "pubky-homeserver": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
       }
     },
     "skills/pubky/references/sdk-rust.md": {
@@ -427,7 +427,7 @@
           ]
         },
         {
-          "repo": "pubky-core",
+          "repo": "pubky-homeserver",
           "paths": [
             "examples/rust/**"
           ]
@@ -444,9 +444,9 @@
       "linksTo": [],
       "lastGeneratedSha": {
         "pubky-knowledge-base-v2": "c9981c6501456f9305918820017134af40d278c0",
-        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
         "docs.rs/pubky": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
-        "crate:pubky": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+        "crate:pubky": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+        "pubky-homeserver": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
       }
     },
     "skills/pubky/references/nexus-api.md": {
@@ -482,7 +482,7 @@
       "covers": "pubky-testnet; npm run testnet; scripting with pubky-cli for app-dev; pointer to the pubky-infra skill for the full self-hosted stack.",
       "sources": [
         {
-          "repo": "pubky-core",
+          "repo": "pubky-homeserver",
           "paths": [
             "docs/DEV_TESTING_GUIDES.md",
             "pubky-testnet/**",
@@ -498,8 +498,8 @@
       ],
       "linksTo": [],
       "lastGeneratedSha": {
-        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
-        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
+        "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
+        "pubky-homeserver": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
       }
     },
     "skills/pubky/references/reference-apps.md": {
@@ -582,7 +582,7 @@
           ]
         },
         {
-          "repo": "pubky-core",
+          "repo": "pubky-homeserver",
           "paths": [
             "README.md",
             "docs/**"
@@ -598,8 +598,8 @@
       "linksTo": [],
       "lastGeneratedSha": {
         "pubky-ai-kit": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
-        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
-        "pubky-app-specs": "031b5a2d534180664b0017b345365a4d3b9f6448"
+        "pubky-app-specs": "031b5a2d534180664b0017b345365a4d3b9f6448",
+        "pubky-homeserver": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
       }
     },
     "skills/pubky-mobile/references/react-native.md": {
@@ -662,7 +662,7 @@
           ]
         },
         {
-          "repo": "pubky-core",
+          "repo": "pubky-homeserver",
           "paths": [
             "docs/AUTH.md"
           ]
@@ -673,7 +673,7 @@
       ],
       "lastGeneratedSha": {
         "pubky-ring": "ce0e083145b0d7567dd81828e25ababcc49ddd28",
-        "pubky-core": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+        "pubky-homeserver": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
       }
     },
     "skills/pubky-mobile/references/concepts-pointer.md": {
@@ -692,7 +692,7 @@
       "covers": "Run via Docker/cargo; admin/client/metrics endpoints (admin API on :6288); config.toml; signup/invite tokens; enable/disable users; the homeserver-dashboard; Cloudflare-tunnel exposure; Umbrel vs standalone.",
       "sources": [
         {
-          "repo": "pubky-core",
+          "repo": "pubky-homeserver",
           "paths": [
             "pubky-homeserver/**"
           ]
@@ -719,10 +719,10 @@
       ],
       "linksTo": [],
       "lastGeneratedSha": {
-        "pubky-core": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811",
         "pubky-docker": "a5544e6247c1f7195ae116586a578d6a8a007a67",
         "homeserver-dashboard": "b3be93d8d2a9d93a9670983f28bed5fb380431af",
-        "umbrel-app-store": "d0b96adf0a217dd4f682d364100d9c460a9b9c7b"
+        "umbrel-app-store": "d0b96adf0a217dd4f682d364100d9c460a9b9c7b",
+        "pubky-homeserver": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
       }
     },
     "skills/pubky-infra/references/nexus-operations.md": {

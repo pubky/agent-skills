@@ -160,7 +160,7 @@ verbatim.
 
 The Android-only deps (`rustls-platform-verifier 0.7.0`, `jni 0.22.4`) are **version-pinned** so
 the verifier's `GLOBAL` static is one instance across the dependency graph. As of `pubky` 0.9.3
-the SDK's own ICANN client no longer uses the platform verifier (pubky-core#456), but pkarr's
+the SDK's own ICANN client no longer uses the platform verifier (pubky-homeserver#456), but pkarr's
 relay client still does — so this init stays required until pkarr#262 lands, after which
 `rustls_init.rs` and the Android-only deps can be removed. (FFI-side tracking:
 [pubky-core-ffi PR #24](https://github.com/pubky/pubky-core-ffi/pull/24).)

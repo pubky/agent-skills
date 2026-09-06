@@ -29,7 +29,7 @@ init`) **initializes the data dir** (writes `config` + keypair) and **exits with
 cargo run -- --data-dir=~/.pubky
 ```
 
-[`main.rs`](https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/src/main.rs) is the
+[`main.rs`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/src/main.rs) is the
 authoritative entrypoint and the only place to trust for CLI/startup:
 
 ```rust
@@ -99,7 +99,7 @@ internet.
 
 Defaults are embedded from `config.default.toml` and your `config.toml` is **deep-merged** on top.
 Sections (see the maintained
-[`config.sample.toml`](https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/config.sample.toml)
+[`config.sample.toml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/config.sample.toml)
 for the full annotated list — link, don't memorize):
 
 - `[general]` — `signup_mode`, `database_url` (Postgres URL), deprecated `user_storage_quota_mb`.
@@ -176,7 +176,7 @@ top level and is **not** under `AdminAuthLayer` — it uses **HTTP Basic auth** 
 instead (tests send `Authorization: Basic base64(admin:)`).
 
 Endpoint map (verified against `admin_server/app.rs`; the
-[OpenAPI spec](https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/openapi.yml) admin
+[OpenAPI spec](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/openapi.yml) admin
 server is tagged `localhost:6288` — link, don't hardcode shapes):
 
 | Method + path | Auth | Does |
@@ -351,7 +351,7 @@ The dashboard's `PLATFORM` env var selects the deployment flavor:
 [`pubky/umbrel-app-store`](https://github.com/pubky/umbrel-app-store) community store (add the store
 URL `https://github.com/pubky/umbrel-app-store`, then install). Manifest: id `pubky-homeserver`,
 version `0.9.1-17` (scheme `<homeserver-version>-<packaging-revision>`), port `8812`, repo
-`pubky/pubky-core`; `backupIgnore` excludes `homeserver.log`. Compose services:
+`pubky/pubky-homeserver`; `backupIgnore` excludes `homeserver.log`. Compose services:
 
 - `app_proxy` — Umbrel's proxy (`APP_HOST=pubky-homeserver_web_1`, `APP_PORT=8812`).
 - `postgres` — `postgres:17-alpine` (`POSTGRES_USER=pubky`, `POSTGRES_DB=pubky_homeserver`,
@@ -422,7 +422,7 @@ secrets are in [`signup-gating.md`](signup-gating.md).
 ## Upstream sources of truth
 
 - Homeserver crate + `config.sample.toml` + `openapi.yml`:
-  [pubky-core/pubky-homeserver](https://github.com/pubky/pubky-core/tree/main/pubky-homeserver)
+  [pubky-homeserver/pubky-homeserver](https://github.com/pubky/pubky-homeserver/tree/main/pubky-homeserver)
 - Full local stack: [pubky-docker](https://github.com/pubky/pubky-docker) ·
   [`local-stack.md`](local-stack.md)
 - Dashboard: [homeserver-dashboard](https://github.com/pubky/homeserver-dashboard)

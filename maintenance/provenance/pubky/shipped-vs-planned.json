@@ -9,7 +9,7 @@
       "sha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a"
     },
     {
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
     {
@@ -30,7 +30,7 @@
       "repo": "pubky/pubky-app-specs",
       "path": "README.md",
       "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
-      "url": "https://github.com/pubky/pubky-core/blob/main/docs/migration-v0.10.md"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/migration-v0.10.md"
     },
     {
       "anchor": "everything-is-v0--nexus-snippet",
@@ -41,7 +41,7 @@
     },
     {
       "anchor": "no-private-encrypted-or-guarded-storage",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/openapi.yml",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
       "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
@@ -55,10 +55,10 @@
     },
     {
       "anchor": "shipped-with-rough-edges",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/persistence/files/events/events_service.rs",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
-      "url": "https://github.com/pubky/pubky-core/issues/122"
+      "url": "https://github.com/pubky/pubky-homeserver/issues/122"
     }
   ],
   "snippet": {

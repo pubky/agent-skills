@@ -15,7 +15,7 @@ documented canonically elsewhere — do not expect it restated here:
 - **Capability-scoped sessions, the single-shared-cookie caveat, write-vs-Nexus-read split:**
   [`../../pubky/references/concepts.md`](../../pubky/references/concepts.md). Its
   [Stability and known limits](../../pubky/references/concepts.md#stability-and-known-limits)
-  section covers the single cookie ([pubky-core#122](https://github.com/pubky/pubky-core/issues/122))
+  section covers the single cookie ([pubky-homeserver#122](https://github.com/pubky/pubky-homeserver/issues/122))
   and the ~3-minute token window, and itself defers the full flow to `auth.md`.
 - **Method surface, `Result` handling, the `<z32>:<cookie>` session-secret format:**
   [`./react-native.md`](./react-native.md), [`./native-ffi.md`](./native-ffi.md).
@@ -25,10 +25,10 @@ documented canonically elsewhere — do not expect it restated here:
 [`pubky-ring/src/utils/inputParser.ts`](https://github.com/pubky/pubky-ring/blob/main/src/utils/inputParser.ts) ·
 [`@synonymdev/react-native-pubky`](https://www.npmjs.com/package/@synonymdev/react-native-pubky)
 ([README](https://github.com/pubky/react-native-pubky), [`src/index.tsx`](https://github.com/pubky/react-native-pubky/blob/main/src/index.tsx)) ·
-[pubky-core `docs/AUTH.md`](https://github.com/pubky/pubky-core/blob/main/docs/AUTH.md).
+[pubky-homeserver `docs/AUTH.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/AUTH.md).
 
 > **Drift warning.** Versions pinned at research time: `@synonymdev/react-native-pubky`
-> **0.13.0** (git `84ec77af`), pubky-ring git `ce0e083145b0`, pubky-core docs `ba6d69c1`. All
+> **0.13.0** (git `84ec77af`), pubky-ring git `ce0e083145b0`, pubky-homeserver docs `ba6d69c1`. All
 > are pre-1.0 / v0.x — deeplink param names and flow change. Trust your installed typings and
 > the linked sources over any table here.
 
@@ -107,7 +107,7 @@ Ring registers two custom URL schemes: **`pubkyring://`** and **`pubkyauth://`**
 
 **Auth** — `pubkyauth:///?relay={url}&secret={secret}&caps={caps}`. `relay` = HTTP relay base
 URL; `secret` = the 3rd-party app's client secret (`base64url` of 32 random bytes); `caps` =
-comma-separated capabilities. Example from pubky-core `AUTH.md`:
+comma-separated capabilities. Example from pubky-homeserver `AUTH.md`:
 
 ```text
 pubkyauth:///?relay=https://httprelay.pubky.app/inbox&caps=/pub/pubky.app/:rw,/pub/example.com/nested:rw&secret=mAa8kGmlrynGzQLteDVW6-WeUGnfvHTpEmbNerbWfPI
@@ -266,7 +266,7 @@ const homeserverRes = await getHomeserver(publicKey);
 — pass it or omit it. (Signup-token issuance is the homeserver operator's domain;
 [auth.md → Signup tokens](../../pubky/references/auth.md#signup-tokens) links it.)
 
-> **Single shared cookie** ([pubky-core#122](https://github.com/pubky/pubky-core/issues/122)):
+> **Single shared cookie** ([pubky-homeserver#122](https://github.com/pubky/pubky-homeserver/issues/122)):
 > signing into App B currently overwrites App A's session — plan re-auth UX around this until
 > the JWT/grant rework lands. Canonical:
 > [concepts.md → Stability and known limits](../../pubky/references/concepts.md#stability-and-known-limits).
