@@ -17,7 +17,7 @@ enable/disable users, and WebDAV entry deletion. For the `user`/`tools` SDK flow
 > `v0.0.1 Initial Release`), built against `pubky = 0.6.0-rc.6`, Rust **edition 2024**. The admin
 > command surface and the homeserver admin API are unstable. Treat the signatures below as a
 > snapshot — link the [README](https://github.com/pubky/pubky-cli/blob/main/README.md) and the
-> homeserver [`openapi.yml`](https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/openapi.yml)
+> homeserver [`openapi-admin.yml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/openapi-admin.yml)
 > for current shape rather than relying on these as stable.
 
 ## Install & run
@@ -223,7 +223,7 @@ openapi `entry_path` example shows a raw-z32 pubkey (`o1gg96ewuo…/pub/file.txt
 ## Coverage vs the full admin API
 
 The admin API exposes **more than the five CLI commands**. Per the homeserver
-[`openapi.yml`](https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/openapi.yml) (admin
+[`openapi.yml`](https://github.com/pubky/pubky-homeserver/blob/d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811/pubky-homeserver/openapi.yml) (admin
 routes declare `servers: http://localhost:6288`; all use security `adminPassword` **except `/dav`**,
 which uses `adminBasicAuth`):
 
@@ -242,7 +242,7 @@ set and the "run the admin API on :6288" context, see the sibling
 
 - [pubky-cli README](https://github.com/pubky/pubky-cli/blob/main/README.md) — canonical usage
   (admin + user + tools flows, env vars, shell completions)
-- [pubky-homeserver `openapi.yml`](https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/openapi.yml)
+- [pubky-homeserver `openapi-admin.yml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/openapi-admin.yml)
   — authoritative admin API routes/schemas (note: `.yml`, not `.yaml`)
 - [`pubky` SDK on docs.rs](https://docs.rs/pubky/0.6.0-rc.6/pubky/) — the SDK the `user`
   subcommands wrap

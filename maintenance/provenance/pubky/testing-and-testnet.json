@@ -5,7 +5,7 @@
   "generatedAt": "2026-06-29T11:38:23.320Z",
   "sourcesUsed": [
     {
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
     {
@@ -16,52 +16,52 @@
   "provenance": [
     {
       "anchor": "surface-1-rust-in-process-tests",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-testnet/README.md",
       "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-testnet/README.md"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md"
     },
     {
       "anchor": "surface-1-rust-in-process-tests",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-testnet/src/ephemeral_testnet.rs",
       "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-testnet/src/ephemeral_testnet.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/src/ephemeral_testnet.rs"
     },
     {
       "anchor": "surface-1-rust-in-process-tests",
-      "repo": "pubky/pubky-core",
-      "path": "examples/rust/1-testnet/main.rs",
+      "repo": "pubky/pubky-homeserver",
+      "path": "examples/rust/8-testnet/main.rs",
       "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/examples/rust/1-testnet/main.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/8-testnet/main.rs"
     },
     {
       "anchor": "postgresql-is-required",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "docs/DEV_TESTING_GUIDES.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/docs/DEV_TESTING_GUIDES.md"
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/docs/DEV_TESTING_GUIDES.md"
     },
     {
       "anchor": "surface-2-standalone-local-testnet",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-testnet/src/static_testnet.rs",
       "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-testnet/src/static_testnet.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/src/static_testnet.rs"
     },
     {
       "anchor": "surface-2-standalone-local-testnet",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/bindings/js/pkg/package.json",
       "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/pkg/package.json"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/bindings/js/pkg/package.json"
     },
     {
       "anchor": "surface-2-standalone-local-testnet",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "examples/javascript/0-check-testnet.mjs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/examples/javascript/0-check-testnet.mjs"
+      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/examples/javascript/0-check-testnet.mjs"
     },
     {
       "anchor": "surface-3-scripting-with-pubky-cli",
@@ -79,10 +79,10 @@
     },
     {
       "anchor": "writing-correct-tests",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "examples/javascript/README.md",
       "sha": "main",
-      "url": "https://github.com/pubky/pubky-core/blob/main/examples/javascript/README.md"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/examples/javascript/README.md"
     },
     {
       "anchor": "writing-correct-tests",

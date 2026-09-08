@@ -1,7 +1,7 @@
 # Advanced: E2E messaging (`pubky-noise`) and payments (`paykit`)
 
 Router, not a full guide: *when* to reach for two **external, experimental** crates layered **on
-top of** Pubky Core — `pubky-noise` (end-to-end encrypted messaging) and `paykit` (cross-app
+top of** the Pubky protocol — `pubky-noise` (end-to-end encrypted messaging) and `paykit` (cross-app
 payment metadata) — with the real API in their upstream READMEs. Neither is part of the core
 `pubky` SDK surface documented elsewhere in this skill. For the shared protocol model these build
 on (homeserver, `/pub` addressing, public-key string formats, PKARR, event streams) see

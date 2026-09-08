@@ -2,7 +2,7 @@
 
 [`pubky-docker`](https://github.com/pubky/pubky-docker) is a one-command Docker Compose
 orchestration for a **local** Pubky Social stack. It builds/runs the Pubky services —
-**Homeserver** ([pubky-core](https://github.com/pubky/pubky-core)), **Nexus**
+**Homeserver** ([pubky-homeserver](https://github.com/pubky/pubky-homeserver)), **Nexus**
 ([pubky-nexus](https://github.com/pubky/pubky-nexus)), **Homegate**
 ([homegate](https://github.com/pubky/homegate)), and **Pubky App**
 ([pubky-app](https://github.com/pubky/pubky-app), the `pubky-app` Compose service) — and pulls
@@ -74,7 +74,7 @@ All image references are overridable in `.env`. Defaults: `REGISTRY=synonymsoft`
 
 | Service | Image reference | Build context |
 | :-- | :-- | :-- |
-| homeserver | `${REGISTRY:-synonymsoft}/homeserver-${HOMESERVER_ENV:-testnet}:${HOMESERVER_TAG:-latest}` | `../pubky-core` |
+| homeserver | `${REGISTRY:-synonymsoft}/homeserver-${HOMESERVER_ENV:-testnet}:${HOMESERVER_TAG:-latest}` | `../pubky-homeserver` |
 | nexusd | `${REGISTRY:-synonymsoft}/pubky-nexus:${PUBKY_NEXUS_TAG:-latest}` | `../pubky-nexus` |
 | pubky-app | `${REGISTRY:-synonymsoft}/pubky-app-${NETWORK:-testnet}:${PUBKY_APP_TAG:-latest}` | `../pubky-app` |
 | homegate | `${REGISTRY:-synonymsoft}/homegate:${HOMEGATE_TAG:-latest}` | `../homegate` |
@@ -112,7 +112,7 @@ services whose checked-out commit changed, then runs
 `docker compose --profile backend [--profile pubky-app] up`.
 
 - **`.build-state`** records the last built `service commit` per Compose service, so unchanged
-  services skip rebuilds. Service→repo build map: homeserver←`pubky-core`, nexusd←`pubky-nexus`,
+  services skip rebuilds. Service→repo build map: homeserver←`pubky-homeserver`, nexusd←`pubky-nexus`,
   homegate←`homegate`, pubky-app←`pubky-app`.
 - For existing repos the script **refuses to change refs when the working tree is dirty**
   (`git status --porcelain` non-empty) — commit, stash, or clean first.
@@ -123,7 +123,7 @@ build contexts:
 ```text
 your_working_directory/
 ├── pubky-docker/
-├── pubky-core/
+├── pubky-homeserver/
 ├── pubky-nexus/
 ├── homegate/
 └── pubky-app/
@@ -227,7 +227,7 @@ For per-component depth, read the sibling references rather than duplicating her
 
 Upstream sources: [pubky-docker README](https://github.com/pubky/pubky-docker/blob/main/Readme.md) ·
 [synonymsoft registry](https://hub.docker.com/u/synonymsoft) ·
-[pubky-core](https://github.com/pubky/pubky-core) ·
+[pubky-homeserver](https://github.com/pubky/pubky-homeserver) ·
 [pubky-nexus](https://github.com/pubky/pubky-nexus) ·
 [homegate](https://github.com/pubky/homegate) ·
 [pubky-app](https://github.com/pubky/pubky-app).

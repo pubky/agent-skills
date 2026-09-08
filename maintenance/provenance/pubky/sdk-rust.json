@@ -9,7 +9,7 @@
       "sha": "c9981c6501456f9305918820017134af40d278c0"
     },
     {
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
     {
@@ -24,7 +24,7 @@
   "provenance": [
     {
       "anchor": "Version drift (signin / start_auth_flow)",
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "path": "examples/rust/4-storage/write.rs",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
@@ -54,7 +54,7 @@
     },
     {
       "anchor": "Error handling",
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "path": "pubky-client/src/errors.rs",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
       "url": "https://docs.rs/pubky/0.9.3/pubky/errors/enum.Error.html"
@@ -86,25 +86,25 @@
     },
     {
       "anchor": "Escape hatch: raw requests",
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "path": "examples/rust/5-request/main.rs",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
     {
       "anchor": "Crate map (PublicKey pubky-prefix Display)",
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "path": "pubky-common/src/keys.rs",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
     {
       "anchor": "Crate map (examples directory listing)",
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "path": "examples/rust",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     },
     {
       "anchor": "Testnet roundtrip pointer",
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "path": "examples/rust/1-testnet/main.rs",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     }

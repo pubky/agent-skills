@@ -29,7 +29,7 @@ deliberately. Derived from the repo `CLAUDE.md` and the pubky-knowledge-base `.a
    `publicKey.z32()` → raw z-base-32 (hostnames, DNS, headers, URL params, DB keys). Don't mix
    them up; flag misuse.
 6. **Prefer CI-verified snippets.** Lift code verbatim from `pubky-knowledge-base-v2/snippets/*`
-   (CI type-checked/clippy'd) and runnable programs from `pubky-core/examples/*` where they
+   (CI type-checked/clippy'd) and runnable programs from `pubky-homeserver/examples/*` where they
    exist; attribute the source. Author new snippets only for genuine gaps.
 
 ## Shipped-vs-planned guardrail (authoritative)

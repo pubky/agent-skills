@@ -14,7 +14,7 @@ signup-token **issuance/admin** (operator side) in
 
 > **Version anchor.** This page documents the **shipped 0.9.3** surface — `pubky` `=0.9.3`
 > (Rust), `@synonymdev/pubky` `0.9.3` (JS), `@synonymdev/react-native-pubky` `0.13.0` (RN) —
-> the CI-verified KB snippets. The `pubky-core` `main` checkout is a **newer, unreleased**
+> the CI-verified KB snippets. The `pubky-homeserver` `main` checkout is a **newer, unreleased**
 > generation with a grant-based rework (`startGrantAuthFlow`, `GrantSession`/`CookieSession`
 > split, `approveAuthRequest`) that marks the cookie flow `@deprecated`. That rework is the
 > *planned* fix for the single-cookie bug (below) — **do not** treat its API as available. Use
@@ -49,7 +49,7 @@ The `AuthToken` is a **bearer token**, which is exactly why the relay only ever 
 encrypted blob — a relay (or a network observer) cannot capture a usable token.
 
 Full protocol writeup:
-[`pubky-core/docs/AUTH.md`](https://github.com/pubky/pubky-core/blob/main/docs/AUTH.md).
+[`pubky-homeserver/docs/AUTH.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/AUTH.md).
 
 ### Third-party app flow (Rust)
 
@@ -158,7 +158,7 @@ holding a **write** capability that covers the path.
 - `Action` enum: `Read` / `Write` / `Unknown(char)`.
 
 Field reference (drift-prone):
-[`pubky-common/src/capabilities.rs`](https://github.com/pubky/pubky-core/blob/main/pubky-common/src/capabilities.rs).
+[`pubky-common/src/capabilities.rs`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-common/src/capabilities.rs).
 
 ## `pubkyauth://` URLs
 
@@ -362,7 +362,7 @@ only) that reads + decrypts the file and returns a signer.
 ## Authenticator side (rare — Pubky Ring's job)
 
 Most apps never implement this; it's the authenticator that scans the QR, shows consent, and
-approves. The names below are from **`pubky-core` HEAD examples**, *not* the 0.9.3-pinned CI
+approves. The names below are from **`pubky-homeserver` examples at `d6c5afc`**, *not* the 0.9.3-pinned CI
 snippets — drift-prone; verify against the published crate before shipping. The authenticator
 parses the URL to a typed deep link (`SigninDeepLink` / `SignupDeepLink`), reads requested
 capabilities for consent, decrypts its recovery file, builds a signer, then approves
@@ -388,9 +388,9 @@ let signer = Pubky::new()?.signer(keypair);
 signer.approve_auth(&url).await?;
 ```
 
-<sub>HEAD example (NOT 0.9.3-pinned — verify before use). Source: [`pubky-core/examples/rust/3-auth_flow/authenticator.rs`](https://github.com/pubky/pubky-core/blob/main/examples/rust/3-auth_flow/authenticator.rs)</sub>
+<sub>Snapshot at `d6c5afc` (NOT 0.9.3-pinned — verify before use). Source: [`pubky-homeserver/examples/rust/3-auth_flow/authenticator.rs`](https://github.com/pubky/pubky-homeserver/blob/d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811/examples/rust/3-auth_flow/authenticator.rs)</sub>
 
-JS authenticator equivalent at HEAD: `signer.approveAuthRequest(flow.authorizationUrl)`.
+JS authenticator equivalent at that snapshot: `signer.approveAuthRequest(flow.authorizationUrl)`.
 
 ## AuthToken wire format
 
@@ -409,7 +409,7 @@ capabilities = *( capability "," ) capability   ; "<scope>:<actions>", actions r
 ```
 
 Confirmed in code
-([`auth_token.rs`](https://github.com/pubky/pubky-core/blob/main/pubky-common/src/auth/auth_token.rs)):
+([`auth_token.rs`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-common/src/auth/auth_token.rs)):
 
 - `CURRENT_VERSION = 0` (`u8`); verification checks the version byte at **index 74** is
   `<= CURRENT_VERSION`.
@@ -425,7 +425,7 @@ These are canonical in
 [`./concepts.md#stability-and-known-limits`](./concepts.md#stability-and-known-limits) — summary
 only:
 
-- **Single auth cookie** ([pubky-core#122](https://github.com/pubky/pubky-core/issues/122)): all
+- **Single auth cookie** ([pubky-homeserver#122](https://github.com/pubky/pubky-homeserver/issues/122)): all
   sessions currently share **one** authentication cookie, so signing into App B overwrites App
   A's session. A JWT / grant-based session rework is in progress (the HEAD grant API noted at the
   top is that fix — **not yet shipped**).

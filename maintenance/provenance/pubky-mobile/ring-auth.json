@@ -9,7 +9,7 @@
       "sha": "ce0e083145b0d7567dd81828e25ababcc49ddd28"
     },
     {
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
     }
   ],
@@ -44,10 +44,10 @@
     },
     {
       "anchor": "deeplink-schemes-and-the-single-parser",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "docs/AUTH.md",
       "sha": "ba6d69c117b9",
-      "url": "https://github.com/pubky/pubky-core/blob/ba6d69c117b9/docs/AUTH.md#L59-L63"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b9/docs/AUTH.md#L59-L63"
     },
     {
       "anchor": "deeplink-schemes-and-the-single-parser",
@@ -65,17 +65,17 @@
     },
     {
       "anchor": "capabilities-ring-view",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "docs/AUTH.md",
       "sha": "ba6d69c117b9",
-      "url": "https://github.com/pubky/pubky-core/blob/ba6d69c117b9/docs/AUTH.md#L87-L94"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b9/docs/AUTH.md#L87-L94"
     },
     {
       "anchor": "relay-secret-summary",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "docs/AUTH.md",
       "sha": "ba6d69c117b9",
-      "url": "https://github.com/pubky/pubky-core/blob/ba6d69c117b9/docs/AUTH.md#L48-L73"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b9/docs/AUTH.md#L48-L73"
     },
     {
       "anchor": "x-callback-return-inter-app",

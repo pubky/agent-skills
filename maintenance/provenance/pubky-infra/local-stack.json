@@ -61,10 +61,10 @@
     },
     {
       "anchor": "ports-and-components",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-common/src/constants.rs",
       "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
-      "url": "https://github.com/pubky/pubky-core/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/pubky-common/src/constants.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/pubky-common/src/constants.rs"
     },
     {
       "anchor": "ports-and-components",

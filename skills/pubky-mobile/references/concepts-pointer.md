@@ -10,7 +10,7 @@ Two SDKs sit over the same protocol spine:
   `@synonymdev/result`), a thin JS wrapper over the native bindings, so its function names mirror
   the FFI exports.
 - **UniFFI bindings** — `pubky-core-ffi` (crate `pubkycore` v0.3.1, wrapping `pubky` 0.9.3;
-  "Pubky Core Mobile SDK", emits Swift / Kotlin / Python).
+  "Pubky mobile SDK", emits Swift / Kotlin / Python).
 
 Functions are declared in Rust `snake_case` (`sign_up`, `delete_file`, `start_auth_flow`);
 UniFFI renders them **lowerCamelCase** (`signUp`, `deleteFile`, `startAuthFlow`) in Swift/Kotlin

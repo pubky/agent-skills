@@ -4,7 +4,7 @@
 //
 //   node maintenance/plan-run.mjs --initial                          > /tmp/manifest.json
 //   node maintenance/plan-run.mjs                                    > /tmp/manifest.json  # incremental
-//   node maintenance/plan-run.mjs --repos pubky-core,pubky-nexus     > /tmp/manifest.json
+//   node maintenance/plan-run.mjs --repos pubky-homeserver,pubky-nexus     > /tmp/manifest.json
 //   node maintenance/plan-run.mjs --only skills/pubky/references/concepts.md,...  > /tmp/manifest.json
 //
 // Reads current SHAs from clones under cacheDir; clones must already exist (the command clones).

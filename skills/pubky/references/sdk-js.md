@@ -12,7 +12,7 @@ in [`./testing-and-testnet.md`](./testing-and-testnet.md). The Rust sibling SDK 
 the published TypeScript declarations
 ([`pubky.d.ts` @ 0.9.3](https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts)); package page on
 [npm](https://www.npmjs.com/package/@synonymdev/pubky). Runnable programs:
-[`pubky-core/examples/javascript`](https://github.com/pubky/pubky-core/tree/main/examples/javascript)
+[`pubky-homeserver/examples/javascript`](https://github.com/pubky/pubky-homeserver/tree/main/examples/javascript)
 (track `main`/HEAD — see the drift note). CI type-checked snippets:
 [`pubky-knowledge-base-v2/snippets/js/src`](https://github.com/pubky/pubky-knowledge-base-v2/tree/main/snippets/js/src).
 When a signature here looks stale, trust the published `.d.ts` for the version you installed.
@@ -21,7 +21,7 @@ When a signature here looks stale, trust the published `.d.ts` for the version y
 > @synonymdev/pubky` resolves to today and what this page is anchored on. Pubky is pre-1.0;
 > treat APIs as **unstable**.
 
-> **Version drift — do NOT code against this.** The `pubky-core` `main` checkout (binding source,
+> **Version drift — do NOT code against this.** The `pubky-homeserver` `main` checkout (binding source,
 > `examples/javascript/*.mjs`, `pkg/README.md`) is a dev HEAD **ahead of 0.9.3** with a different,
 > **unpublished** API: (a) `signer.signup(homeserver, token?)` returns `Promise<void>` and you
 > must then call `signer.signin(clientId)`; (b) `signin(clientId)` / `signinBlocking(clientId)`

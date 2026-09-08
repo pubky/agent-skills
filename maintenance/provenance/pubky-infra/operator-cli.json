@@ -60,11 +60,11 @@
       "url": "https://github.com/pubky/pubky-cli/blob/main/tests/integration.rs"
     },
     {
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/openapi.yml",
       "sha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811",
       "anchor": "coverage-vs-the-full-admin-api",
-      "url": "https://github.com/pubky/pubky-core/blob/main/pubky-homeserver/openapi.yml"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811/pubky-homeserver/openapi.yml"
     },
     {
       "repo": "pubky/agent-skills",
