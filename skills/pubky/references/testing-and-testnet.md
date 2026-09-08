@@ -13,7 +13,7 @@ For operating the **full self-hosted backend stack** (homeserver + Nexus + DNS i
 a throwaway test net — see [Full self-hosted stack](#full-self-hosted-stack) below.
 
 Upstream (authoritative, drift-prone — link, don't memorize):
-[`pubky-testnet` README](https://github.com/pubky/pubky-core/blob/main/pubky-testnet/README.md) ·
+[`pubky-testnet` README](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md) ·
 [docs.rs/pubky-testnet](https://docs.rs/pubky-testnet).
 
 ## Surface 1: Rust in-process tests
@@ -47,7 +47,7 @@ async fn my_test() {
 }
 ```
 
-<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-core/blob/main/pubky-testnet/README.md)</sub>
+<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md)</sub>
 
 The `#[pubky_testnet::test]` macro drops the ephemeral Postgres database(s) when the test
 finishes **or panics** — keep it on every test.
@@ -110,7 +110,7 @@ async fn main() -> anyhow::Result<()> {
 }
 ```
 
-<sub>Source: [`examples/rust/1-testnet/main.rs`](https://github.com/pubky/pubky-core/blob/main/examples/rust/1-testnet/main.rs)</sub>
+<sub>Source: [`examples/rust/8-testnet/main.rs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/8-testnet/main.rs)</sub>
 
 ## PostgreSQL is required
 
@@ -138,7 +138,7 @@ async fn main() {
 }
 ```
 
-<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-core/blob/main/pubky-testnet/README.md)</sub>
+<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md)</sub>
 
 Each `.with_docker_postgres()` starts a **separate** container. For a test suite, start **one**
 container with `DockerPostgres::shared()` (returns `&'static DockerPostgres`) and pass its
@@ -161,14 +161,14 @@ async fn test_one() {
 }
 ```
 
-<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-core/blob/main/pubky-testnet/README.md)</sub>
+<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md)</sub>
 
 **(B) External Postgres.** Without `docker-postgres`, the testnet defaults to
 `postgres://localhost:5432/postgres?pubky-test=true`. The `?pubky-test=true` query parameter
 tells the homeserver (compiled with the `testing` feature) to create an **ephemeral test
 database** that is dropped after the test. Override the connection via the
 `TEST_PUBKY_CONNECTION_STRING` env var or `.postgres(ConnectionString::new(...))`.
-[`docs/DEV_TESTING_GUIDES.md`](https://github.com/pubky/pubky-core/blob/main/docs/DEV_TESTING_GUIDES.md)
+[`docs/DEV_TESTING_GUIDES.md`](https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/docs/DEV_TESTING_GUIDES.md)
 gives the canonical local-Postgres one-liner (auto-creates the `pubky_homeserver` DB):
 
 ```bash
@@ -205,7 +205,7 @@ JS `PublicKey.from(...)` takes the display form; `pubky-cli signup <homeserver-p
 bare z32 form.
 
 **`npm run testnet`** is defined in the in-repo JS SDK package
-([`pubky-sdk/bindings/js/pkg/package.json`](https://github.com/pubky/pubky-core/blob/main/pubky-sdk/bindings/js/pkg/package.json))
+([`pubky-sdk/bindings/js/pkg/package.json`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/bindings/js/pkg/package.json))
 as exactly `"cargo run -p pubky-testnet"` — a thin alias for the Rust binary. It therefore
 **requires the Rust toolchain** (and Postgres/Docker per the DB requirement above); it is not a
 pure-JS server. Run it from the SDK package dir and wait for `Testnet running` before pointing
@@ -213,7 +213,7 @@ examples at it. (In-repo package is `@synonymdev/pubky` 0.9.0; the published npm
 ahead — the JS snippet below was verified against 0.9.3.)
 
 **JS examples** live in
-[`examples/javascript/*.mjs`](https://github.com/pubky/pubky-core/tree/main/examples/javascript)
+[`examples/javascript/*.mjs`](https://github.com/pubky/pubky-homeserver/tree/ba6d69c117b927e665fa6dd6b79c0deceafceb87/examples/javascript)
 (Node 20+). Setup: build the local SDK (`cd pubky-sdk/bindings/js/pkg && npm install && npm run
 build`), then `cd examples/javascript && npm install` (they depend on the local
 `@synonymdev/pubky` via `file:../../pubky-sdk/bindings/js/pkg`). Scripts taking `--testnet`
@@ -246,7 +246,7 @@ await session.storage.putText(path, "hi");
 const roundtrip = await session.storage.getText(path);
 ```
 
-<sub>Source: [`examples/javascript/0-check-testnet.mjs`](https://github.com/pubky/pubky-core/blob/main/examples/javascript/0-check-testnet.mjs)</sub>
+<sub>Source: [`examples/javascript/0-check-testnet.mjs`](https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/examples/javascript/0-check-testnet.mjs)</sub>
 
 > The upstream example calls `signer.signin("my-cool-app.example")`, but the published 0.9.x JS
 > SDK declares `signin(): Promise<Session>` (zero args, returns a root-capability session). The
@@ -313,7 +313,7 @@ remaining env vars (PKARR bootstrap/relay/timeout overrides, admin password) are
 
 > **Version skew — flag this when recommending pubky-cli.** `pubky-cli` is itself pre-release
 > (`0.1.0-rc.1`) and pins `pubky = "0.6.0-rc.6"` / `pubky-testnet = "0.6.0-rc.6exp"` —
-> markedly **older** than pubky-core's current `0.9.0` SDK/testnet. Its SDK behavior and flags
+> markedly **older** than pubky-homeserver's current `0.9.0` SDK/testnet. Its SDK behavior and flags
 > may lag the current `pubky` crate; do not assume parity with 0.9.x semantics.
 
 ## Writing correct tests
@@ -348,11 +348,11 @@ admin/operator usage of `pubky-cli` lives in `pubky-infra` to keep triggers disj
 
 ## Upstream references
 
-- `pubky-testnet`: [README](https://github.com/pubky/pubky-core/blob/main/pubky-testnet/README.md) ·
+- `pubky-testnet`: [README](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md) ·
   [docs.rs](https://docs.rs/pubky-testnet)
-- Examples: [JS](https://github.com/pubky/pubky-core/tree/main/examples/javascript) ·
-  [Rust](https://github.com/pubky/pubky-core/tree/main/examples/rust)
+- Examples: [JS](https://github.com/pubky/pubky-homeserver/tree/main/examples/javascript) ·
+  [Rust](https://github.com/pubky/pubky-homeserver/tree/main/examples/rust)
 - Postgres / test-DB notes:
-  [`docs/DEV_TESTING_GUIDES.md`](https://github.com/pubky/pubky-core/blob/main/docs/DEV_TESTING_GUIDES.md)
+  [`docs/DEV_TESTING_GUIDES.md`](https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/docs/DEV_TESTING_GUIDES.md)
 - `pubky-cli`: [repo](https://github.com/pubky/pubky-cli) ·
   [crates.io](https://crates.io/crates/pubky-cli)

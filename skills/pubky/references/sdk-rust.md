@@ -11,7 +11,7 @@ are in [`./testing-and-testnet.md`](./testing-and-testnet.md).
 — pin to your installed version ([0.9.3](https://docs.rs/pubky/0.9.3/pubky/)) or follow
 [floating-latest](https://docs.rs/pubky); version source of truth is
 [crates.io](https://crates.io/crates/pubky). Runnable programs:
-[`pubky-core/examples/rust`](https://github.com/pubky/pubky-core/tree/main/examples/rust)
+[`pubky-homeserver/examples/rust`](https://github.com/pubky/pubky-homeserver/tree/main/examples/rust)
 (`keygen`, `0-logging`, `1-testnet`, `2-signup`, `3-auth_flow`, `4-storage`, `5-request`,
 `6-auth_flow_signup`, `7-events_stream`); CI-verified snippets:
 [`pubky-knowledge-base-v2/snippets/rust`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/rust/src/lib.rs).
@@ -20,7 +20,7 @@ When a signature here looks stale, trust docs.rs for the version you installed.
 > **Version:** latest published is **0.9.3** (2026-06-24) — what `cargo add pubky` resolves to
 > today and what this page is anchored on. Pubky is pre-1.0; treat APIs as **unstable**.
 
-> **Version drift.** The `pubky-core` examples on `main` track the *next* (unreleased) release,
+> **Version drift.** The `pubky-homeserver` examples on `main` track the *next* (unreleased) release,
 > not 0.9.3. Two breaking changes are on `main` but **not** in 0.9.3: `signer.signin(...)` takes
 > a required `ClientId` (0.9.3 `signin()` takes **no** argument), and `start_auth_flow` was
 > renamed `start_cookie_auth_flow` (0.9.3 still uses `start_auth_flow`). Trust the 0.9.3 surface

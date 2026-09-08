@@ -1,4 +1,4 @@
-# Pubky core concepts
+# Pubky protocol concepts
 
 > **CANONICAL.** Single source of truth for this material. The `pubky-mobile` and `pubky-infra` skills link here — never copy.
 
@@ -7,14 +7,14 @@ apps possible. It pairs [PKARR](#pkarr-resolution) — a public-key-based, censo
 alternative to DNS — with ordinary web tech, so users own their identity and data while
 developers get web-app availability without operating a central database.
 
-Pubky Core has three parts:
+Pubky includes the protocol and its implementations:
 
 1. **The open protocol spec** — public-key auth, capability-based authorization, key/value
    storage semantics, homeserver discovery via PKARR, and a RESTful API.
-2. **The homeserver implementation** — hosts one user's data per public key, exposes the RESTful
+2. **The Pubky Homeserver implementation** — hosts one user's data per public key, exposes the RESTful
    HTTP API, manages auth/sessions, publishes its own PKARR record, and stores files separately
    from its PostgreSQL-backed metadata.
-3. **The SDKs** — Rust (native), JavaScript/WASM, and iOS/Android native bindings.
+3. **The Pubky SDKs** — Rust (native), JavaScript/WASM, and iOS/Android native bindings.
 
 ## The one mental model
 
@@ -65,7 +65,7 @@ let recovery_bytes = create_recovery_file(&keypair, &passphrase);
 std::fs::write(&output_path, &recovery_bytes)?;
 ```
 
-<sub>Source: [`pubky-core/examples/rust/keygen.rs`](https://github.com/pubky/pubky-core/blob/main/examples/rust/keygen.rs)</sub>
+<sub>Source: [`pubky-homeserver/examples/rust/keygen.rs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/keygen.rs)</sub>
 
 ### Public-key string formats
 
@@ -352,7 +352,7 @@ into a 3rd-party app) is a known security risk and should only happen on trusted
 - **Pre-1.0 churn:** the `/pub` path layout is not stabilized, the Nexus `/v0` API is
   breaking-change-prone, and app-specs are v0.x. PKARR DHT records are ephemeral (republished)
   and DHT reads are heavily cached / not real-time.
-- **Single session cookie** ([pubky-core#122](https://github.com/pubky/pubky-core/issues/122)):
+- **Single session cookie** ([pubky-homeserver#122](https://github.com/pubky/pubky-homeserver/issues/122)):
   all sessions currently share one auth cookie, so signing into App B overwrites App A's session;
   a JWT-based session-management rework is in progress.
 
@@ -361,8 +361,8 @@ into a 3rd-party app) is a known security risk and should only happen on trusted
 - **Rust SDK API** (authoritative, drift-prone; currently v0.9.3): [docs.rs/pubky](https://docs.rs/pubky)
 - **JS/WASM SDK:** [`@synonymdev/pubky`](https://www.npmjs.com/package/@synonymdev/pubky) ·
   **React Native binding:** [`@synonymdev/react-native-pubky`](https://www.npmjs.com/package/@synonymdev/react-native-pubky)
-- **Pubky Core docs** (protocol / homeserver / API): [pubky.github.io/pubky-core](https://pubky.github.io/pubky-core/) ·
-  homeserver implementation + config: [pubky-core/pubky-homeserver](https://github.com/pubky/pubky-core/tree/main/pubky-homeserver)
+- **Pubky protocol docs** (protocol / homeserver / API): [Developer guide](https://pubky.org/explore/pubky-protocol/getting-started/) ·
+  homeserver implementation + config: [Pubky Homeserver](https://github.com/pubky/pubky-homeserver/tree/main/pubky-homeserver)
 - **PKARR / DHT:** [pkarr](https://github.com/pubky/pkarr) ·
   [pkdns](https://github.com/pubky/pkdns) · [mainline](https://github.com/pubky/mainline)
 - **Nexus read API** (Swagger, source of truth): <https://nexus.pubky.app/swagger-ui/>

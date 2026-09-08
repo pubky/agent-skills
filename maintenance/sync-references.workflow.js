@@ -376,7 +376,7 @@ const perFile = await pipeline(
     (f.diffHunks ? `INCREMENTAL UPDATE — focus on what these upstream diff hunks changed:\n${f.diffHunks}\n\n` : '') +
     `AUTHORING RULES:\n${RULES}\n\n` +
     `Extract every fact, API signature, and code snippet you will need, each with exact provenance (repo, path, url, line range). ` +
-    `PREFER lifting code snippets verbatim from pubky-knowledge-base-v2/snippets/* (CI-verified) and runnable programs from pubky-core/examples/*; tag those snippet claims with their source. ` +
+    `PREFER lifting code snippets verbatim from pubky-knowledge-base-v2/snippets/* (CI-verified) and runnable programs from pubky-homeserver/examples/*; tag those snippet claims with their source. ` +
     `For snippet claims set lang and put the code in 'code'. Capture open questions for the fact-checker.`,
     { schema: CLAIMS_SCHEMA, phase: 'Research', label: `research:${f.path.split('/').pop()}` }
   ).then(r => ({ f, claims: r })),

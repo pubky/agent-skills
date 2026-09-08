@@ -34,14 +34,14 @@ as non-existent when writing code.
 Every layer is pre-1.0 and changes without long-term compatibility guarantees. Do not hardcode
 shapes, paths, or API surfaces; isolate them behind your own adapters and pin versions.
 
-- **SDK / pubky-core — 0.x.** The Rust workspace and the JS package
+- **Pubky SDK / Pubky Homeserver — 0.x.** The Rust workspace and the JS package
   ([`@synonymdev/pubky`](https://www.npmjs.com/package/@synonymdev/pubky)) are both still in the
   `0.9.x` range. The churn is real, not theoretical: the v0.9 → v0.10 migration **renamed core
   auth APIs** (e.g. `PubkyAuthFlow` → `PubkyCookieAuthFlow`, `startAuthFlow` →
   `startCookieAuthFlow`, added `-Cookie` / `_cookie` variants of signup/signin) and **tightened
   capability path matching so a trailing slash is now significant**. SDK-specific detail belongs
   in [`sdk-rust.md`](sdk-rust.md) / [`sdk-js.md`](sdk-js.md); see the upstream
-  [v0.10 migration guide](https://github.com/pubky/pubky-core/blob/main/docs/migration-v0.10.md)
+  [v0.10 migration guide](https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/README.md)
   for proof of the breakage. **Stable signal:** a 1.0 release.
 - **pubky-app-specs — v0.x draft (currently `0.5.x`).** The README states it plainly: *"this
   specification is in an early development phase and is evolving quickly … Consider this a v0
@@ -120,7 +120,7 @@ link, don't restate:
 - **PostgreSQL-backed homeservers — shipped.** PostgreSQL holds homeserver metadata only; user
   file content lives in a separate filesystem under `/pub/`. **Apps never connect to PostgreSQL —
   they see only the file API.** Detail: [`concepts.md`](concepts.md#the-homeserver-model).
-- **Single session cookie — known limitation ([pubky-core#122](https://github.com/pubky/pubky-core/issues/122)).**
+- **Single session cookie — known limitation ([pubky-homeserver#122](https://github.com/pubky/pubky-homeserver/issues/122)).**
   All sessions share one auth cookie, so signing into App B **overwrites** App A's session; a
   JWT-based rework is in progress. Detail: [`auth.md`](auth.md), [`concepts.md`](concepts.md#stability-and-known-limits).
 
@@ -131,7 +131,7 @@ Link these instead of mirroring their (drift-prone) contents:
 - **Nexus `/v0` API:** [nexus.pubky.app/swagger-ui](https://nexus.pubky.app/swagger-ui/)
 - **Data-contract version/stability:** [pubky-app-specs](https://github.com/pubky/pubky-app-specs)
   (README + `src/` Rust models; watch for the `pubky.app/v1/` path prefix)
-- **Protocol / homeserver / SDK status:** [pubky.github.io/pubky-core](https://pubky.github.io/pubky-core/),
+- **Protocol / homeserver / SDK status:** [Pubky SDK guide](https://pubky.org/explore/pubky-protocol/sdk/),
   [docs.rs/pubky](https://docs.rs/pubky), and the
-  [v0.10 migration guide](https://github.com/pubky/pubky-core/blob/main/docs/migration-v0.10.md)
+  [v0.10 migration guide](https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/README.md)
   (concrete proof of breaking SDK changes)

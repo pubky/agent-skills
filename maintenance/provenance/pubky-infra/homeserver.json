@@ -5,7 +5,7 @@
   "generatedAt": "2026-06-30T12:59:21.584Z",
   "sourcesUsed": [
     {
-      "repo": "pubky-core",
+      "repo": "pubky-homeserver",
       "sha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
     },
     {
@@ -24,66 +24,66 @@
   "provenance": [
     {
       "anchor": "Run it",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/main.rs",
       "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/main.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/main.rs"
     },
     {
       "anchor": "Three servers, four sockets",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/data_directory/config_toml.rs",
       "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/data_directory/config_toml.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/data_directory/config_toml.rs"
     },
     {
       "anchor": "config.toml",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/config.sample.toml",
       "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/config.sample.toml"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/config.sample.toml"
     },
     {
       "anchor": "config.toml",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/data_directory/config.default.toml",
       "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/data_directory/config.default.toml"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/data_directory/config.default.toml"
     },
     {
       "anchor": "Admin API (:6288)",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/admin_server/app.rs",
       "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/admin_server/app.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/admin_server/app.rs"
     },
     {
       "anchor": "Signup tokens and quotas",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/persistence/sql/entities/signup_code.rs",
       "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/persistence/sql/entities/signup_code.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/persistence/sql/entities/signup_code.rs"
     },
     {
       "anchor": "Enable and disable users",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/admin_server/routes/disable_users.rs",
       "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/admin_server/routes/disable_users.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/admin_server/routes/disable_users.rs"
     },
     {
       "anchor": "Metrics (:6289)",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/metrics_server/mod.rs",
       "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/metrics_server/mod.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/metrics_server/mod.rs"
     },
     {
       "anchor": "Event streams (client server)",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/client_server/routes/events.rs",
       "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/client_server/routes/events.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/client_server/routes/events.rs"
     },
     {
       "anchor": "homeserver-dashboard",
@@ -122,10 +122,10 @@
     },
     {
       "anchor": "Security guardrails",
-      "repo": "pubky/pubky-core",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/client_server/auth/authorization.rs",
       "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-core/blob/d6c5afc/pubky-homeserver/src/client_server/auth/authorization.rs"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/client_server/auth/authorization.rs"
     },
     {
       "anchor": "Security guardrails",
@@ -149,7 +149,7 @@
     "unsupported": 0
   },
   "guardrailViolations": [],
-  "wordCount": 3137,
+  "wordCount": 3140,
   "substance": {
     "ok": true,
     "reasons": []

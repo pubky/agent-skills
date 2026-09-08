@@ -3,7 +3,7 @@
 [Homegate](https://github.com/pubky/homegate) is a standalone backend service that gatekeeps
 homeserver signups. A client proves itself one of three ways — **SMS**, **Lightning payment**,
 or **IP** — and Homegate mints a homeserver **signup token** for it. It is a separate repo /
-process from pubky-core, sitting in front of the homeserver admin API. The production social app
+process from Pubky Homeserver, sitting in front of the homeserver admin API. The production social app
 gates onboarding (`https://pubky.app/onboarding/human`) through it.
 
 What a signup token *is*, and the homeserver-write model, are canonical elsewhere — **do not

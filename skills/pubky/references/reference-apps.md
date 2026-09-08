@@ -6,11 +6,11 @@ point on the architecture spectrum — pick the one whose shape matches what you
 
 | App | What it is | Architecture | Repo / live |
 | :-- | :-- | :-- | :-- |
-| **pubky.app** | Flagship social web app (publisher + feed) on Pubky Core + Nexus | Custom backend (Nexus aggregator) | [pubky-app](https://github.com/pubky/pubky-app) · <https://pubky.app> |
+| **pubky.app** | Flagship social web app (publisher + feed) using the Pubky protocol and Nexus | Custom backend (Nexus aggregator) | [pubky-app](https://github.com/pubky/pubky-app) · <https://pubky.app> |
 | **Pubky Explorer** | Read-only public-data browser ("enter a Pubky, browse `/pub`") | Client↔homeserver (direct, unauthenticated reads) | [pubky-explorer](https://github.com/pubky/pubky-explorer) · <https://explorer.pubky.app> |
 | **workshop** | Teaching CLI ("De cero a Pubky") — init → connect → auth → read/write | Client↔homeserver (direct, authenticated) | [workshop](https://github.com/pubky/workshop) |
 
-All three are *applications*, not part of Pubky Core. The homeserver-write vs Nexus-read split,
+All three are *applications* built on the Pubky protocol. The homeserver-write vs Nexus-read split,
 `pubky://` addressing, event streams, and public-key string formats they rely on are canonical in
 [`./concepts.md`](./concepts.md) — this file links there rather than restating them.
 
@@ -45,7 +45,7 @@ at [pubky/pubky-nexus](https://github.com/pubky/pubky-nexus).
 ## pubky.app structure
 
 The primary reference for building on the Pubky SDK (auth + data storage) combined with **Nexus**
-(aggregation/indexing). A Next.js PWA; not part of Pubky Core.
+(aggregation/indexing). A Next.js PWA built on the Pubky protocol.
 
 **Tech stack** (verified in `package.json` @ `3a819f0aa857`):
 

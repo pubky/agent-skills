@@ -10,7 +10,7 @@ republish, why UDP-less / browser environments need HTTP relays, and the `_pubky
 homeserver-discovery record chain all live there. Read it first; this file does not restate it.
 
 > **Two different "relays."** `pkarr-relay` (this file) bridges browsers/WASM to the **Mainline
-> DHT** for PKARR publish/resolve. The Pubky-core **`http-relay`** is an unrelated
+> DHT** for PKARR publish/resolve. The Pubky **`http-relay`** is an unrelated
 > store-and-forward service for `pubkyauth` and inbox flows — see
 > [`http-relay.md`](http-relay.md). Do not conflate them.
 
@@ -250,7 +250,7 @@ The relay key in the path is the **raw z-base-32 public key** (`publicKey.z32()`
 (`relay/src/extractors.rs`) feeds `PublicKey::from_str`, which rejects a 57-char `pubky<z32>`
 string (it z32-decodes to ~35 bytes → `InvalidPublicKeyLength` → `400`). Note: in **pkarr core**,
 `PublicKey`'s `Display` already emits **raw z32 with no `pubky` prefix** — the `pubky` prefix is a
-pubky-core wrapper concept. `from_str` is otherwise lenient (accepts `pk:<z32>`,
+Pubky SDK wrapper concept. `from_str` is otherwise lenient (accepts `pk:<z32>`,
 `http(s)://<z32>`, `sub.<z32>`, trailing dot, path/query/port). HTTP shapes below match
 [`design/relays.md`](https://github.com/pubky/pkarr/blob/main/design/relays.md); `?policy=` and
 most status codes come from `relay/src/handlers.rs` (the `413` body limit comes from a

@@ -13,7 +13,7 @@
 set -euo pipefail
 
 CACHE_DIR="${CACHE_DIR:-$HOME/.cache/pubky-agent-skills/upstream}"
-CORE_DIR="$CACHE_DIR/pubky-core"
+HOMESERVER_DIR="$CACHE_DIR/pubky-homeserver"
 PIDFILE="${PIDFILE:-/tmp/pubky-testnet.pid}"
 LOGFILE="${LOGFILE:-/tmp/pubky-testnet.log}"
 export TEST_PUBKY_CONNECTION_STRING="${TEST_PUBKY_CONNECTION_STRING:-postgres://localhost:5432/postgres?pubky-test=true}"
@@ -29,10 +29,10 @@ case "$cmd" in
     if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
       echo "already running (pid $(cat "$PIDFILE"))"; exit 0
     fi
-    [ -d "$CORE_DIR" ] || { echo "missing clone: $CORE_DIR (run /sync-references which clones it)"; exit 1; }
-    ( cd "$CORE_DIR" && cargo build -q -p pubky-testnet ) || { echo "build failed"; exit 1; }
+    [ -d "$HOMESERVER_DIR" ] || { echo "missing clone: $HOMESERVER_DIR (run /sync-references which clones it)"; exit 1; }
+    ( cd "$HOMESERVER_DIR" && cargo build -q -p pubky-testnet ) || { echo "build failed"; exit 1; }
     # launch directly (no wrapping subshell) so $! is the testnet binary's pid, not a subshell's
-    cd "$CORE_DIR"
+    cd "$HOMESERVER_DIR"
     RUST_LOG=info nohup ./target/debug/pubky-testnet >"$LOGFILE" 2>&1 &
     echo $! > "$PIDFILE"
     i=0; until grep -q "Testnet running" "$LOGFILE" 2>/dev/null || [ $i -ge 60 ]; do i=$((i+1)); sleep 1; done
