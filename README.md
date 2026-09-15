@@ -13,9 +13,6 @@ plugin marketplace.
 > doc. The old monolith loaded ~1,300 lines all at once; these skills load a thin always-on
 > overview and pull in topic reference files only when relevant.
 
-> ℹ️ **Private during development.** The repo is private for now, so installs require access
-> to `pubky/agent-skills` until it's made public.
-
 ## Skills
 
 One plugin (`pubky`), four skills split by **audience / task** — not by SDK language (every
