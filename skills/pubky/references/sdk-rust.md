@@ -407,7 +407,7 @@ while let Some(result) = stream.next().await {
 **Raw HTTP** (only for requests the storage APIs don't cover, since they already handle addressing):
 - **Recommended path:**
   1. `resolve_pubky(id)` converts an address to its canonical `https://_pubky.<z32>/storage/<z32>/...` URL.
-  2. `client.request_async(Method, url)` sends it. It negotiates storage addressing, falls back to the legacy addressing that pre-0.10 homeservers use, and resolves ICANN fallback endpoints.
+  2. `client.request_async(Method, url)` sends it. It negotiates storage addressing (falling back to legacy `pubky-host` addressing on homeservers that don't advertise `path-addressed-storage` in `/info`, i.e. anything before v0.12.0) and resolves ICANN fallback endpoints.
 - **Low-level alternative:** `PubkyHttpClient::request(method, &url)` returns a `reqwest::RequestBuilder`.
   - It is native-only.
   - It does **not** negotiate storage addressing or resolve ICANN fallback endpoints. Upstream says to use `request_async` for Pubky and PKDNS URLs.

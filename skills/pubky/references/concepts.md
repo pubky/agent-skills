@@ -266,7 +266,7 @@ By convention the first segment under `/pub` is a **scope**. An app may touch se
 | :-- | :-- | :-- | :-- |
 | `/pub/` | Allowed | Allowed | Session for **this tenant** with write capability |
 | `/priv/` (**ALPHA**) | **401** | Session for this tenant with read capability (else **403**) | Session for this tenant with write capability |
-| Anything else | — | — | **403** "Writing to directories other than '/pub/' and '/priv/' is forbidden" |
+| Anything else | **403** | **403** | **403** "Writing to directories other than '/pub/' and '/priv/' is forbidden" |
 
 > **`/priv` is alpha: not for production, not encrypted from the operator.** It shipped in `pubky-homeserver`
 > **v0.10.0** (2026-08-05), whose release notes say it "should NOT be used in any production environment" and
@@ -467,7 +467,8 @@ sessions, entries (path, Blake3 hash, length, MIME, timestamps), events (PUT/DEL
   direct endpoint is unreachable (NAT, tunnel) and ICANN is advertised. **Browsers/WASM use ICANN only.**
 - **Path addressing (current):** `GET /storage/{user-z32}/pub/...`. The owner in the path is authoritative and
   `pubky-host` is ignored. The homeserver has served it since v0.11.0; SDK 0.12.0 uses it by default, including
-  over ICANN fallback, and sends **no** `pubky-host` header.
+  over ICANN fallback, and sends **no** `pubky-host` header. The `/info` feature flag the SDK checks first
+  arrived only in homeserver v0.12.0, so against a v0.11.x homeserver the SDK still uses legacy addressing.
 - **Legacy addressing (deprecated, still served):** `GET /pub/...`, used by older SDKs or against homeservers
   without the feature. The owner comes from the `pubky-host` header, then `Host`, then `?pubky-host=`.
 - **Feature detection:** `GET /info` -> `{"features":["path-addressed-storage"]}`; ignore unknown identifiers.
@@ -547,7 +548,7 @@ optional cursor) and path prefixes (default `/pub/`), and supports `live` (histo
 [`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/openapi-client.yml).
 
 **Nexus** (nexus-watcher, nexus-webapi, nexus-common, nexusd) ingests these streams into **Neo4j + Redis** and
-serves REST, e.g. `https://nexus.pubky.app/v0/feeds/global`.
+serves REST, e.g. `https://nexus.pubky.app/v0/stream/posts` (the global post feed).
 
 **Social write flow:** build the object per [`app-specs.md`](app-specs.md) -> `PUT` to your homeserver -> the
 homeserver emits an event -> Nexus indexes it -> others read via Nexus (or directly via public storage).

@@ -112,10 +112,10 @@ Key `Signer` signatures (0.12.0, all async; full list in the `.d.ts`):
 Gotchas:
 
 - **Always call `signin(clientId)` after `signup()`** (breaking since 0.10). `signin()` with no argument is the removed 0.9.x form and TypeScript rejects it. Older guides (including pubky-ai-kit) show `const session = await signer.signup(...)` and `signin()`; both are wrong for 0.12.0.
-- **`clientId`:** domain-like app identifier (`"myapp.example"`), non-empty, ≤ 253 chars; the user sees it in their grant and session list. An invalid `clientId` throws **`AuthenticationError`**, not `InvalidInput`.
+- **`clientId`:** domain-like app identifier (`"myapp.example"`), non-empty, ≤ 253 bytes (UTF-8); the user sees it in their grant and session list. An invalid `clientId` throws **`AuthenticationError`**, not `InvalidInput`.
 - **Existing account:** signup rejects with `RequestError`, `data.statusCode === 409`. Catch that status to make signup idempotent.
 - **Signup tokens:** failures are `RequestError`, **not** `AuthenticationError` (the `.d.ts` JSDoc is wrong): `statusCode` 401 for an invalid or already-used token (tokens are single-use), 400 when the homeserver requires a token and none was sent. Pass `null` on open homeservers. See [`./auth.md#signup-tokens`](./auth.md#signup-tokens).
-- **Signer sign-in is a dev shortcut.** It needs the user's **secret key** and grants **root capabilities**. For production, use Pubky Ring: `startGrantAuthFlow` with scoped capabilities. See [`./auth.md#third-party-app-flow-js`](./auth.md#javascript).
+- **Signer sign-in is a dev shortcut.** It needs the user's **secret key** and grants **root capabilities**. For production, use Pubky Ring: `startGrantAuthFlow` with scoped capabilities. See [`./auth.md#javascript`](./auth.md#javascript).
 
 ## Session
 
@@ -132,7 +132,7 @@ Restoring:
   - Local sessions saved to `browserSessionStore` still store bearer-equivalent secrets in IndexedDB.
 - `session.export()` and `Session.restore()` are deprecated.
 
-Lifecycle and persistence semantics: [`./auth.md#session-lifecycle`](./auth.md#session-lifecycle), [`./auth.md#persisting-a-session`](./auth.md#persist-and-restore).
+Lifecycle and persistence semantics: [`./auth.md#session-lifecycle`](./auth.md#session-lifecycle), [`./auth.md#persist-and-restore`](./auth.md#persist-and-restore).
 
 ## Storage operations
 
@@ -250,7 +250,7 @@ Every SDK error is a real `Error` (`instanceof Error` holds) with `name: PubkyEr
 | `InvalidInput` | Malformed URLs or public keys, bad JS values, invalid relay URLs, invalid grant id, capability parse errors (`data.invalidEntries: string[]`) |
 | `AuthenticationError` | Auth failures, AuthToken verification, invalid `clientId` |
 | `PkarrError` | DHT/relay resolution failures, including `getHomeserverOf` and sign-in, grant exchange or event streams that resolve a homeserver internally |
-| `ClientStateError` | Corrupt recovery file or wrong passphrase |
+| `ClientStateError` | Corrupt recovery file or wrong passphrase; concurrent or post-completion auth-flow polling; `saveLocal()` / `saveDelegated()` / `exportLocalSecret()` on the wrong kind of flow or session; grant-only calls on a non-grant session. See [`./auth.md#errors`](./auth.md#errors) |
 | `InternalError` | Client build errors (e.g. `relays: []`), unknown JS errors |
 
 For server HTTP errors, `error.data` is `{ statusCode: number }`:
@@ -329,14 +329,14 @@ async function putWithRetry(
 
 ## Keys and homeserver lookup
 
-- **`Keypair`:** `Keypair.random()`; `Keypair.fromSecret(secret)` needs a **32-byte** `Uint8Array` (throws otherwise); `keypair.secret()`, `keypair.publicKey`. Recovery files: `createRecoveryFile(passphrase)` / `Keypair.fromRecoveryFile(bytes, passphrase)`; wrong passphrase throws `ClientStateError`. See [`./auth.md#recovery-files`](./concepts.md#identity-the-ed25519-keypair).
+- **`Keypair`:** `Keypair.random()`; `Keypair.fromSecret(secret)` needs a **32-byte** `Uint8Array` (throws otherwise); `keypair.secret()`, `keypair.publicKey`. Recovery files: `createRecoveryFile(passphrase)` / `Keypair.fromRecoveryFile(bytes, passphrase)`; wrong passphrase throws `ClientStateError`. See [`./concepts.md#identity-the-ed25519-keypair`](./concepts.md#identity-the-ed25519-keypair).
 - **`PublicKey.from(value)`** accepts raw z32 or `pubky<z32>`; it **rejects `pubky://...`** with `InvalidInput`.
   - `toString()` → `pubky<z32>` (display).
   - `z32()` → raw z32 (hostnames, headers, query params, JSON, DB keys).
   - `toUint8Array()` → 32 raw bytes.
 - **`pubky.getHomeserverOf(user): Promise<PublicKey | undefined>`** resolves `undefined` when the user has no homeserver record and **rejects with `PkarrError`** when resolution fails. On testnet, a fresh unpublished key rejects (message contains "no responses") instead of resolving `undefined`. Handle both.
 
-Homeserver lookup cache (KB `troubleshooting.ts`; Verified). The cache is keyed by the exact input string, so `z32` and `pubky<z32>` forms get separate entries:
+Homeserver lookup cache (KB `troubleshooting.ts`; Verified). **Harden before use:** it is keyed by the exact input string, so `z32` and `pubky<z32>` forms get separate entries (key by `PublicKey.from(x).z32()`), and it never expires, so after a user migrates homeservers it keeps pointing at the old one. See the notes in [`./concepts.md#pkarr-resolution`](./concepts.md#pkarr-resolution):
 
 ```ts
 import { Pubky, PublicKey } from "@synonymdev/pubky";

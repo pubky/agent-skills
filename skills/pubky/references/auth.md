@@ -29,7 +29,7 @@ Canonical elsewhere, so link rather than restate:
 | Anything new | **Not** cookie auth (`*_cookie*`, deprecated and insecure) | n/a |
 
 - **Never hand-build `pubkyauth://` URLs or tokens.** Use `authorization_url()` (Rust) / `authorizationUrl` (JS) from the flow.
-- **Never ask users to paste keys or mnemonics into a third-party app.** See [`concepts.md#authentication-pointer`](concepts.md#authentication).
+- **Never ask users to paste keys or mnemonics into a third-party app.** See [`concepts.md#authentication`](concepts.md#authentication).
 
 ## Grant auth model
 
@@ -41,7 +41,7 @@ Canonical elsewhere, so link rather than restate:
 
 **Grants vs cookies:** per-client credentials; replaying a grant requires the client's private key; grants can be listed and revoked individually.
 
-**Client ID:** required for every grant session; stored by the homeserver and shown when the user lists sessions. Use a stable domain-like string (`myapp.example`). Validation only checks non-empty and ≤253 characters.
+**Client ID:** required for every grant session; stored by the homeserver and shown when the user lists sessions. Use a stable domain-like string (`myapp.example`). Validation only checks non-empty and ≤253 bytes (UTF-8 length, not characters).
 
 ## Third-party app: grant auth flow
 
