@@ -2,147 +2,272 @@
   "path": "skills/pubky-infra/references/signup-gating.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "generatedAt": "2026-09-17T12:42:03.138Z",
   "sourcesUsed": [
     {
       "repo": "homegate",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8"
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61"
     }
   ],
   "provenance": [
     {
-      "anchor": "Three optional routes / startup homeserver check",
+      "anchor": "#signup-gating-homegate",
+      "repo": "pubky/homegate",
+      "path": "README.md",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/README.md#L1-L11"
+    },
+    {
+      "anchor": "#signup-gating-homegate",
+      "repo": "pubky/homegate",
+      "path": ".github/workflows/build-and-release.yml",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/.github/workflows/build-and-release.yml"
+    },
+    {
+      "anchor": "#signup-gating-homegate",
+      "repo": "pubky/homegate",
+      "path": "Cargo.toml",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/Cargo.toml#L1-L4"
+    },
+    {
+      "anchor": "#signup-gating-homegate",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/auth.md",
+      "sha": "68f67fd",
+      "url": "https://github.com/pubky/agent-skills/blob/main/skills/pubky/references/auth.md"
+    },
+    {
+      "anchor": "#routes-are-opt-in-per-config-section",
       "repo": "pubky/homegate",
       "path": "src/infrastructure/http/server.rs",
       "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/http/server.rs"
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/http/server.rs#L40-L60"
     },
     {
-      "anchor": "Configuration (data-dir, config.toml template, required keys)",
+      "anchor": "#routes-are-opt-in-per-config-section",
       "repo": "pubky/homegate",
       "path": "src/infrastructure/config.rs",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/config.rs"
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/infrastructure/config.rs#L11-L26"
     },
     {
-      "anchor": "Configuration top-level example",
+      "anchor": "#startup-and-configuration",
+      "repo": "pubky/homegate",
+      "path": "src/main.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/main.rs#L16-L41"
+    },
+    {
+      "anchor": "#startup-and-configuration",
       "repo": "pubky/homegate",
       "path": "config.toml.example",
       "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
       "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/config.toml.example"
     },
     {
-      "anchor": "PostgreSQL backing (auto-migrations on startup)",
+      "anchor": "#startup-and-configuration",
+      "repo": "pubky/homegate",
+      "path": "src/infrastructure/config.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/infrastructure/config.rs#L76-L137"
+    },
+    {
+      "anchor": "#postgresql-backing",
+      "repo": "pubky/homegate",
+      "path": "src/infrastructure/sql/migrator.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/infrastructure/sql/migrator.rs#L31-L41"
+    },
+    {
+      "anchor": "#postgresql-backing",
       "repo": "pubky/homegate",
       "path": "src/infrastructure/sql/sql_db.rs",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/sql/sql_db.rs"
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/infrastructure/sql/sql_db.rs#L25-L35"
     },
     {
-      "anchor": "PostgreSQL backing (three tables / columns)",
+      "anchor": "#postgresql-backing",
       "repo": "pubky/homegate",
-      "path": "src/infrastructure/sql/migrations",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/tree/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/sql/migrations"
+      "path": "README.md",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/README.md#L72-L82"
     },
     {
-      "anchor": "The pepper secret / Argon2id params",
+      "anchor": "#the-pepper-secret",
       "repo": "pubky/homegate",
       "path": "src/shared/hasher_argon2id.rs",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/shared/hasher_argon2id.rs"
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/shared/hasher_argon2id.rs#L7-L110"
     },
     {
-      "anchor": "Homeserver admin API (generate_signup_token, GET /info)",
+      "anchor": "#the-pepper-secret",
+      "repo": "pubky/homegate",
+      "path": "README.md",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/README.md#L35-L38"
+    },
+    {
+      "anchor": "#the-pepper-secret",
+      "repo": "pubky/homegate",
+      "path": "src/sms_verification/service.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/sms_verification/service.rs#L132-L141"
+    },
+    {
+      "anchor": "#token-minting",
       "repo": "pubky/homegate",
       "path": "src/shared/homeserver_admin_api.rs",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/shared/homeserver_admin_api.rs"
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/shared/homeserver_admin_api.rs#L34-L90"
     },
     {
-      "anchor": "SMS (Prelude) flow / config",
-      "repo": "pubky/homegate",
-      "path": "src/sms_verification/types.rs",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/sms_verification/types.rs"
+      "anchor": "#token-minting",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/admin_server/app_state.rs",
+      "sha": "28f4bf3",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf3/pubky-homeserver/src/admin_server/app_state.rs#L34-L36"
     },
     {
-      "anchor": "Lightning (phoenixd) flow / await timeout",
-      "repo": "pubky/homegate",
-      "path": "src/ln_verification/http.rs",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/ln_verification/http.rs"
-    },
-    {
-      "anchor": "IP flow / status codes / signup_quota",
-      "repo": "pubky/homegate",
-      "path": "src/ip_verification/http.rs",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/ip_verification/http.rs"
-    },
-    {
-      "anchor": "IP advisory-lock concurrency / rate-limit windows",
-      "repo": "pubky/homegate",
-      "path": "src/ip_verification/service.rs",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/ip_verification/service.rs"
-    },
-    {
-      "anchor": "IP security weakness (three failure modes)",
-      "repo": "pubky/homegate",
-      "path": "src/ip_verification/mod.rs",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/ip_verification/mod.rs"
-    },
-    {
-      "anchor": "Client IP determination (X-Forwarded-For rightmost)",
-      "repo": "pubky/homegate",
-      "path": "src/infrastructure/http/extractors/request_origin.rs",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/http/extractors/request_origin.rs"
-    },
-    {
-      "anchor": "Operational notes / Deploy (Dockerfile)",
-      "repo": "pubky/homegate",
-      "path": "Dockerfile",
-      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
-      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/Dockerfile"
-    },
-    {
-      "anchor": "openapi.yaml AI-generated warning / route shapes",
+      "anchor": "#http-api",
       "repo": "pubky/homegate",
       "path": "openapi.yaml",
       "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
       "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/openapi.yaml"
     },
     {
-      "anchor": "Canonical link: signup token / homeserver-write model",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/concepts.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/agent-skills/blob/main/skills/pubky/references/concepts.md"
+      "anchor": "#http-api",
+      "repo": "pubky/homegate",
+      "path": "src/ln_verification/http.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/ln_verification/http.rs#L53-L60"
     },
     {
-      "anchor": "Canonical link: shipped-vs-planned guardrail (/pub)",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/shipped-vs-planned.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/agent-skills/blob/main/skills/pubky/references/shipped-vs-planned.md"
+      "anchor": "#abuse-rate-limit-requests-at-the-proxy",
+      "repo": "pubky/homegate",
+      "path": "src/ip_verification/service.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/ip_verification/service.rs#L57-L74"
+    },
+    {
+      "anchor": "#sms-prelude",
+      "repo": "pubky/homegate",
+      "path": "src/sms_verification/http.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/sms_verification/http.rs#L60-L102"
+    },
+    {
+      "anchor": "#sms-prelude",
+      "repo": "pubky/homegate",
+      "path": "src/sms_verification/service.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/sms_verification/service.rs#L103-L241"
+    },
+    {
+      "anchor": "#sms-prelude",
+      "repo": "pubky/homegate",
+      "path": "src/sms_verification/types.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/sms_verification/types.rs#L28-L40"
+    },
+    {
+      "anchor": "#sms-prelude",
+      "repo": "pubky/homegate",
+      "path": "src/sms_verification/repository.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/sms_verification/repository.rs#L156-L189"
+    },
+    {
+      "anchor": "#lightning-phoenixd",
+      "repo": "pubky/homegate",
+      "path": "src/ln_verification/http.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/ln_verification/http.rs#L21-L25"
+    },
+    {
+      "anchor": "#lightning-phoenixd",
+      "repo": "pubky/homegate",
+      "path": "src/ln_verification/service.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/ln_verification/service.rs#L92-L358"
+    },
+    {
+      "anchor": "#ip",
+      "repo": "pubky/homegate",
+      "path": "src/ip_verification/http.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/ip_verification/http.rs#L31-L57"
+    },
+    {
+      "anchor": "#signup-quota-ip-only",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/shared/quota/user_quota.rs",
+      "sha": "28f4bf3",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf3/pubky-homeserver/src/shared/quota/user_quota.rs#L233-L305"
+    },
+    {
+      "anchor": "#signup-quota-ip-only",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/client_server/auth/authorization.rs",
+      "sha": "v0.10.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.10.0/pubky-homeserver/src/client_server/auth/authorization.rs#L23-L28"
+    },
+    {
+      "anchor": "#client-ip-and-proxies",
+      "repo": "pubky/homegate",
+      "path": "src/infrastructure/http/extractors/request_origin.rs",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/src/infrastructure/http/extractors/request_origin.rs#L31-L65"
+    },
+    {
+      "anchor": "#rate-limit-semantics",
+      "repo": "pubky/homegate",
+      "path": "src/shared/rate_limited_signup_issuer.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/shared/rate_limited_signup_issuer.rs#L119-L290"
+    },
+    {
+      "anchor": "#deploy",
+      "repo": "pubky/homegate",
+      "path": "Dockerfile",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/Dockerfile"
+    },
+    {
+      "anchor": "#unreleased-google-verification-master-only",
+      "repo": "pubky/homegate",
+      "path": "src/google_verification/google_id_token_verifier.rs",
+      "sha": "292ce68108c066fd5c3533b8629d0dd2b1566e61",
+      "url": "https://github.com/pubky/homegate/blob/292ce68108c066fd5c3533b8629d0dd2b1566e61/src/google_verification/google_id_token_verifier.rs#L11-L127"
+    },
+    {
+      "anchor": "#upstream",
+      "repo": "pubky/homegate",
+      "path": "README.md",
+      "sha": "ea838a80b6463124906b8837f8c47e0b0731ecc8",
+      "url": "https://github.com/pubky/homegate/blob/ea838a80b6463124906b8837f8c47e0b0731ecc8/README.md"
     }
   ],
   "snippet": {
     "total": 7,
-    "pass": 7,
-    "fail": 0,
+    "pass": 6,
+    "fail": 1,
     "unverifiable": 0,
-    "failing": []
+    "failing": [
+      "pg-3-test"
+    ]
   },
   "factCheck": {
-    "supported": 28,
-    "refuted": 0,
-    "caveated": 1,
+    "supported": 46,
+    "refuted": 2,
+    "caveated": 9,
     "unsupported": 0
   },
   "guardrailViolations": [],
-  "wordCount": 1802
+  "wordCount": 3522,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  }
 }

@@ -1,42 +1,37 @@
 # Testing and the local testnet
 
-Pubky app-dev testing has **three surfaces, all backed by the same `pubky-testnet` harness**.
-Pick by how your client connects:
+All app-dev testing uses the same `pubky-testnet` harness. Choose the entry point based on how your client connects:
 
 | Surface | Use it for | Entry point |
 | :-- | :-- | :-- |
-| In-process Rust tests | `#[tokio::test]` against an ephemeral homeserver, fully offline | `EphemeralTestnet` (the `pubky-testnet` lib) |
-| Standalone local testnet process | browser / JS-WASM / CLI clients that connect over the network | `cargo run -p pubky-testnet` (a.k.a. `npm run testnet`) |
-| Shell scripting | scripted signup / put / get flows | the `pubky-cli` binary |
+| In-process Rust tests | `#[tokio::test]` against an isolated DHT and homeserver. Offline and parallel-safe. | `EphemeralTestnet` (lib) |
+| Standalone local testnet | Browsers, JS/WASM, mobile, `pubky-cli` and manual debugging, over fixed ports | `cargo run -p pubky-testnet` (same as `npm run testnet`) |
+| Shell scripting | Scripted signup, publish, get and delete | `pubky-cli user` + `tools` |
 
-For operating the **full self-hosted backend stack** (homeserver + Nexus + DNS in Docker) — not
-a throwaway test net — see [Full self-hosted stack](#full-self-hosted-stack) below.
+For a real persistent deployment (compose, homeserver config, admin API, signup tokens), see [Full self-hosted stack](#full-self-hosted-stack).
 
-Upstream (authoritative, drift-prone — link, don't memorize):
+**Versions:** the `pubky-homeserver` workspace is **0.12.0** (rust-version 1.89). `pubky`, `pubky-common`, `pubky-homeserver` and `pubky-testnet` are all 0.12. `@synonymdev/pubky` `latest` on npm is 0.12.0. Pubky is pre-1.0, so expect breaking changes.
+
+Upstream is authoritative and changes often:
 [`pubky-testnet` README](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md) ·
-[docs.rs/pubky-testnet](https://docs.rs/pubky-testnet).
+[docs.rs/pubky-testnet](https://docs.rs/pubky-testnet) ·
+[`docs/TESTING.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/TESTING.md)
+(contributor guide; it replaced `docs/DEV_TESTING_GUIDES.md`, which no longer exists).
 
-## Surface 1: Rust in-process tests
+## Rust in-process tests (`EphemeralTestnet`)
 
-The `pubky-testnet` crate (workspace version **0.9**) exposes three types:
-
-- **`EphemeralTestnet`** (+ `EphemeralTestnetBuilder`) — one test DHT + homeserver per test;
-  the canonical choice for `#[tokio::test]`.
-- **`StaticTestnet`** — the hardcoded-wiring net behind the standalone binary (Surface 2).
-- **`Testnet`** — the flexible base both build on.
-
-It re-exports the core crates `pubky`, `pubky_common`, `pubky_homeserver`, plus
-`drop_test_databases` and the `test` macro (`pubky_test_utils::test`). The `docker_postgres`
-module is gated behind the `docker-postgres` feature.
+- **`EphemeralTestnet`** is for automated tests. It uses random ports and gives each instance its own DHT and homeserver, so tests can run in parallel.
+- **`StaticTestnet`** is for interactive use, on fixed ports (see [Standalone local testnet](#standalone-local-testnet)).
+- The crate re-exports `pubky`, `pubky_common`, `pubky_homeserver`, `drop_test_databases` and the `test` macro. The `docker_postgres` module needs the `docker-postgres` feature.
 
 ```rust
 use pubky_testnet::EphemeralTestnet;
 
 #[tokio::test]
-#[pubky_testnet::test] // Macro ensures ephemeral Postgres databases are cleaned up
+#[pubky_testnet::test] // Cleans up ephemeral Postgres databases after the test
 async fn my_test() {
-    // Run a new testnet. This creates a test DHT and homeserver.
-    // By default, uses minimal_test_config() (admin/metrics disabled, no HTTP relay).
+    // Note: both attributes are required — #[tokio::test] provides the async
+    // runtime, #[pubky_testnet::test] registers a cleanup hook for test DBs.
     let testnet = EphemeralTestnet::builder().build().await.unwrap();
 
     // Create a Pubky Http Client from the testnet.
@@ -47,32 +42,31 @@ async fn my_test() {
 }
 ```
 
-<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md)</sub>
+<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-testnet/README.md#L65-L81). Compiled against `pubky-testnet` 0.12.0, not executed. `client` and `homeserver` are unused placeholder bindings.</sub>
 
-The `#[pubky_testnet::test]` macro drops the ephemeral Postgres database(s) when the test
-finishes **or panics** — keep it on every test.
+**`EphemeralTestnetBuilder`** (`build() -> anyhow::Result<EphemeralTestnet>`):
 
-**`EphemeralTestnetBuilder` API** (signatures you'll actually call):
+| Method | Effect / default |
+| :-- | :-- |
+| `.config(ConfigToml)` | Defaults to `ConfigToml::minimal_test_config()`, which has **admin and metrics disabled**. Pass `ConfigToml::default_test_config()` if the test needs the admin server. |
+| `.keypair(Keypair)` | Defaults to a deterministic keypair from secret `[0; 32]` (`8pinx…`, see below). |
+| `.postgres(ConnectionString)` | Uses this Postgres server (`pubky_testnet::pubky_homeserver::ConnectionString::new("postgres://…")`). |
+| `.with_http_relay()` | Starts an HTTP relay (**off** by default). |
+| `.with_docker_postgres()` | Starts a dedicated Postgres container for this testnet (feature `docker-postgres`). |
 
-- `.config(ConfigToml)` — default is `minimal_test_config()` (admin + metrics disabled, no HTTP
-  relay). Use `ConfigToml::default_test_config()` if your test needs the **admin server**.
-- `.keypair(Keypair)` — fix the homeserver keypair.
-- `.postgres(ConnectionString)` — point at an external Postgres.
-- `.with_http_relay()` — start an HTTP relay (off by default); read it via `testnet.http_relay()`.
-- `.with_docker_postgres()` — run Postgres in a Docker container (feature `docker-postgres`).
-- `.postgres(...)` and `.with_docker_postgres()` are **mutually exclusive** — `build()` returns
-  an error if both are set.
+`build()` **errors if you set both `.postgres()` and `.with_docker_postgres()`**.
 
-Accessors on the built testnet: `.client()` (`PubkyHttpClient`), `.sdk()` (the `Pubky` facade,
-pre-wired to this net), `.homeserver_app()`, `.http_relay()`, `.pkarr_client_builder()`.
-(`EphemeralTestnet` has **no** `.pkarr_relay()` — that accessor exists only on `StaticTestnet`.)
+**Signup tokens:** both test configs use `signup_mode = Open`, so **`EphemeralTestnet` and the default in-memory static testnet need no signup token**. This does **not** apply to a static testnet started with `persist` or `--homeserver-config` (see below). Blobs are stored in memory (`InMemory`), but metadata still goes to Postgres.
 
-> `with_embedded_postgres()` / the `embedded-postgres` feature are **deprecated since 0.9.0** —
-> use `with_docker_postgres()` / `docker-postgres`.
+**Accessor gotchas.** The full list is on [docs.rs](https://docs.rs/pubky-testnet).
 
-A complete runnable program (offline app test against an ephemeral homeserver). `cargo run --bin
-testnet` uses Docker Postgres; `-- --external-postgres` uses an external DB. `testnet.sdk()`
-yields a `Pubky` facade already pointed at this net:
+- `client()` returns `Result<PubkyHttpClient, BuildError>` and `sdk()` returns `Result<Pubky, BuildError>`, already wired to this testnet. Unwrap them or use `?`.
+- `http_relay()` **panics** (`no http relay configured - use .with_http_relay() when building`) unless you built with `.with_http_relay()`.
+- `EphemeralTestnet` has **no** `pkarr_relay()`. Only `StaticTestnet` has `pkarr_relay()`, `bootstrap_nodes()` and `is_persistent()`.
+
+> **Deprecated APIs: use the builders.** `EphemeralTestnet::start()` is **not** the same as `builder().build()`. It uses `default_test_config()`, so admin is enabled and an HTTP relay starts. The other `start_*` constructors are deprecated too. Since 0.9.0, `with_embedded_postgres()`, the `embedded_postgres` module and `EmbeddedPostgres` are deprecated in favour of the `docker-postgres` equivalents. The `embedded-postgres` feature is kept only as a deprecated alias. For `StaticTestnet::start_with_homeserver_config`, use `StaticTestnet::builder().homeserver_config(path).build()` instead. See docs.rs for the full list.
+
+The following runnable program does an offline app roundtrip. Run it from `examples/rust` with `cargo run --bin testnet`. That uses Docker Postgres, because the examples crate enables `docker-postgres` by default. Add `-- --external-postgres` to use your own Postgres. In Rust, `signin` takes a `ClientId`:
 
 ```rust
 use clap::Parser;
@@ -83,67 +77,95 @@ use pubky_testnet::{
 
 #[derive(Parser)]
 struct Args {
+    /// Use an external PostgreSQL instance instead of the Docker-managed one.
+    /// Connects to TEST_PUBKY_CONNECTION_STRING env var if set,
+    /// otherwise defaults to postgres://postgres:postgres@localhost:5432/postgres
     #[arg(long)]
     external_postgres: bool,
 }
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    #[allow(unused_variables)]
     let args = Args::parse();
+
+    // Spin up ephemeral DHT + homeserver with minimal config
+    #[allow(unused_mut)]
     let mut builder = EphemeralTestnet::builder();
+
     #[cfg(feature = "docker-postgres")]
-    let builder = if !args.external_postgres { builder.with_docker_postgres() } else { builder };
+    let builder = if !args.external_postgres {
+        builder.with_docker_postgres()
+    } else {
+        builder
+    };
 
     let testnet = builder.build().await?;
     let homeserver = testnet.homeserver_app();
+
+    // Intantiate a Pubky SDK wrapper that uses this testnet's preconfigured client for transport
     let pubky = testnet.sdk()?;
 
+    // Create a random signer and sign up
     let signer = pubky.signer(Keypair::random());
     signer.signup(&homeserver.public_key(), None).await?;
     let session = signer.signin(ClientId::new("testnet.example")?).await?;
 
-    session.storage().put("/pub/my-cool-app/hello.txt", "hi").await?;
-    let txt = session.storage().get("/pub/my-cool-app/hello.txt").await?.text().await?;
+    // Write a file
+    session
+        .storage()
+        .put("/pub/my-cool-app/hello.txt", "hi")
+        .await?;
+
+    // Read it back
+    let txt = session
+        .storage()
+        .get("/pub/my-cool-app/hello.txt")
+        .await?
+        .text()
+        .await?;
     assert_eq!(txt, "hi");
+
     println!("Roundtrip succeeded: {txt}");
     Ok(())
 }
 ```
 
-<sub>Source: [`examples/rust/8-testnet/main.rs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/8-testnet/main.rs)</sub>
+<sub>Source: [`examples/rust/8-testnet/main.rs`](https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/examples/rust/8-testnet/main.rs). Clippy-clean against 0.12.0 with and without `docker-postgres`. Not executed; the same roundtrip was run in JS against a local testnet.</sub>
+
+The other Rust examples connect to a standalone testnet that is already running (for example `cargo run --bin signup -- --testnet`). Examples 7 (logging) and 8 (testnet) start their own. See the [Rust examples README](https://github.com/pubky/pubky-homeserver/tree/main/examples/rust).
 
 ## PostgreSQL is required
 
-The testnet **requires PostgreSQL** — it is no longer in-memory/embedded SQLite. Older docs or
-snippets showing an SQLite testnet are stale. Two ways to supply Postgres:
+Every testnet needs a reachable **Postgres server**. For tests and the in-memory static testnet, the homeserver **always** creates a fresh `pubky_test_{uuid}` database on that server. It picks the server in this order:
 
-**(A) Docker-managed (no DB install).** Enable the `docker-postgres` feature so testcontainers
-runs Postgres in a container — **Docker must be running**. The container is auto-cleaned on drop
-and on Ctrl+C/SIGTERM.
+1. An explicit URL: builder `.postgres(..)`, Docker Postgres, or `database_url` in the config.
+2. The `TEST_PUBKY_CONNECTION_STRING` env var. An invalid value is an error, not a fallback.
+3. The default, `postgres://localhost:5432/postgres`.
 
-```rust
-// Cargo.toml
-// [dev-dependencies]
-// pubky-testnet = { version = "0.9", features = ["docker-postgres"] }
+- **`--homeserver-config` overrides the env var.** A custom config file is merged over `config.default.toml`, which sets `database_url = postgres://localhost:5432/pubky_homeserver`. That counts as an explicit URL (step 1), so `TEST_PUBKY_CONNECTION_STRING` is **silently ignored** unless your config sets its own `database_url`.
+- **`?pubky-test=true` is no longer needed.** The homeserver ignores the parameter, so old URLs still work. Leave it out of new connection strings.
 
-use pubky_testnet::EphemeralTestnet;
+> **Leaked databases:** dropping the testnet only *registers* the test DB for cleanup. The DB is actually deleted only by `#[pubky_testnet::test]`, or by calling `pubky_testnet::drop_test_databases().await` **after** the testnet is dropped. If neither happens, `pubky_test_{uuid}` databases pile up on your Postgres server.
 
-#[tokio::main]
-async fn main() {
-    let testnet = EphemeralTestnet::builder()
-        .with_docker_postgres()
-        .build()
-        .await
-        .unwrap();
-}
+**(A) Your own Postgres** (current upstream command):
+
+```bash
+docker run --name pubky-postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -p 127.0.0.1:5432:5432 \
+  -d postgres:18
+
+TEST_PUBKY_CONNECTION_STRING='postgres://postgres:postgres@localhost:5432/postgres' \
+  cargo test -p my-crate
 ```
 
-<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md)</sub>
+<sub>Source: [`docs/TESTING.md`](https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/docs/TESTING.md#L5-L24) (upstream uses `-p pubky-homeserver --all-features`; `my-crate` is a placeholder). The flags were checked by the docker and cargo parsers, and the `postgres:18` tag exists.</sub>
 
-Each `.with_docker_postgres()` starts a **separate** container. For a test suite, start **one**
-container with `DockerPostgres::shared()` (returns `&'static DockerPostgres`) and pass its
-`.connection_string()` to `.postgres(...)`. Each testnet still gets its own ephemeral DB inside
-the shared instance, so tests stay isolated:
+**(B) Docker-managed Postgres (testcontainers).** Add `pubky-testnet = { version = "0.12", features = ["docker-postgres"] }` to dev-dependencies. **Docker must be running.** Containers are removed when they are dropped, on Ctrl+C/SIGTERM (testcontainers watchdog), and, for the shared container, when the process exits normally.
+
+Each `.with_docker_postgres()` starts its **own** container, which is slow across a whole suite. Share one container instead. Each testnet still gets its own isolated DB inside it:
 
 ```rust
 use pubky_testnet::EphemeralTestnet;
@@ -161,72 +183,69 @@ async fn test_one() {
 }
 ```
 
-<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md)</sub>
+<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-testnet/README.md#L142-L175)</sub>
 
-**(B) External Postgres.** Without `docker-postgres`, the testnet defaults to
-`postgres://localhost:5432/postgres?pubky-test=true`. The `?pubky-test=true` query parameter
-tells the homeserver (compiled with the `testing` feature) to create an **ephemeral test
-database** that is dropped after the test. Override the connection via the
-`TEST_PUBKY_CONNECTION_STRING` env var or `.postgres(ConnectionString::new(...))`.
-[`docs/DEV_TESTING_GUIDES.md`](https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/docs/DEV_TESTING_GUIDES.md)
-gives the canonical local-Postgres one-liner (auto-creates the `pubky_homeserver` DB):
+- The upstream snippet above leaves out `#[pubky_testnet::test]`. **Add it**, or the test DBs leak.
+- `DockerPostgres::shared()` **panics if Docker isn't running**. Use `DockerPostgres::start()`, which returns `anyhow::Result`, when you need to handle that error. For the other methods, see [docs.rs](https://docs.rs/pubky-testnet).
 
-```bash
-docker run --name postgres \
-  -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=pubky_homeserver \
-  -p 127.0.0.1:5432:5432 -d postgres:18-alpine
-```
+## Standalone local testnet
 
-> Docker Hub anonymous pulls are rate-limited (100 / 6h). Pre-pull `postgres` or `docker login`
-> if you hit it.
-
-## Surface 2: standalone local testnet
-
-`cargo run -p pubky-testnet` runs a `StaticTestnet` with **hardcoded wiring** so out-of-process
-clients (browsers, JS/WASM, `pubky-cli`) can connect. It logs `Testnet running` when ready and
-tears everything down (including ephemeral databases via `drop_test_databases()`) on Ctrl+C.
-Accepts an optional `--homeserver-config <path>`.
+`cargo run -p pubky-testnet` runs a `StaticTestnet` on fixed ports so that clients in other processes can connect. When ready it logs `Testnet running`, followed by the bootstrap, relay and homeserver URLs. The admin URL is also logged because admin is enabled here, and the metrics URL is logged **only if metrics are enabled** (they are off by default). **Wait for the `Testnet running` line before connecting.**
 
 | Component | Port / value |
 | :-- | :-- |
-| DHT bootstrap node | `6881` |
+| DHT bootstrap | `6881` |
 | Pkarr relay | `15411` |
 | HTTP relay | `15412` |
-| Homeserver — ICANN HTTP | `6286` |
-| Homeserver — Pubky HTTP | `6287` |
-| Homeserver — admin server | `6288` (admin is **enabled** in the static testnet) |
-| Homeserver keypair | derived from secret `[0u8; 32]` |
+| Homeserver ICANN HTTP | `6286` |
+| Homeserver Pubky HTTPS | `6287` |
+| Homeserver admin | `6288` (**enabled**) |
 | Homeserver public key (z32) | `8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo` |
-| Homeserver public key (display) | `pubky8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo` |
 
-The z32 vs `pubky`-prefixed display forms are the same key in different renderings — use the
-right one for the right call (see [`concepts.md` — public-key string formats](concepts.md#public-key-string-formats)).
-JS `PublicKey.from(...)` takes the display form; `pubky-cli signup <homeserver-pk>` takes the
-bare z32 form.
+> **Security:** all listeners bind **`0.0.0.0`**, and the admin API on `6288` uses the default password **`admin`** from `config.default.toml`. Don't run the static testnet on an untrusted or shared network. Otherwise, firewall these ports (at minimum `6288`).
 
-**`npm run testnet`** is defined in the in-repo JS SDK package
-([`pubky-sdk/bindings/js/pkg/package.json`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/bindings/js/pkg/package.json))
-as exactly `"cargo run -p pubky-testnet"` — a thin alias for the Rust binary. It therefore
-**requires the Rust toolchain** (and Postgres/Docker per the DB requirement above); it is not a
-pure-JS server. Run it from the SDK package dir and wait for `Testnet running` before pointing
-examples at it. (In-repo package is `@synonymdev/pubky` 0.9.0; the published npm package runs
-ahead — the JS snippet below was verified against 0.9.3.)
+The homeserver key comes from `Keypair::from_secret(&[0; 32])`, so it is the same on every run and in both static and ephemeral testnets. Its display form is `pubky8pinx…`. Use the correct string format for each call; see [`concepts.md`: public-key string formats](concepts.md#public-key-string-formats).
 
-**JS examples** live in
-[`examples/javascript/*.mjs`](https://github.com/pubky/pubky-homeserver/tree/ba6d69c117b927e665fa6dd6b79c0deceafceb87/examples/javascript)
-(Node 20+). Setup: build the local SDK (`cd pubky-sdk/bindings/js/pkg && npm install && npm run
-build`), then `cd examples/javascript && npm install` (they depend on the local
-`@synonymdev/pubky` via `file:../../pubky-sdk/bindings/js/pkg`). Scripts taking `--testnet`
-expect a running local testnet in another terminal. Run **`0-check-testnet.mjs` first** — it does
-an authenticated signup → signin → write → read roundtrip and does not depend on public PKDNS
-resolution. Expected output: `Testnet is available, roundtrip succeeded.`
+```bash
+# Persistent state
+TEST_PUBKY_CONNECTION_STRING='postgres://postgres:postgres@localhost:5432/postgres' \
+  cargo run -p pubky-testnet -- persist ./my-testnet-data
+
+# Seed a custom homeserver config on first run (errors if config.toml already exists)
+TEST_PUBKY_CONNECTION_STRING='postgres://postgres:postgres@localhost:5432/postgres' \
+  cargo run -p pubky-testnet -- --homeserver-config my-config.toml persist ./my-testnet-data
+
+# Ephemeral: DB auto-created on startup, cleaned up on shutdown
+TEST_PUBKY_CONNECTION_STRING='postgres://postgres:postgres@localhost:5432/postgres' \
+  cargo run -p pubky-testnet
+```
+
+<sub>Source: [`pubky-testnet/README.md`](https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-testnet/README.md#L21-L44). Argument order was checked with the real CLI parser: `--homeserver-config` must come **before** `persist`. **The env-var prefix on the two `persist` commands has no effect** (see below). Upstream's claim that it overrides `database_url` is stale.</sub>
+
+- **In-memory mode (default):** uses a `pubky_test_{uuid}` database, so `TEST_PUBKY_CONNECTION_STRING` applies. On Ctrl+C it drops the testnet and calls `drop_test_databases()`. `--homeserver-config` replaces the default config, but the fixed ports, DHT and admin settings are still applied on top. The file is merged over `config.default.toml`, so unless your file overrides them you get `database_url = …/pubky_homeserver` (which beats the env var) and `signup_mode = token_required`.
+- **`persist <data_dir>`:** creates `config.toml`, `secret` and `data/files/` on the first run, and keeps the same `8pinx…` identity across restarts. It uses **no** test DB and **ignores `TEST_PUBKY_CONNECTION_STRING`**. It connects directly to `[general].database_url` in `<data_dir>/config.toml`. Without that URL it fails with `Persistent testnet requires an explicit database URL`. The generated config points at `postgres://localhost:5432/pubky_homeserver` with no credentials, so edit it (for example `postgres://postgres:postgres@localhost:5432/pubky_homeserver`) and make sure the database exists. Nothing is cleaned up on shutdown.
+- **Persistent and custom-config testnets require signup tokens** (`signup_mode = token_required` from `config.default.toml`). The JS and `pubky-cli` signup flows below fail against them unless you pass a token or set `signup_mode` to open in the config. For how tokens work, see [`signup-gating.md`](../../pubky-infra/references/signup-gating.md).
+
+**`npm run testnet`** in the JS SDK package (`pubky-sdk/bindings/js/pkg`) is just `"cargo run -p pubky-testnet"`, both in the repo and in the published 0.12.0 `package.json`. It is not a pure-JS server: it needs a Rust toolchain, a `pubky-homeserver` checkout and Postgres.
+
+**Pointing clients at it:** `Pubky::testnet()` / `Pubky.testnet()` is the same as `testnet_with_host("localhost")`. That sets the DHT bootstrap to `<host>:6881` (native only) and the pkarr relay to `http://<host>:15411`. On WASM the host is also used to rewrite URLs. For a testnet on another machine or in a container, pass the host: `PubkyHttpClientBuilder::testnet_with_host("192.168.1.50")` in Rust, or `Pubky.testnet("host.docker.internal")` in JS. Those ports must be reachable. For mainnet vs testnet facade construction, see [`sdk-js.md`](sdk-js.md) and [`sdk-rust.md`](sdk-rust.md).
+
+A Docker image of the testnet exists. Build it with `--build-arg BUILD_TARGET=testnet`; the binary inside is named `homeserver`. See [`docs/TESTING.md#docker-build-options`](https://github.com/pubky/pubky-homeserver/blob/main/docs/TESTING.md#docker-build-options).
+
+### JS against the local testnet
+
+The JS examples are in [`examples/javascript`](https://github.com/pubky/pubky-homeserver/tree/main/examples/javascript) (Node 20+) and use the local SDK via `file:../../pubky-sdk/bindings/js/pkg`.
+
+1. `cd pubky-sdk/bindings/js/pkg && npm install && npm run build`
+2. `cd examples/javascript && npm install`
+3. From the repo root, start `cargo run -p pubky-testnet` and wait for `Testnet running`.
+4. Run **`node 6-check-testnet.mjs` first** (it was renamed from `0-check-testnet.mjs`). The expected output is `Testnet is available, roundtrip succeeded.`
 
 ```js
 import { Pubky, Keypair, PublicKey } from "@synonymdev/pubky";
 
-// This is the default testnet homeserver. It comes from the secret `00000...` (bits).
 const TESTNET_HOMESERVER =
-  "pubky8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo";
+  "8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo";
 
 // 1) Build Pubky SDK facade for local testnet host
 const pubky = Pubky.testnet();
@@ -237,122 +256,84 @@ const signer = pubky.signer(keypair);
 const homeserver = PublicKey.from(TESTNET_HOMESERVER);
 await signer.signup(homeserver);
 
-// 3) Sign in to create a root-capability session for storage access
-const session = await signer.signin();
+// 3) Sign in to create a grant-backed session for storage access
+const session = await signer.signin("my-cool-app.example");
 
 // 4) Write then read a file under /pub/<your.app>/
 const path = "/pub/my-cool-app/hello.txt";
 await session.storage.putText(path, "hi");
+
 const roundtrip = await session.storage.getText(path);
+await session.signout();
 ```
 
-<sub>Source: [`examples/javascript/0-check-testnet.mjs`](https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/examples/javascript/0-check-testnet.mjs)</sub>
+<sub>Adapted from [`examples/javascript/6-check-testnet.mjs`](https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/examples/javascript/6-check-testnet.mjs#L9-L44): the `try/catch` body is unwrapped and `TESTNET_HOMESERVER` is inlined from `_testnet.mjs`. Executed with `@synonymdev/pubky` 0.12.0 against a local testnet (`tsc --noEmit` strict passes). The roundtrip returns `"hi"`, and a write after `signout` returns `401`.</sub>
 
-> The upstream example calls `signer.signin("my-cool-app.example")`, but the published 0.9.x JS
-> SDK declares `signin(): Promise<Session>` (zero args, returns a root-capability session). The
-> argument is vestigial — plain JS ignores it, but TypeScript rejects it (`TS2554`). Omit it.
-> (The Rust path differs: `signin(ClientId::new(...))` does take an arg.)
+JS signatures in 0.12.0 that break older code:
 
-## Surface 3: scripting with pubky-cli
+- `signer.signup(homeserver: PublicKey, signup_token?: string | null): Promise<void>`. It **returns no session**, so call `signin` afterwards.
+- `signer.signin(client_id: string): Promise<Session>`. The **`client_id` is required** in 0.12, and leaving it out is a TypeScript error; the 0.9.x "omit it" advice is wrong now. `signinBlocking(client_id)` works the same way.
+- `PublicKey.from(value)` accepts raw z32 or `pubky<z32>`. It **rejects `pubky://…`** with `InvalidInput`.
+- Rewrite older snippets that do `const session = await signer.signup(...)` (for example from pubky-ai-kit) as signup followed by `signin(clientId)`.
 
-`pubky-cli` is a **separate crate/repo** ([github.com/pubky/pubky-cli](https://github.com/pubky/pubky-cli),
-[crates.io](https://crates.io/crates/pubky-cli)). Install with `cargo install pubky-cli` (or
-`cargo install --path .` from a clone). It reuses the `pubky` SDK and the `pubky-testnet` harness,
-so you can script local testing or drive a real deployment. Top-level subcommands: `user`
-(client API — app-dev flows), `admin` (homeserver admin API — operator flows), and `tools`
-(recovery-file generation, shell completions).
+**Troubleshooting:**
 
-**For app development, use `user` and `tools`.** The `admin` subcommands are operator territory —
-see [Full self-hosted stack](#full-self-hosted-stack).
+| Symptom | Cause |
+| :-- | :-- |
+| `ECONNREFUSED` / transport error | The testnet isn't running or is still starting. |
+| `PkarrError: No HTTPS endpoints found` | The testnet isn't ready, or the key isn't published or resolvable yet. Run `6-check-testnet` first. |
+| `401` | Write without a valid session (for example after `signout`), or as the wrong user. |
+| `403` | The path is outside `/pub/` and `/priv/`, belongs to another user, or no capability covers it. |
+| Signup rejected (token) | You are on a `persist` or `--homeserver-config` testnet (`signup_mode = token_required`). |
 
-`pubky-cli user` verbs: `signup`, `signin`, `session`, `signout`, `publish`, `get`, `delete`,
-`list`, plus a third-party auth-token hand-off. For exact positional order and per-command flags,
-read the [pubky-cli README](https://github.com/pubky/pubky-cli/blob/main/README.md) (pinned to an
-older `pubky`; see the version-skew caveat below) rather than memorizing them here. Two points
-that bite:
+Don't use `3-storage.mjs` (an addressed public read) as your first smoke test, because PKDNS publication can lag.
 
-- **`--testnet` is required on *every* command in a local-testnet flow**, not just signup. Each
-  verb runs `signin()` first, which resolves the user's homeserver record over PKDNS; without
-  `--testnet` the CLI builds a public-network facade and cannot find a record published only to
-  the local testnet DHT — so even `get`/`delete` fail.
-- The README quick-start has a typo `--singup-code`; the correct flag is **`--signup-code`**
-  (source field `signup_code`).
+## Scripting with pubky-cli
 
-App-dev onboarding against a local testnet. The recovery passphrase comes from
-`PUBKY_CLI_RECOVERY_PASSPHRASE` (otherwise prompted interactively). `<homeserver-pk>` for the
-static testnet is `8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo`:
+`pubky-cli` is a separate repo and crate ([github.com/pubky/pubky-cli](https://github.com/pubky/pubky-cli), [crates.io](https://crates.io/crates/pubky-cli)). For app development, use `user` (signup, signin, session, signout, publish, get, delete, list) and `tools`. `admin` is for operators; see [Full self-hosted stack](#full-self-hosted-stack). For exact arguments, the `tools` subcommands and all env vars (`PUBKY_PKARR_BOOTSTRAP`, `PUBKY_PKARR_RELAYS`, `PUBKY_PKARR_TIMEOUT_MS`, …), read the [README](https://github.com/pubky/pubky-cli/blob/main/README.md).
+
+> **Version skew: mention this whenever you recommend it.** `pubky-cli` exists only as the pre-release `0.1.0-rc.1` (last published 2025-10-23; there is no stable release). Plain `cargo install pubky-cli` therefore **fails** (`could not find pubky-cli … with version *`), so pin the version: `cargo install pubky-cli --version 0.1.0-rc.1`. It pins `pubky = "0.6.0-rc.6"` and `pubky-testnet = "0.6.0-rc.6exp"`, far behind 0.12. It uses the old root-session API (Rust `signin()` takes no `ClientId`). Don't assume it behaves like 0.12.
+
+Mistakes that break scripts:
+
+- **Signup can exit non-zero against a 0.12 testnet.** With only `--testnet`, `user signup` failed with `Failed to publish record to the DHT: Publishing SignedPacket to Mainline failed` (exit 1), even though the account was created. The old pkarr could not publish to the testnet's local DHT. This reproduced 4/4, but only in one environment, so it may depend on the setup. Any `set -e` script stops there. **Fix:** `export PUBKY_PKARR_RELAYS=http://localhost:15411` to publish through the testnet's pkarr relay only (verified: the whole flow below passes).
+- **`PUBKY_PKARR_BOOTSTRAP` / `PUBKY_PKARR_RELAYS` make `--testnet` a no-op.** When either is set, the client is built from those env vars and `--testnet` is ignored.
+- **Without those env vars, pass `--testnet` on *every* command** that takes a recovery file, including `get` and `delete`. Those commands load the recovery file and sign in first, and they use `Pubky::testnet()` only when `--testnet` is set. Upstream's README leaves the flag off `get`/`delete`, and they fail without it (`pkarr could not resolve host`). `user list` is different: it takes a URL and does not sign in.
+- **Key format:** pass the homeserver as **bare z32** (`8pinx…`) or `pubky.<z32>`. The 0.12 display form `pubky8pinx…` (no dot) is **rejected** by this old CLI.
+- The README quick-start writes `--singup-code`. That is a typo; the real flag is **`--signup-code`**.
+- **Secrets:** `tools generate-recovery` **prints the passphrase to stdout** (`Keep this passphrase safe: …`), and `--passphrase` puts it in shell history and the process list. In CI, supply it only through `PUBKY_CLI_RECOVERY_PASSPHRASE` from a secret, and keep that output out of logs. Never do this with real keys.
 
 ```bash
-# 1) Create a recovery file and note the printed public key
+cargo install pubky-cli --version 0.1.0-rc.1
+
 pubky-cli tools generate-recovery ./alice.recovery --passphrase pass
 
-# 2) Sign up (replace <homeserver-pk> with your server's public key)
-PUBKY_CLI_RECOVERY_PASSPHRASE=pass \
-  pubky-cli user signup <homeserver-pk> ./alice.recovery --testnet
+# pubky-cli 0.1.0-rc.1 (pkarr from pubky 0.6.0-rc.6) cannot publish to the 0.12
+# testnet's local DHT, so signup exits non-zero. Publish via the testnet pkarr relay only.
+export PUBKY_PKARR_RELAYS=http://localhost:15411
+export PUBKY_CLI_RECOVERY_PASSPHRASE=pass
 
-# 3) Sign in to establish a session
-PUBKY_CLI_RECOVERY_PASSPHRASE=pass \
-  pubky-cli user signin ./alice.recovery --testnet
-
-# 4) Publish, read, then delete data under /pub/
-PUBKY_CLI_RECOVERY_PASSPHRASE=pass \
-  pubky-cli user publish "/pub/my-cool-app/hello.txt" test.txt ./alice.recovery --testnet
-PUBKY_CLI_RECOVERY_PASSPHRASE=pass \
-  pubky-cli user get /pub/my-cool-app/hello.txt ./alice.recovery --testnet
-PUBKY_CLI_RECOVERY_PASSPHRASE=pass \
-  pubky-cli user delete "/pub/my-cool-app/hello.txt" ./alice.recovery --testnet
+pubky-cli user signup <homeserver-pk> ./alice.recovery --testnet
+pubky-cli user signin ./alice.recovery --testnet
+pubky-cli user publish "/pub/my-cool-app/hello.txt" test.txt ./alice.recovery --testnet
+pubky-cli user get /pub/my-cool-app/hello.txt ./alice.recovery --testnet
+pubky-cli user delete "/pub/my-cool-app/hello.txt" ./alice.recovery --testnet
 ```
 
-<sub>Source: [`pubky-cli/README.md`](https://github.com/pubky/pubky-cli/blob/main/README.md)</sub>
-
-App-dev `tools` subcommands: `generate-recovery <path> --passphrase <p>` writes a recovery file
-and prints the public key; `completions <shell> --outfile <path>` emits shell completions. Set
-**`PUBKY_CLI_RECOVERY_PASSPHRASE`** to auto-decrypt recovery files (used above; handy in CI). The
-remaining env vars (PKARR bootstrap/relay/timeout overrides, admin password) are listed in the
-[README](https://github.com/pubky/pubky-cli/blob/main/README.md).
-
-> **Version skew — flag this when recommending pubky-cli.** `pubky-cli` is itself pre-release
-> (`0.1.0-rc.1`) and pins `pubky = "0.6.0-rc.6"` / `pubky-testnet = "0.6.0-rc.6exp"` —
-> markedly **older** than pubky-homeserver's current `0.9.0` SDK/testnet. Its SDK behavior and flags
-> may lag the current `pubky` crate; do not assume parity with 0.9.x semantics.
+<sub>Adapted from [`pubky-cli/README.md`](https://github.com/pubky/pubky-cli/blob/c041b2b1009267e45c1f974f34dc5c7676c00a25/README.md#L44-L81): pinned install, relay-only pkarr, and `--testnet` added to `get`/`delete` (a no-op here because `PUBKY_PKARR_RELAYS` is set, but required if you drop the env var). Executed under `set -euo pipefail` against a 0.12 static testnet, with `<homeserver-pk>` = `8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo`. Needs a no-token testnet (default in-memory mode); add `--signup-code <token>` otherwise.</sub>
 
 ## Writing correct tests
 
-- **Only `/pub/*` is reachable.** `GET`/`HEAD` are public; `PUT`/`DELETE` require a session with
-  a write capability; anything outside `/pub/` (e.g. `/priv/...`) returns **`403 Forbidden`**
-  regardless of capability. A test that writes to a non-`/pub` path fails **by design, not by
-  bug**. This is shared protocol behavior — see
-  [`concepts.md` — addressing and the /pub tree](concepts.md#addressing-and-the-pub-tree).
-- **Don't exercise unshipped features in tests.** No `/priv` private storage,
-  encrypted/guarded data as a general primitive, homeserver mirroring, backup *restore*, cloud
-  backup, or two-way sync. Full guardrail: [`shipped-vs-planned.md`](shipped-vs-planned.md).
-- **Facade construction (testnet vs mainnet)** is documented canonically — mainnet `new Pubky()`
-  / `Pubky::new()`, testnet `Pubky.testnet()` / `Pubky::testnet()` (localhost wiring), or wrap a
-  custom client. See [`concepts.md` — clients](concepts.md#homeserver-write-vs-nexus-read); don't
-  restate it here.
+- **Storage paths:** write under `/pub/<your.app>/`. The `/pub` path layout is **not stabilized** (pre-1.0). Paths outside `/pub/` and `/priv/` return `403`. For addressing and access rules, see [`concepts.md`: storage roots and access](concepts.md#storage-roots-and-access).
+- **`/priv` is ALPHA (v0.10.0+) and not for production.** It is access-controlled, *not* encrypted, so the operator can read it. Test it only with that caveat stated. See [`shipped-vs-planned.md`](shipped-vs-planned.md).
+- **Don't test planned features** such as encrypted/guarded data as a general primitive, homeserver mirroring, backup restore, cloud backup or two-way sync. See [`shipped-vs-planned.md`](shipped-vs-planned.md).
+- **Contributors to `pubky-homeserver` itself:** `cargo test -p pubky-testnet --features docker-postgres` tests the testnet crate, and `TEST_PUBKY_CONNECTION_STRING=… cargo test -p e2e` runs the cross-crate e2e tests. See [`docs/TESTING.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/TESTING.md).
 
 ## Full self-hosted stack
 
-For a real, persistent deployment (not a throwaway test net), switch to the **`pubky-infra`**
-skill:
+For a real, persistent deployment instead of a throwaway testnet, use the **`pubky-infra`** skill:
 
-- [`local-stack.md`](../../pubky-infra/references/local-stack.md) — `pubky-docker` compose
-  profiles, `.env` image tags, `pubky-docker-cli.sh`.
-- [`homeserver.md`](../../pubky-infra/references/homeserver.md) — run a real homeserver
-  (Docker/cargo), `config.toml`, admin API on `:6288`, signup tokens.
-- [`operator-cli.md`](../../pubky-infra/references/operator-cli.md) — `pubky-cli admin` flows:
-  invite/signup tokens, server stats, enable/disable users, WebDAV admin.
-
-This reference covers only the developer/test-net slice and `pubky-cli user` / `tools`;
-admin/operator usage of `pubky-cli` lives in `pubky-infra` to keep triggers disjoint.
-
-## Upstream references
-
-- `pubky-testnet`: [README](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md) ·
-  [docs.rs](https://docs.rs/pubky-testnet)
-- Examples: [JS](https://github.com/pubky/pubky-homeserver/tree/main/examples/javascript) ·
-  [Rust](https://github.com/pubky/pubky-homeserver/tree/main/examples/rust)
-- Postgres / test-DB notes:
-  [`docs/DEV_TESTING_GUIDES.md`](https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/docs/DEV_TESTING_GUIDES.md)
-- `pubky-cli`: [repo](https://github.com/pubky/pubky-cli) ·
-  [crates.io](https://crates.io/crates/pubky-cli)
+- [`local-stack.md`](../../pubky-infra/references/local-stack.md): the `pubky-docker` compose stack.
+- [`homeserver.md`](../../pubky-infra/references/homeserver.md): real homeserver config and admin API.
+- [`signup-gating.md`](../../pubky-infra/references/signup-gating.md): signup tokens and invite gating.
+- [`operator-cli.md`](../../pubky-infra/references/operator-cli.md): `pubky-cli admin` flows (`PUBKY_ADMIN_PASSWORD`).

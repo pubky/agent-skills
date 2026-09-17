@@ -2,68 +2,163 @@
   "path": "skills/pubky/references/advanced-messaging-payments.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-30T12:59:21.584Z",
+  "generatedAt": "2026-09-17T11:46:08.619Z",
   "sourcesUsed": [
     {
       "repo": "pubky-noise",
-      "sha": "be472b914ac98ced838c16e59b659d82c667f245"
+      "sha": "e38460d176b53357eaf008e13c64e60b4786186c"
     },
     {
       "repo": "paykit-rs",
-      "sha": "5f860da46c78a05abd2a737216c3c953a2e47e43"
+      "sha": "d263a7027a449f8f993fffad703285cef4ef25c1"
     }
   ],
   "provenance": [
     {
-      "anchor": "advanced-messaging-payments.md (finalized file body)",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/advanced-messaging-payments.md",
-      "sha": "f024337f81f79d5beea14220c21873c801140e4b"
+      "anchor": "Status and guardrails (read first)",
+      "repo": "pubky/pubky-noise",
+      "path": "README.md",
+      "sha": "e38460d176b5",
+      "url": "https://github.com/pubky/pubky-noise/blob/e38460d176b5/README.md"
     },
     {
-      "anchor": "Status & guardrails / paykit — cross-app payments",
+      "anchor": "Status and guardrails (read first)",
       "repo": "pubky/paykit-rs",
       "path": "README.md",
-      "sha": "5f860da",
-      "url": "https://github.com/pubky/paykit-rs"
+      "sha": "d263a7027a44",
+      "url": "https://github.com/pubky/paykit-rs/blob/d263a7027a44/README.md"
     },
     {
-      "anchor": "Public Payment Endpoints / paykit-lib signatures",
+      "anchor": "Status and guardrails (read first)",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/shipped-vs-planned.md",
+      "sha": "68f67fd23e2715007860395e0ed80d6cbd2caf5e"
+    },
+    {
+      "anchor": "When to reach for which",
       "repo": "pubky/paykit-rs",
-      "path": "paykit-lib/README.md",
-      "sha": "5f860da",
-      "url": "https://github.com/pubky/paykit-rs"
+      "path": "paykit-lib/Cargo.toml",
+      "sha": "d263a7027a44",
+      "url": "https://github.com/pubky/paykit-rs/blob/d263a7027a44/paykit-lib/Cargo.toml"
     },
     {
-      "anchor": "pubky-noise — E2E messaging",
+      "anchor": "pubky-noise: E2E messaging",
       "repo": "pubky/pubky-noise",
       "path": "pubky-noise/README.md",
-      "sha": "0.1.0-rc5",
-      "url": "https://github.com/pubky/pubky-noise"
+      "sha": "e38460d176b5",
+      "url": "https://github.com/pubky/pubky-noise/blob/e38460d176b5/pubky-noise/README.md"
     },
     {
-      "anchor": "Bindings (React Native)",
+      "anchor": "pubky-noise: E2E messaging (holder_skey / core types)",
+      "repo": "pubky/pubky-noise",
+      "path": "pubky-noise/src/lib.rs",
+      "sha": "e38460d176b5",
+      "url": "https://github.com/pubky/pubky-noise/blob/e38460d176b5/pubky-noise/src/lib.rs#L433-L448"
+    },
+    {
+      "anchor": "pubky-noise: E2E messaging (path derivation)",
+      "repo": "pubky/pubky-noise",
+      "path": "pubky-noise/src/path_derivation.rs",
+      "sha": "e38460d176b5",
+      "url": "https://github.com/pubky/pubky-noise/blob/e38460d176b5/pubky-noise/src/path_derivation.rs"
+    },
+    {
+      "anchor": "Sending and receiving: use the staged API",
+      "repo": "pubky/pubky-noise",
+      "path": "pubky-noise/README.md",
+      "sha": "e38460d176b5",
+      "url": "https://github.com/pubky/pubky-noise/blob/e38460d176b5/pubky-noise/README.md#quick-start"
+    },
+    {
+      "anchor": "Session snapshots and encrypted backup (unreleased rc9, git only)",
+      "repo": "pubky/pubky-noise",
+      "path": "pubky-noise/src/backup_crypto.rs",
+      "sha": "e38460d176b5",
+      "url": "https://github.com/pubky/pubky-noise/blob/e38460d176b5/pubky-noise/src/backup_crypto.rs"
+    },
+    {
+      "anchor": "Handshake write failures and errors",
+      "repo": "pubky/pubky-noise",
+      "path": "pubky-noise/README.md",
+      "sha": "e38460d176b5",
+      "url": "https://github.com/pubky/pubky-noise/blob/e38460d176b5/pubky-noise/README.md#write-failure-recovery"
+    },
+    {
+      "anchor": "paykit: cross-app payments",
       "repo": "pubky/paykit-rs",
-      "path": "paykit-react-native/src/index.tsx",
-      "sha": "0.1.0",
-      "url": "https://github.com/pubky/paykit-rs"
+      "path": "README.md",
+      "sha": "d263a7027a44",
+      "url": "https://github.com/pubky/paykit-rs/blob/d263a7027a44/README.md#boundaries"
+    },
+    {
+      "anchor": "Storage layout (receiver-scoped)",
+      "repo": "pubky/paykit-rs",
+      "path": "paykit-lib/src/receiver.rs",
+      "sha": "d263a7027a44",
+      "url": "https://github.com/pubky/paykit-rs/blob/d263a7027a44/paykit-lib/src/receiver.rs#L60-L105"
+    },
+    {
+      "anchor": "Public Payment Endpoints",
+      "repo": "pubky/paykit-rs",
+      "path": "paykit-lib/README.md",
+      "sha": "d263a7027a44",
+      "url": "https://github.com/pubky/paykit-rs/blob/d263a7027a44/paykit-lib/README.md#quick-start"
+    },
+    {
+      "anchor": "Public Payment Endpoints (PaykitError)",
+      "repo": "pubky/paykit-rs",
+      "path": "paykit-lib/src/error.rs",
+      "sha": "d263a7027a44",
+      "url": "https://github.com/pubky/paykit-rs/blob/d263a7027a44/paykit-lib/src/error.rs"
+    },
+    {
+      "anchor": "Encrypted Link (private channel)",
+      "repo": "pubky/paykit-rs",
+      "path": "paykit-lib/src/encrypted_link/handshake.rs",
+      "sha": "d263a7027a44",
+      "url": "https://github.com/pubky/paykit-rs/blob/d263a7027a44/paykit-lib/src/encrypted_link/handshake.rs#L15-L312"
+    },
+    {
+      "anchor": "Private messages, Payment Requests, receipts",
+      "repo": "pubky/paykit-rs",
+      "path": "paykit-lib/README.md",
+      "sha": "d263a7027a44",
+      "url": "https://github.com/pubky/paykit-rs/blob/d263a7027a44/paykit-lib/README.md#payment-receipts"
+    },
+    {
+      "anchor": "Mobile bindings (paykit-ffi)",
+      "repo": "pubky/paykit-rs",
+      "path": "paykit-ffi/README.md",
+      "sha": "d263a7027a44",
+      "url": "https://github.com/pubky/paykit-rs/blob/d263a7027a44/paykit-ffi/README.md"
+    },
+    {
+      "anchor": "Status and guardrails (paykit-sdk backup)",
+      "repo": "pubky/paykit-rs",
+      "path": "paykit-sdk/README.md",
+      "sha": "d263a7027a44",
+      "url": "https://github.com/pubky/paykit-rs/blob/d263a7027a44/paykit-sdk/README.md"
     }
   ],
   "snippet": {
-    "total": 3,
-    "pass": 3,
+    "total": 4,
+    "pass": 4,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 33,
+    "supported": 36,
     "refuted": 0,
-    "caveated": 0,
+    "caveated": 9,
     "unsupported": 0
   },
-  "guardrailViolations": [],
-  "wordCount": 2091,
+  "guardrailViolations": [
+    "Section 'Session snapshots and encrypted backup' and the Backup API table present encrypted persist_snapshot(&backup_key, generation), load_snapshot, backup_crypto::derive_backup_key and rollback protection as available, with no release caveat. They are implemented only in unreleased pubky-noise rc9 (git HEAD). Published crates.io rc8, and the rc8 that paykit-lib depends on and re-exports, has persist_snapshot(&self), which uploads secret keys unencrypted to /pub. This matches the 'implemented in main but NOT released' category and needs an explicit 'unreleased, git-only' caveat.",
+    "Guardrail bullet 'Backup and restore here mean restoring one crate's Noise session' is incomplete: paykit-sdk also offers 'SDK backup/restore' (export/restore of SDK state over an app-owned transport, paykit-sdk/README.md L11-12, L65). Widen the bullet so a reader doesn't take paykit-sdk's backup/restore for Pubky Backup restore (planned) or homeserver mirroring.",
+    "'Privacy comes from client-side ciphertext plus unguessable path segments derived from a DH shared secret' overclaims privacy. Unguessable paths exist only when derive_asymmetric_paths + new_with_paths are used; the Quick Start's PubkyNoiseConfig::new(..., \"/pub/data\") writes to a fixed, publicly enumerable /pub path."
+  ],
+  "wordCount": 3870,
   "substance": {
     "ok": true,
     "reasons": []

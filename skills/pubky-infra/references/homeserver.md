@@ -1,306 +1,528 @@
 # Run a homeserver
 
-Operating a homeserver: how to launch it, the HTTP servers it exposes, `config.toml`, the admin
-API (signup tokens, user enable/disable, quotas), the dashboard, public exposure via Cloudflare
-Tunnel, and Umbrel vs standalone.
+Operator reference for Pubky Homeserver: install and run, public deployment, `config.toml`, PKARR
+republishing, the admin and metrics servers (signup tokens, enable/disable users, quotas), the
+dashboard, and Umbrel vs standalone.
 
-## What a homeserver is
+Operations only. For the protocol model, link to the canonical files and don't restate them:
+[the homeserver model](../../pubky/references/concepts.md#the-homeserver-model) ·
+[homeserver-write vs Nexus-read](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read) ·
+[`shipped-vs-planned.md`](../../pubky/references/shipped-vs-planned.md).
 
-For the protocol model — the per-public-key backend, PKARR discovery, the `/pub` tree, the
-PostgreSQL-metadata-vs-filesystem split, and **homeserver-write vs Nexus-read** — read the
-canonical [`concepts.md`](../../pubky/references/concepts.md#the-homeserver-model) and
-[`concepts.md` write/read split](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read).
-This file is operations only — don't re-derive the model here.
+> **Versions.** Standalone `main` is workspace version **0.12.0** (`rust-version = 1.89`). Recent
+> tags: v0.12.0 (2026-09-14), v0.11.0, v0.10.0, v0.9.3. The **Umbrel app still runs v0.9.1**
+> (see [Umbrel vs standalone](#umbrel-vs-standalone)). `openapi-admin.yml` still says
+> `info.version: 0.9.0`, which is stale. Pubky is pre-1.0: check every API shape below against the
+> linked upstream file.
 
-> Versions below are from the `0.9.0` homeserver workspace (`[workspace.package] version`; the
-> homeserver crate inherits via `version.workspace = true`, and the OpenAPI `info.version` is also
-> `0.9.0`; `rust-version = 1.89`). Pubky is **pre-1.0**; treat any version-pinned or API-shape
-> claim as drift-prone and confirm against the linked upstream source. (The Umbrel app is packaged
-> at `0.9.1-<n>` — see [below](#umbrel-vs-standalone).)
+## Install and run
 
-## Run it
+The binary is **`pubky-homeserver`**. In the project's Docker image (and on Umbrel) it is
+installed as **`homeserver`**. CLI: one flag, `--data-dir` / `-d` (default `~/.pubky`, must not be
+an existing file), and one optional subcommand:
 
-The binary takes `--data-dir` / `-d` (default `~/.pubky`, validated as a directory) plus an
-optional `init` **subcommand**. With **no subcommand** it loads `config.toml` from the data dir,
-inits tracing, and **starts the server**. `homeserver init` (or `homeserver --data-dir <dir>
-init`) **initializes the data dir** (writes `config` + keypair) and **exits without starting**.
+- **`init`** (v0.10+): creates the data dir, writes `config.toml` and the keypair if missing, then
+  **exits** without starting the server or touching Postgres. On v0.9 and earlier, the first run
+  creates these files and then fails without Postgres.
+- **No subcommand**: starts the server; runs until **SIGINT** (Ctrl+C).
+
+Install a release binary (upstream
+[`INSTALL.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/INSTALL.md) still pins
+0.11.0; v0.12.0 assets use the same names, and the tarball also contains `homeservercli`):
 
 ```bash
-cargo run -- --data-dir=~/.pubky
+PUBKY_VERSION=0.12.0
+PUBKY_PLATFORM=linux-amd64  # or linux-arm64, osx-arm64, osx-amd64, windows-amd64
+curl -LO https://github.com/pubky/pubky-homeserver/releases/download/v${PUBKY_VERSION}/pubky-homeserver-v${PUBKY_VERSION}-${PUBKY_PLATFORM}.tar.gz
+tar -xf pubky-homeserver-v${PUBKY_VERSION}-${PUBKY_PLATFORM}.tar.gz
+cp pubky-homeserver-v${PUBKY_VERSION}-${PUBKY_PLATFORM}/pubky-homeserver /usr/local/bin  # usually needs sudo
+pubky-homeserver --version
 ```
 
-[`main.rs`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/src/main.rs) is the
-authoritative entrypoint and the only place to trust for CLI/startup:
+Or build from source / Docker, then initialise the data dir:
+
+```bash
+cargo build --release -p pubky-homeserver
+cp ./target/release/pubky-homeserver /usr/local/bin
+
+# or Docker (the binary inside the image is `homeserver`)
+docker build -t pubky-homeserver .
+docker run --rm pubky-homeserver homeserver --version
+
+# initialise the data dir (pick one)
+pubky-homeserver init
+pubky-homeserver --data-dir /path/to/pubky-data init
+docker run -it -v ~/.pubky:/root/.pubky pubky-homeserver homeserver init
+```
+
+**Data dir layout:** `config.toml`, `secret` (the server keypair, i.e. its identity), and file
+storage under `data/files` by default.
+
+> **Gotcha: set `database_url` with real credentials.** `init` writes the annotated sample with
+> **every setting commented out**, so only the embedded `config.default.toml` applies. That default
+> always supplies `database_url = "postgres://localhost:5432/pubky_homeserver"` (no credentials).
+> If you don't override `[general].database_url`, startup fails with a **Postgres connection / auth
+> / "database does not exist" error**, not a missing-config error.
+
+**PostgreSQL is required.** The homeserver runs its own migrations but **does not create the
+database**; create an empty one first:
+
+```bash
+docker run --name pubky-postgres \
+  --restart unless-stopped \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=pubky_homeserver \
+  -p 127.0.0.1:5432:5432 \
+  -v postgres-data:/var/lib/postgresql \
+  -d postgres:18
+
+# Uncomment [general] and set database_url in ~/.pubky/config.toml (GNU sed syntax)
+sed -i 's|^# \[general\]|[general]|; s|^# database_url = .*|database_url = "postgres://postgres:postgres@localhost:5432/pubky_homeserver"|' ~/.pubky/config.toml
+```
+
+Run it:
+
+```bash
+# Docker: host networking so the container can reach Postgres on the host
+docker run -d --name pubky-homeserver --restart unless-stopped --network=host -v ~/.pubky:/root/.pubky pubky-homeserver homeserver
+
+# native, in the foreground
+pubky-homeserver
+
+# from source (dev)
+cargo run -p pubky-homeserver -- --data-dir ~/.pubky
+```
+
+For systemd, **set `KillSignal=SIGINT`**. The server waits on `tokio::signal::ctrl_c`, not SIGTERM,
+so the default stop signal does not shut it down cleanly:
+
+```ini
+[Unit]
+Description=Pubky Homeserver
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/pubky-homeserver --data-dir /home/YOUR_USER/.pubky
+User=YOUR_USER
+# The homeserver listens for SIGINT (Ctrl+C), not SIGTERM.
+KillSignal=SIGINT
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+**Startup order:** user-keys republisher → admin server (if enabled) → metrics server (if enabled)
+→ client server → homeserver key republisher, which does an **initial PKARR publish. If that first
+DHT publish fails, startup fails.**
+
+**Logging:** stdout only, filtered by `[logging].level` / `module_levels`; a `RUST_LOG` env filter
+overrides the config. No built-in log file.
+
+### Embedding as a library
+
+Matches the real `pubky-homeserver` 0.12.0 API (compiles cleanly under clippy against the crates.io
+release). A leading `~/` in the data-dir path is expanded.
 
 ```rust
-#[derive(Parser, Debug)]
-#[command(version = env!("CARGO_PKG_VERSION"))]
-struct Cli {
-    /// Path to data directory. Defaults to ~/.pubky
-    #[clap(short, long, default_value_os_t = default_config_dir_path(), value_parser = validate_config_dir_path)]
-    data_dir: PathBuf,
+use pubky_homeserver::HomeserverApp;
+use std::path::PathBuf;
 
-    #[command(subcommand)]
-    command: Option<Command>,
-}
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    let app = HomeserverApp::start_with_persistent_data_dir_path(
+        PathBuf::from("~/.pubky")
+    ).await?;
 
-#[derive(Subcommand, Debug)]
-enum Command {
-    /// Initialize the data directory (config and keypair) without starting the server.
-    Init,
+    println!("Homeserver HTTP: {}", app.icann_http_url());
+    println!("Homeserver Pubky TLS: {}", app.pubky_url());
+
+    if let Some(admin) = app.admin_server() {
+        println!("Admin server: http://{}", admin.listen_socket());
+    }
+
+    tokio::signal::ctrl_c().await?;
+    Ok(())
 }
 ```
 
-> The homeserver **README's library examples** are stale: they call `HomeserverApp::run_with_data_dir_path`,
-> `server.core()`, `server.admin()`, `HomeserverCore::from_data_dir_path`, `DataDirMock` — none of
-> which match `main.rs` (real surface: `HomeserverApp::start_with_persistent_data_dir_path`,
-> `server.client_server()`, `server.admin_server()`, `server.metrics_server()`). **Do not copy the
-> README examples verbatim** — trust `main.rs`.
+<sub>Source: [`pubky-homeserver/README.md`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/README.md) (not CI-verified upstream). Other `HomeserverApp` entry points: `start_with_persistent_data_dir`, `start(AppContext)`, `start_with_mock_data_dir` (`testing` feature), `client_server()`, `admin_server()` / `metrics_server()` (both `Option`), `public_key()`.</sub>
 
-Three ways to deploy:
+## Servers and sockets
 
-- **From source / single binary** — `cargo run` (above), or run the built `homeserver` binary.
-- **Local dev stack** — `pubky-docker` compose brings up homeserver + Nexus + frontends in one
-  command. It is **local development / experimentation only, not production hosting** — see the
-  guardrail below and [`local-stack.md`](local-stack.md).
-- **Self-host (production)** — the [Umbrel app](#umbrel-vs-standalone), or a hand-rolled hardened
-  deployment (reverse proxy + TLS + isolated metrics).
+All defaults bind to loopback.
 
-A **PostgreSQL** database is required and **must be created manually** (the `[general]` sample
-comment: *"Important: The database must be created manually."*) — the binary applies its bundled
-migrations but will not create the database. Default `[general].database_url` is
-`postgres://localhost:5432/pubky_homeserver`.
-
-## Three servers, four sockets
-
-The homeserver runs **three independent HTTP servers**; the client (drive) server binds **two**
-sockets (Pubky-TLS + ICANN HTTP), admin and metrics one each. Defaults are all loopback. The
-client (`6286`/`6287`) and admin (`6288`) sockets are asserted in `test_default_config`; the
-metrics default (`6289`) comes from `config.default.toml`.
-
-| Server | Default socket | Runs by default? | Purpose |
+| Server | Default socket | On by default | Expose publicly? |
 | :-- | :-- | :-- | :-- |
-| Client — ICANN HTTP | `127.0.0.1:6286` | yes | tenant file API, cleartext (behind your reverse proxy) |
-| Client — Pubky-TLS | `127.0.0.1:6287` | yes | tenant file API over Pubky-TLS (raw public keys) |
-| Admin | `127.0.0.1:6288` | yes (`[admin] enabled = true`) | operator API (tokens, users, quotas, WebDAV) |
-| Metrics | `127.0.0.1:6289` | **no** (`[metrics] enabled = false`) | Prometheus `/metrics`, **unauthenticated** |
+| Client, ICANN HTTP | `127.0.0.1:6286` | yes | **No.** Put a reverse proxy or tunnel in front |
+| Client, Pubky TLS | `127.0.0.1:6287` | yes | **Yes.** Set `0.0.0.0:6287` for direct access |
+| Admin | `127.0.0.1:6288` | yes (`[admin] enabled = true`) | **Never** |
+| Metrics (`/metrics`, no auth) | `127.0.0.1:6289` | **no** (`[metrics] enabled = false`) | **Never** |
 
-> **Metrics is disabled by default.** The embedded runtime default (`config.default.toml`, loaded
-> via `include_str!` and used by `ConfigToml::default()`) has `[metrics] enabled = false`; only the
-> annotated `config.sample.toml` ships `[metrics] enabled = true`. Admin is enabled by default in
-> both. So out of the box you get three running listeners unless you copy the sample (or set
-> `[metrics] enabled = true` yourself).
+> The annotated `config.sample.toml` shows `[metrics] enabled = true`, but `init` comments it out.
+> The **effective default is metrics OFF**.
 
-The **client** servers host the tenant file API (`/pub` `PUT`/`GET`/`DELETE`) and the **event
-streams**; the **admin** and **metrics** servers are operator-only and should stay off the public
-internet.
+The client server hosts tenant storage, auth, and event feeds (spec:
+[`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/openapi-client.yml)).
+Its unauthenticated `GET /info` returns `{"features": ["path-addressed-storage"]}` for SDK feature
+discovery. This is **not** the admin `GET /info`.
 
 ## config.toml
 
-Defaults are embedded from `config.default.toml` and your `config.toml` is **deep-merged** on top.
-Sections (see the maintained
+Your `config.toml` is **deep-merged over the embedded `config.default.toml`**, table by table, key
+by key. Read the annotated
 [`config.sample.toml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/config.sample.toml)
-for the full annotated list — link, don't memorize):
+for every key.
 
-- `[general]` — `signup_mode`, `database_url` (Postgres URL), deprecated `user_storage_quota_mb`.
-- `[drive]` — `pubky_listen_socket`, `icann_listen_socket`, and `[[drive.rate_limits]]`.
-- `[storage]` — backend `type` + `default_quota_mb`.
-- `[default_quotas]` — `rate_read`/`rate_write`/`unauthenticated_ip_rate_read`.
-- `[admin]` — `enabled`, `listen_socket`, `admin_password`.
-- `[metrics]` — `enabled`, `listen_socket`.
-- `[pkdns]` — public-reachability advertisement (see below).
-- `[logging]` — `level`, `module_levels`.
+> **Gotcha: arrays replace, they don't merge (`replace_arrays = true`).** Any array you set
+> (`[[drive.rate_limits]]`, `dht_relay_nodes`, `module_levels`, ...) **replaces the default array
+> entirely**. Defining your own `[[drive.rate_limits]]` **silently drops the default
+> `GET /signup_tokens/*` 10r/m per-IP limit** that slows token brute-forcing; add it back. A value
+> whose type doesn't match the default fails with `Incompatible types at path ...`.
+
+Embedded defaults and what they mean:
+
+- `[general]`: `signup_mode = "token_required"` (or `"open"`);
+  `database_url = "postgres://localhost:5432/pubky_homeserver"` (database must already exist; see
+  the credentials gotcha above). `user_storage_quota_mb` is deprecated (`0` = unlimited), migrated
+  into `[storage].default_quota_mb` only when that key is unset.
+- `[drive]`: `pubky_listen_socket`, `icann_listen_socket`, `[[drive.rate_limits]]` (`path` glob,
+  `method`, `quota` as `"<n>r/s"` / `"<n>r/m"`, `key = "ip" | "user"`, optional `burst`,
+  `whitelist`). **Request-count quotas only**; put bandwidth limits in `[default_quotas]`. The
+  sample (not the defaults) enables `POST /session` 20r/m per IP with `127.0.0.1` whitelisted, and
+  leaves the `/signup_tokens/*` rule commented out.
+- `[default_quotas]`: `rate_read`, `rate_write`, `unauthenticated_ip_rate_read` (sample: `10mb/s` /
+  `5mb/s` / `1mb/s`). Apply when a user's quota is `Default`.
+- `[storage]`: `type = "file_system"` (default) or `"google_bucket"` (`bucket_name` + `credential`;
+  **bucket must already exist**; Cargo default feature `storage-gcs`). `"in_memory"` **only parses
+  in builds with the `storage-memory` (or `testing`) feature**; release/default builds reject it.
+  `default_quota_mb`: **absent = unlimited, `0` = zero storage**.
+- `[admin]`: `enabled`, `listen_socket`, `admin_password = "admin"` (**change it**).
+- `[metrics]`: `enabled`, `listen_socket`.
+- `[pkdns]`: `public_ip` (default `127.0.0.1`), `public_pubky_tls_port`, `public_icann_http_port`,
+  `icann_domain` (default `localhost`), `user_keys_republisher_interval = 14400`,
+  `dht_bootstrap_nodes`, `dht_relay_nodes` (default `https://pkarr.pubky.app`,
+  `https://pkarr.pubky.org`), `dht_request_timeout_ms` (2000).
+- `[logging]`: `level = "info"`, `module_levels = ["pubky_homeserver=debug", "tower_http=debug"]`.
+
+**No built-in ICANN TLS.** Run a reverse proxy and manage certificates yourself.
+
+## Deploy publicly
+
+Pick a guide from [`docs/DEPLOY.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/DEPLOY.md):
+
+| Guide | Needs | Pubky TLS (6287) | Certs |
+| :-- | :-- | :-- | :-- |
+| [Domain](https://github.com/pubky/pubky-homeserver/blob/main/docs/deploy/domain.md) (recommended for production) | static IP + domain; open 80/443/6287 | yes | Caddy, 90-day |
+| [IP-only](https://github.com/pubky/pubky-homeserver/blob/main/docs/deploy/ip-only.md) | static IP; open 80/443/6287; Caddy v2.10.1+ | yes | Caddy `shortlived` profile, ~6 days |
+| [Cloudflare Tunnel](https://github.com/pubky/pubky-homeserver/blob/main/docs/deploy/cloudflare-tunnel.md) | domain on Cloudflare; no static IP or open ports | **no** | Cloudflare |
+
+Pubky TLS (6287) needs no CA: clients resolve the server key on the DHT. HTTPS (443) is what
+browsers and the browser SDK need.
+
+> **Rules for every deployment.** Bind **only** `pubky_listen_socket` to `0.0.0.0:6287`. Never set
+> `0.0.0.0` on `icann_listen_socket`, `admin.listen_socket`, or `metrics.listen_socket`; never
+> expose 6286, 6288, or 6289 to the internet. Use a **static (reserved) IP**: the PKARR record
+> embeds `public_ip` and **silently breaks if the IP changes**.
+
+**Domain.** The Caddyfile host must exactly match both the DNS A record and `icann_domain`:
 
 ```toml
-[admin]
-# Enable or disable the admin server
-enabled = true
-listen_socket = "127.0.0.1:6288"
-# If this API is ever exposed to the public internet, make sure to add a HTTPS cert.
-admin_password = "admin"
+# ~/.pubky/config.toml
+[drive]
+pubky_listen_socket = "0.0.0.0:6287"
 
-[metrics]
-enabled = true   # NOTE: the sample sets true; the EMBEDDED default is false (metrics off)
-# Exposed at /metrics. Isolate from the public network — monitoring systems only.
-listen_socket = "127.0.0.1:6289"
+[pkdns]
+public_ip = "YOUR_IP"
+icann_domain = "YOUR_DOMAIN"
 ```
 
-> The block above is the annotated `config.sample.toml`; the embedded `config.default.toml`
-> differs on `[metrics] enabled` (false) — see the table above.
+```caddyfile
+# /etc/caddy/Caddyfile
+your_domain.com {
+    reverse_proxy 127.0.0.1:6286
+}
+```
 
-**Signup mode** — `[general].signup_mode` is `"open"` (anyone may sign up) or `"token_required"`
-(a signup token is required). **Default is `token_required`** (the default config + the unit test
-assert `SignupMode::TokenRequired`).
+**IP-only.** Set `icann_domain = "YOUR_IP"` (same `[drive]` / `public_ip` as above). Caddy needs
+`default_sni` (clients send no SNI to a bare IP) and the `shortlived` ACME profile (without it:
+`rejectedIdentifier`):
 
-**Storage backends** — `[storage].type` is one of: `"file_system"` (local disk, default),
-`"google_bucket"` (`bucket_name` + `credential` to a service-account JSON; **the bucket must
-already exist**), or `"in_memory"` (test/dev only). Cargo's default feature is `storage-gcs`
-(`default = ["storage-gcs"]`); `storage-memory` is a separate feature (`testing` pulls it in).
-Per-user default quota is `[storage].default_quota_mb` — **omit = unlimited; `0` = zero storage
-(not unlimited)**.
+```caddyfile
+{
+    default_sni YOUR_IP
+}
 
-**Public reachability** — to be reachable from outside, `[pkdns]` must advertise a public address
-on the DHT: `public_ip` (must be set), optional `public_pubky_tls_port` / `public_icann_http_port`
-(sample sets `80`), and `icann_domain` (a real domain for legacy browsers). ICANN **TLS is not
-natively supported** — *"you should be running a reverse proxy and managing certificates
-yourself."* `user_keys_republisher_interval` (default `14400`s = 4h; `0` disables) controls DHT
-republish cadence; `dht_bootstrap_nodes` / `dht_relay_nodes` (default relays
-`https://pkarr.pubky.app`, `https://pkarr.pubky.org`) / `dht_request_timeout_ms` (`2000`) are also
-present. DHT/relay operation lives in [`dns-and-relays.md`](dns-and-relays.md).
+YOUR_IP {
+    tls {
+        issuer acme {
+            profile shortlived
+        }
+    }
+    reverse_proxy 127.0.0.1:6286
+}
+```
 
-**Request-count rate limiting** — `[[drive.rate_limits]]` entries: `path` (fast-glob), `method`
-(`GET`/`POST`/…), `quota` (`$rate'r'/$unit` request-count form, e.g. `20r/m`; `$rate` a positive
-int up to `4,294,967,296`; only `s`/`m` units), `key` (`ip` or `user` — `user` requires an
-authenticated endpoint), optional `burst` (defaults to the quota rate) and `whitelist` (IPs or
-pubkeys). **Bandwidth quotas (`kb/s`/`mb/s`/`gb/s`) are not allowed here** — use `[default_quotas]`
-for bandwidth throttling.
+**Cloudflare Tunnel (standalone `cloudflared`).** Only HTTP is tunneled, so `pubky_listen_socket`
+can stay at its default. Advertise port 443:
 
-> **Default vs sample mismatch.** The embedded runtime default (`config.default.toml`, asserted by
-> `test_default_config`) ships **one** rule: `GET /signup_tokens/* 10r/m` per-IP (slows invite-code
-> brute-forcing). The annotated `config.sample.toml` instead **enables** `POST /session 20r/m`
-> per-IP (whitelisting `127.0.0.1`) and leaves the `/signup_tokens/*` rule **commented**. What you
-> get out of the box depends on whether you start from the embedded defaults or copy the sample.
+```bash
+cloudflared login
+cloudflared tunnel create pubky-homeserver
+cloudflared tunnel route dns pubky-homeserver YOUR_DOMAIN
+# write ~/.cloudflared/config.yml and ~/.pubky/config.toml (below), then install as a service.
+# Pass --config explicitly: sudo changes HOME.
+sudo cloudflared --config ~/.cloudflared/config.yml service install
+sudo systemctl enable cloudflared
+sudo systemctl start cloudflared
+```
 
-**Bandwidth quotas** — `[default_quotas]` sets the system-wide fallbacks used when a user's quota
-is `Default`: `rate_read` (download bandwidth, sample `10mb/s`), `rate_write` (uploads, sample
-`5mb/s`), `unauthenticated_ip_rate_read` (anonymous-by-IP downloads, sample `1mb/s`). Per-user
-overrides go through the admin API (`PATCH /users/{pubkey}/quota`).
+```yaml
+# ~/.cloudflared/config.yml
+tunnel: <TUNNEL_ID>
+credentials-file: /home/<YOUR_USER>/.cloudflared/<TUNNEL_ID>.json
+ingress:
+  - hostname: YOUR_DOMAIN
+    service: http://127.0.0.1:6286
+  - service: http_status:404
+```
+
+```toml
+# ~/.pubky/config.toml
+[pkdns]
+public_icann_http_port = 443
+icann_domain = "YOUR_DOMAIN"
+```
+
+**Post-setup checks** (from
+[`post-setup.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/deploy/post-setup.md);
+the first two steps were run against a local testnet, the third needs a public server):
+
+```bash
+# On the server: get the homeserver public key (use your admin password)
+curl -s "http://127.0.0.1:6288/info" -H "X-Admin-Password: admin"
+
+# In a pkarr clone: expect an A record with public_ip plus HTTPS/SVCB records
+cargo run --example resolve <homeserver-public-key>
+
+# From ANOTHER machine, in a pkarr clone (skip for Cloudflare Tunnel): prints "Pubky Homeserver"
+cargo run --features=reqwest-builder --example http-get https://<homeserver-public-key>
+```
+
+You can also check the record on pkdns.net. After changing `icann_domain` or `public_ip`, restart
+and wait a few minutes for the DHT. If Pubky TLS times out, check the firewall and that the server
+listens on `0.0.0.0:6287`.
+
+**Reverse-proxy caching.** Preserve upstream `Cache-Control` and `Vary`. Private responses are
+`no-store`. `/storage/{user_z32}/priv/...` varies on `Authorization` and `Cookie`; the deprecated
+`/priv/...` and `/events-stream` also vary on `pubky-host`. (`/priv` is **alpha, not for
+production, not encrypted from the operator**; see
+[`shipped-vs-planned.md`](../../pubky/references/shipped-vs-planned.md).)
+`/storage/{user_z32}/pub/...` is cacheable and does not vary on `pubky-host`; the deprecated
+`/pub/...` still does.
+
+## PKARR republishing
+
+How clients resolve these records:
+[`concepts.md` § PKARR resolution](../../pubky/references/concepts.md#pkarr-resolution).
+The homeserver's own packet (all TTL 3600):
+
+- HTTPS/SVCB, priority 1, target `.`, port `public_pubky_tls_port` (or the bound TLS port), IP
+  hints `public_ip`.
+- If `icann_domain` is set: HTTPS/SVCB, priority 10, targeting that domain;
+  `public_icann_http_port` defaults to the bound ICANN port.
+- A/AAAA for `public_ip`.
+
+Two background jobs:
+
+- **HomeserverKeyRepublisher**: publishes the server's packet at startup (failure aborts start),
+  then **every hour**; later failures are only logged.
+- **UserKeysRepublisher**: republishes user packets every `user_keys_republisher_interval` seconds
+  after a 60 s delay. Default 14400 (4 h); `0` disables; values under 1800 are **clamped to 1800**
+  with a warning.
+
+Each attempt reads cache then network and picks the newest valid packet; it never publishes
+straight from cache. The user republisher **only republishes users whose `_pubky` record points at
+this homeserver**; others are `Skipped` and their stored data is **not** removed. Only operational
+errors are retried, with jittered backoff. Full algorithm:
+[`docs/REPUBLISHING.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/REPUBLISHING.md).
+
+> **Relay gotcha: relays stay on unless you override `dht_relay_nodes`.** The embedded default
+> always supplies `dht_relay_nodes` (`pkarr.pubky.app`, `pkarr.pubky.org`), so setting only
+> custom/testnet `dht_bootstrap_nodes` still leaves the **mainnet** relays enabled. If you point
+> `dht_bootstrap_nodes` at a testnet, also set `dht_relay_nodes` to matching relays. (The sample's
+> "If not set and no bootstrap nodes are set..." comment is misleading for the binary.) DHT and
+> relay operation: [`dns-and-relays.md`](dns-and-relays.md#republishing).
 
 ## Admin API (:6288)
 
-**Auth model:** the protected router is wrapped in `AdminAuthLayer`, which checks the
-**`X-Admin-Password`** header against `[admin].admin_password` by **exact string match**. Missing
-header → `401 "Missing admin password"`; wrong value → `401 "Invalid admin password"`. CORS is
-**`CorsLayer::very_permissive()`**. `GET /` is public. The `/dav{*path}` route is mounted at the
-top level and is **not** under `AdminAuthLayer` — it uses **HTTP Basic auth** in the dav handler
-instead (tests send `Authorization: Basic base64(admin:)`).
+Spec:
+[`openapi-admin.yml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/openapi-admin.yml);
+link to it rather than hardcoding response shapes. CLI wrappers such as `homeservercli` (password
+from flag, then `PUBKY_HOMESERVER_ADMIN_PASSWORD`, then `config.toml`) are in
+[`operator-cli.md`](operator-cli.md).
 
-Endpoint map (verified against `admin_server/app.rs`; the
-[OpenAPI spec](https://github.com/pubky/pubky-homeserver/blob/d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811/pubky-homeserver/openapi.yml) admin
-server is tagged `localhost:6288` — link, don't hardcode shapes):
+**Auth:** send **`X-Admin-Password`**, exactly matching `[admin].admin_password`. Missing →
+`401 Missing admin password`; wrong → `401 Invalid admin password`. **`/dav{*path}` differs:** it
+sits outside that layer and uses **HTTP Basic auth, username `admin`, password = admin password**.
+CORS is `very_permissive`.
 
-| Method + path | Auth | Does |
-| :-- | :-- | :-- |
-| `GET /generate_signup_token` | header | mint a default-limit signup token |
-| `POST /generate_signup_token` | header | mint a token with a custom `UserQuota` (JSON body) |
-| `GET /info` | header | server stats (dashboard Overview) |
-| `GET /signup_tokens` | header | paginated list (`state=all\|used\|unused`, `limit`, `cursor`) |
-| `POST /users/{pubkey}/disable` | header | disable a user |
-| `POST /users/{pubkey}/enable` | header | re-enable a user |
-| `GET /users/{pubkey}/quota` | header | `{effective, overrides}` |
-| `PATCH /users/{pubkey}/quota` | header | set per-user quota overrides (`UserQuotaPatch` body) |
-| `DELETE /webdav/{*entry_path}` | header | admin delete by `{pubkey}/path` |
-| `ANY /dav{*path}` | **Basic** | WebDAV (`PROPFIND`/`MKCOL`/`GET`/`PUT`/`DELETE`/…); user URLs are `/dav/{pubkey}/path` |
-| `GET /` | none | `"Homeserver - Admin Endpoint"` |
+| Route | Does |
+| :-- | :-- |
+| `GET /generate_signup_token` | Mint a token with default limits (text body = token) |
+| `POST /generate_signup_token` | Mint a token with a `UserQuota` JSON body |
+| `GET /signup_tokens` | List tokens, paginated |
+| `GET /info` | Stats + identity |
+| `GET /events-stream` | SSE stream of **all** users' events, including `/priv` (alpha, not for production) |
+| `POST /users/{pubkey}/disable` · `/enable` | Block / unblock writes |
+| `GET` · `PATCH /users/{pubkey}/quota` | Read / override per-user quota |
+| `DELETE /webdav/{pubkey}/{path}` | Delete a file; **path must be under `/pub/`** (`204`; `400` bad key or non-`/pub/` path, `404` missing) |
+| `ANY /dav/{pubkey}/...` | WebDAV, any root (**Basic** auth) |
+| `GET /` | Public: `Homeserver - Admin Endpoint` |
 
-`GET /info` returns `InfoResponse`: `num_users`, `num_disabled_users`, `total_disk_used_mb`,
-`num_signup_codes`, `num_unused_signup_codes`, `public_key`, `pkarr_pubky_address`
-(`Option`), `pkarr_icann_domain` (`Option`), `version`.
+`GET /info` returns `num_users`, `num_disabled_users`, `total_disk_used_mb`, `num_signup_codes`,
+`num_unused_signup_codes`, `public_key` (z32), `pkarr_pubky_address` and `pkarr_icann_domain`
+(nullable), and `version`.
 
-> **No `/users/disabled` route exists** in this homeserver version (only `/users/{pubkey}/disable`,
-> `/enable`, `/quota`). The dashboard README claims its Users tab fetches a disabled-users list from
-> `/users/disabled` — that endpoint is **not** in the homeserver admin router at this commit, so
-> the dashboard is either ahead of this homeserver or computes the list differently. Don't rely on
-> it; verify against the homeserver you actually run.
-
-CLI-driven versions of these flows (`pubky-cli`) live in [`operator-cli.md`](operator-cli.md).
+> **`{pubkey}` is raw z32** (`publicKey.z32()`), **not** the `pubky<z32>` display form, which gets
+> ``400 Invalid URL: unexpected `pubky` prefix; expected raw z32``. See
+> [`concepts.md` § Public-key string formats](../../pubky/references/concepts.md#public-key-string-formats).
 
 ### Signup tokens and quotas
 
-Mint a token (here with the **testnet default** password `admin` — change it for any real
-deployment). `GET` returns `200` with the token id as the **plain-text body**:
+Standalone homeservers require tokens by default (`signup_mode = "token_required"`). Client-side
+signup with a token: [`auth.md` § Signup tokens](../../pubky/references/auth.md#signup-tokens).
+Mint one:
 
 ```bash
 curl -X GET "http://127.0.0.1:6288/generate_signup_token" \
-     -H "X-Admin-Password: admin"
-     # Use your admin password. This is testnet default pwd.
+  -H "X-Admin-Password: admin"   # use your real admin password
 ```
 
-Token id format is **`XXXX-XXXX-XXXX`** — 14 chars: 12 Crockford-base32 chars (uppercase, from 7
-random bytes), hyphen-grouped every 4. Validation requires `len == 14` and Crockford-decodability
-after stripping hyphens; server-minted tokens are uppercase, but `is_valid` is **case-insensitive**
-(Crockford decode), so don't rely on case to reject a token.
+- **Format:** `XXXX-XXXX-XXXX` (14 chars): 7 random bytes, Crockford base32, uppercase, hyphenated.
+  Valid = 14 chars and Crockford-decodable with hyphens removed.
+- **`POST /generate_signup_token`** takes a `UserQuota` body (invalid → `422`). Per field: absent
+  or `null` = Default, `"unlimited"` = no limit, value = explicit limit. Fields:
+  `storage_quota_mb`; `rate_read`, `rate_write` (e.g. `"200mb/m"`); `rate_read_burst`,
+  `rate_write_burst` (integer ≥ 1; absent = burst equals rate); `allowed_write_paths` (absent =
+  unrestricted, `[]` = read-only, `["/pub/tokens/"]` = only those prefixes or exact files; `/` and
+  duplicates rejected).
+- **`GET /signup_tokens`**: `state=all|used|unused` (default `all`), `limit` (default 100, max
+  1000, `0` → `400`), `cursor` (previous page's `next_cursor`). Response
+  `{items: [{token, created_at, used_at, used_by}], next_cursor}`. Read-only; run as written
+  against a local testnet:
 
-`GET /signup_tokens` lists them: query `state` (`all`/`used`/`unused`, default `all`), `limit`
-(`NonZeroU16`; `limit=0` → `400`), `cursor` (a `SignupCode`; invalid → `400`). Response is
-`{ items: [{token, created_at, used_at?, used_by? (z32)}], next_cursor? }`. Default list limit
-`100`, max `1000`.
+```bash
+curl -s "http://127.0.0.1:6288/signup_tokens?state=unused&limit=50" \
+  -H "X-Admin-Password: $ADMIN_PASSWORD"
+```
 
-**Quotas use two different body types** — don't conflate them:
+- **Client-server check:** `GET /signup_tokens/{token}` returns `{status: valid|used, created_at}`;
+  `404 Token not found`, `400` bad format, `400 Signup tokens not required` in open mode. Protected
+  by the default 10r/m per-IP limit (see the arrays gotcha under [config.toml](#configtoml)).
+- **Per-user quota:** `GET /users/{pubkey}/quota` returns `{effective, overrides}` (`effective` =
+  every field merged with defaults; `overrides` = only customizations). `PATCH` takes a
+  `UserQuotaPatch`, where field semantics differ:
 
-| Endpoint | Body type | Field **absent** means |
+| Field in body | `POST /generate_signup_token` (`UserQuota`) | `PATCH …/quota` (`UserQuotaPatch`) |
 | :-- | :-- | :-- |
-| `POST /generate_signup_token` | `UserQuota` | **Default** (resolve from system config) |
-| `PATCH /users/{pubkey}/quota` | `UserQuotaPatch` | **keep existing** (unchanged) |
+| absent | Default | **keep current** |
+| `null` | Default | reset to Default (`allowed_write_paths`: unrestricted) |
+| `"unlimited"` / value | no limit / explicit | no limit / explicit |
 
-For both: field **`null`** → reset to Default; **`"unlimited"`** → no limit; a **value** → explicit
-limit. Fields: `storage_quota_mb` (integer MB), `rate_read`, `rate_write` (bandwidth strings like
-`"200mb/m"`). Invalid quota format → `422`.
-
-`GET /users/{pubkey}/quota` returns `{effective, overrides}`: `effective` = overrides merged with
-system defaults (**all fields always present**); `overrides` = only the per-user customizations
-(Default fields **omitted**, so `Default` vs `Unlimited` are distinguishable — `Unlimited` shows as
-`"unlimited"`, `Default` is absent). `404` for a nonexistent user; `PATCH` with an invalid rate
-string → `422`.
+PATCH errors: `400` invalid pubkey, `404` unknown user, `422` invalid quota. Homegate mints tokens
+through this same API; see [`signup-gating.md`](signup-gating.md).
 
 ### Enable and disable users
 
-`POST /users/{pubkey}/disable` and `/enable` toggle a boolean (`user.disabled`) on the user row;
-both return `200 "Ok"`. `404 "User not found"` if no such user; `400` if `{pubkey}` is not a valid
-z-base-32 key (`Path<Z32Pubkey>` rejection).
+`POST /users/{pubkey}/disable` and `/enable` return `200 Ok`, `400` for non-z32 keys, `404` for an
+unknown user.
 
-> `{pubkey}` in admin paths is the **raw z32 form** (`publicKey.z32()`), **not** the `pubky<z32>`
-> display form. Mixing these up is a common cause of `400`s — see the
-> [public-key string formats table](../../pubky/references/concepts.md#public-key-string-formats).
+```bash
+curl -X POST "http://127.0.0.1:6288/users/<user-z32>/disable" \
+  -H "X-Admin-Password: $ADMIN_PASSWORD"
+```
+
+> **Disabling blocks writes; it does not lock the account.** A disabled user can still **sign in,
+> read (`GET 200`), and DELETE their own files (`204`)**. Only PUT is rejected
+> (`403 User is disabled`). To remove a user's files as operator, use `DELETE /webdav/...` for
+> `/pub/` paths, or a WebDAV `DELETE` on `/dav/...` (Basic auth) for other roots.
+
+### Admin event stream
+
+`GET /events-stream` (SSE, `no-store`, v0.10+). Includes `/priv` events (alpha, not for
+production, not encrypted from the operator). Query parameters:
+
+- `user=<z32>`: repeatable; omit for all users. More than 50 → `400`; `pubky`-prefixed key →
+  `400`; unknown user → `404`.
+- `cursor=`: one global cursor, **not** the per-user `user=pk:cursor` form.
+- `limit`: `0` → `400`.
+- `reverse` and `live` (`true` or `1`): both together → `400`.
+- `path=`: repeatable. Trailing `/` = directory prefix; otherwise exact file match.
+
+Each event is `event: PUT|DEL` with data lines `pubky://user/path` and `cursor: N`; **only PUT
+events** add `content_hash: <base64>`. Slow live clients are disconnected. The 50-user cap
+(`MAX_EVENT_STREAM_USERS`) also applies to the client-server stream Nexus consumes; see
+[`nexus-operations.md`](nexus-operations.md).
 
 ## Metrics (:6289)
 
-`GET /metrics` serves Prometheus text on `[metrics].listen_socket` and is **unauthenticated**.
-Module doc: *"counters and histograms for event stream connections, database query latencies, and
-broadcast channel health."* The sample warns it *"should be isolated from the public network and
-only accessible to monitoring systems."* **Off by default** (see the sockets table); Umbrel
-deliberately does not publish `6289` to the LAN (container-network only).
+Off by default; enable with `[metrics] enabled = true`. One route, `GET /metrics` (Prometheus
+text), **no authentication**: keep it on a private network. Instruments (from `observability.rs`):
+`events_db_query_duration_ms`, `event_stream_db_query_duration_ms`,
+`event_stream_broadcast_lagged_count`, `event_stream_broadcast_half_full_count`,
+`event_stream_active_connections`, `event_stream_connection_duration_ms`, `signup_count`,
+`storage_request_count`.
 
-## Event streams (client server)
+> **Query the exposed names, not the instrument names.** Prometheus exposition adds suffixes:
+> counters get `_total` (e.g. `storage_request_count_total`), histograms appear as `*_count`,
+> `*_sum`, `*_bucket`. Querying bare `storage_request_count` returns nothing.
 
-A **shipped** feature, exposed on the **client** server (`6286`/`6287`), **not** admin. This is
-what a Nexus watcher or Pubky Backup consumes:
+**Storage-addressing migration metric (v0.12.0).** `storage_request_count_total` counts each tenant
+storage request once. Labels: `addressing_mode` (`path` = `/storage/{user-z32}/pub/...`, `legacy` =
+`/pub/...` plus `pubky-host`), `pubky_host_header` (`absent|matching|other`), `pubky_host_query`
+(`true|false`), `auth_method` (`none|cookie|grant`). At most 36 label combinations; no keys,
+tokens, or paths in labels.
 
-- `GET /events/` — legacy plain-text historical feed (`events::feed`).
-- `GET /events-stream` — Server-Sent Events (`events::feed_stream`). Query params: `user=<z32>[:cursor]`
-  (repeatable; a `pubky<z32>` prefix is **rejected**; an empty user list → `400 "user parameter is
-  required"`), `path=` (repeatable, empty ignored), `limit=` (`u16`), `reverse=` (`true`/`1`),
-  `live=` (`true`/`1`). `live` + `reverse` → `400 "Cannot use live mode with reverse ordering"`.
-  There is a `MAX_EVENT_STREAM_USERS` cap (exceeding it → `400`).
+Legacy addressing, `pubky-host`, and cookie auth all still work. Upstream's removal policy requires
+at least one year after the first stable path-addressing SDK plus an explicit review. The SDKs
+(`pubky` / `@synonymdev/pubky` 0.12.0) already build `/storage/<owner>/...` URLs, but the upstream
+migration table has **not yet declared a qualifying release**, so the clock start is undeclared.
+Both the path layout and this policy are pre-1.0 and may change (the `/pub` layout is not
+stabilized). To have your data count:
 
-The write-vs-read consumer model is canonical in
-[`concepts.md`](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read); operating the
-watcher side is in [`nexus-operations.md`](nexus-operations.md).
+- Enable and scrape metrics **now**.
+- Retain the data for the whole migration period.
+- Aggregate across all instances; counters reset on restart.
 
-> **Client-server auth is canonical, not restated here.** The OpenAPI describes it as grant-based
-> (`Authorization: Bearer <token>` from `POST /auth/grant/session`) with a deprecated cookie path
-> (`POST /signup` / `POST /session`), and tenant resolution by priority `pubky-host` header > `Host`
-> (TLS SNI) > `?pubky-host=` query, the value being a z-base-32 Ed25519 public key. See
-> [`concepts.md` § Authentication](../../pubky/references/concepts.md#authentication) and
-> [`auth.md`](../../pubky/references/auth.md).
+```promql
+sum by (addressing_mode) (increase(storage_request_count_total[30d]))
+sum by (addressing_mode, pubky_host_header, pubky_host_query) (increase(storage_request_count_total{pubky_host_header!="absent"}[30d]))
+sum by (addressing_mode) (increase(storage_request_count_total{pubky_host_query="true"}[30d]))
+sum by (auth_method) (increase(storage_request_count_total[30d]))
+```
+
+Detail and current status:
+[`STORAGE_ADDRESSING_MIGRATION.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/STORAGE_ADDRESSING_MIGRATION.md).
 
 ## homeserver-dashboard
 
-A Next.js (App Router) + React + Tailwind/shadcn admin UI (Node 24+), single route `/dashboard`,
-server binds port `8080` by default. Tabs: **Overview** (`GET /info`), **Users** (disable/enable),
-**Invites** (`generate_signup_token` + QR), **Files** (WebDAV `/dav/*` via Basic Auth + admin
-delete-by-path), **Logs** (tails the `HOMESERVER_LOG_PATH` JSON log; `/api/logs` returns `503` and
-the tab is unavailable when unset), **API** (explorer for admin/client/metrics), plus **Settings**
-(gear) with **Config** (view/edit the real `config.toml` — secret redaction, optimistic
-concurrency, atomic writes, read-only fallback) and **Cloudflare**.
+[homeserver-dashboard](https://github.com/pubky/homeserver-dashboard) v0.1.27: Next.js admin UI
+(Node 24+) served at `/dashboard` on port 8080. Tabs:
 
-> The Umbrel build's release notes (dashboard `v0.1.26`) say the developer-only **"API" explorer
-> tab was removed** from the normal interface; the standalone dashboard README still lists API as a
-> tab. Treat the API tab as possibly absent on Umbrel — verify on the build you run.
+- **Overview**: `GET /info`.
+- **Users**: disable / enable users.
+- **Invites**: mints a token, shows a QR code.
+- **Files**: WebDAV (Basic auth) plus delete by path.
+- **Logs**: needs `HOMESERVER_LOG_PATH`; without it `/api/logs` returns `503`.
+- **Settings**: **Config** edits the real `config.toml` (secrets redacted, atomic writes, falls
+  back to read-only); **Cloudflare** configures a tunnel.
 
-Run it standalone in Docker, pointed at a homeserver's admin API. `ADMIN_BASE_URL` + `ADMIN_TOKEN`
-are **server-only** env (no `NEXT_PUBLIC_` prefix) so credentials never reach the browser. In
-Docker, use the **service name**, not `localhost`:
+Since v0.1.26 the **API explorer tab is hidden** unless built with
+`NEXT_PUBLIC_API_EXPLORER=true`, though the README still lists it.
 
 ```bash
 docker build -t homeserver-dashboard .
@@ -313,117 +535,95 @@ docker run -d \
   homeserver-dashboard
 ```
 
-Key env (all server-only, read lazily): `ADMIN_BASE_URL` / `ADMIN_TOKEN` (required), `CLIENT_BASE_URL`
-(default `http://homeserver:6286`), `METRICS_BASE_URL` (default `http://homeserver:6289`),
-`HOMESERVER_CONFIG_PATH` (default `/app/homeserver-data/config.toml`), `HOMESERVER_LOG_PATH`
-(default unset → Logs tab unavailable), `PREVIEW_INSTANT_ORIGIN` (default `http://homeserver:6286`),
-`CLOUDFLARE_CONFIG_DIR` / `CLOUDFLARED_BIN` / `CLOUDFLARED_RUNTIME_DIR` / `CF_API_BASE`,
-`ADMIN_PASSWORD_MANAGED` (set `true` to lock `admin_password` edits), `PLATFORM`
-(`umbrel` | unset = standalone), `PORT` / `HOSTNAME` (default `8080` / `0.0.0.0`).
+All env vars are **server-only** (no `NEXT_PUBLIC_` prefix), so credentials never reach the
+browser. `http://homeserver:6288` only resolves on a Docker network with a `homeserver` service:
+use the compose **service name**, not `localhost`.
 
-## Cloudflare-tunnel exposure
+- **Required:** `ADMIN_BASE_URL`, `ADMIN_TOKEN`.
+- **Optional (defaults):** `CLIENT_BASE_URL` (`http://homeserver:6286`), `METRICS_BASE_URL`
+  (`http://homeserver:6289`), `HOMESERVER_CONFIG_PATH` (`/app/homeserver-data/config.toml`),
+  `HOMESERVER_LOG_PATH` (unset), `PREVIEW_INSTANT_ORIGIN` (`http://homeserver:6286`),
+  `CLOUDFLARE_CONFIG_DIR`, `CLOUDFLARED_BIN`, `CLOUDFLARED_RUNTIME_DIR`, `ADMIN_PASSWORD_MANAGED`
+  (`true` locks `admin_password` edits), `PLATFORM` (`umbrel`, or unset for standalone),
+  `PORT` / `HOSTNAME` (`8080` / `0.0.0.0`).
 
-Cloudflare Tunnel exposes the homeserver publicly **without port forwarding**. Only the **HTTP
-endpoint (`6286`)** is tunneled — the public-hostname Service is the HTTP URL `homeserver:6286`;
-**Pubky-TLS (`6287`) needs direct connectivity** and cannot be tunneled. The dashboard Settings →
-Cloudflare tab offers four setups: **Connect account** (browser OAuth, recommended), **API token**,
-**manual token + domain**, and **Preview** (a temporary, account-less `trycloudflare.com` quick
-tunnel refreshed each restart). The manual / debugging reference is upstream in
-[`CLOUDFLARE_TUNNEL.md`](https://github.com/pubky/homeserver-dashboard/blob/main/CLOUDFLARE_TUNNEL.md).
+> **Users tab vs a stock homeserver.** The dashboard calls admin `GET /users/disabled`, which is
+> **not in any merged or released pubky-homeserver version** (proposed in open
+> [PR #327](https://github.com/pubky/pubky-homeserver/pull/327)). Against a stock homeserver the
+> disabled-users list is unavailable. The per-user `disable` / `enable` routes exist; call them
+> directly or via [`operator-cli.md`](operator-cli.md).
 
-> **Preview tunnels break `/events`.** An account-less Preview (`trycloudflare.com` quick) tunnel
-> does **not** pass the live `/events` SSE stream, so Pubky indexers (Nexus) may **miss the
-> homeserver's content**; the address is also temporary and can drop on restart. Use a **permanent
-> Cloudflare domain** (the persistent `cloudflared` service) for full `/events` support.
+> **Invite links use `pubkyauth://direct_signup`** (v0.1.27), not the relayed `pubkyauth://signup`
+> cookie flow, so they need a Pubky Ring build that understands `direct_signup`. The dashboard
+> detects completed signup by polling token stats, not per-token status. Auth flows:
+> [`auth.md`](../../pubky/references/auth.md).
 
 ## Umbrel vs standalone
 
-The dashboard's `PLATFORM` env var selects the deployment flavor:
+| | Standalone | Umbrel |
+| :-- | :-- | :-- |
+| Homeserver version | 0.12.0 (`main`) | **v0.9.1** (`synonymsoft/homeserver` pinned at commit `f90548c7`) |
+| Missing on this version (among others) | — | admin `/events-stream`, `GET /signup_tokens`, `init`, grant auth, `/priv` (alpha anyway), path-addressed `/storage/{user}/` routes and client `GET /info` (v0.11), `storage_request_count` metric (v0.12) |
+| Dashboard `PLATFORM` | unset: Cloudflare setup UI and `/cloudflare-guide` hidden (setup routes return `404 not_supported`); read-only reachability and PKARR checks remain | `umbrel`: Cloudflare setup flows, umbrelOS backup guidance, "restart from Umbrel" copy |
+| Admin password | you set `[admin].admin_password` | Umbrel's `APP_PASSWORD`, shared by homeserver, dashboard `ADMIN_TOKEN`, and Postgres; `ADMIN_PASSWORD_MANAGED=true` |
+| Public exposure | your own reverse proxy or tunnel ([Deploy publicly](#deploy-publicly)) | Dashboard Settings → Cloudflare: Connect account (recommended), API token, Preview, or Manual |
 
-- **`PLATFORM=umbrel`** — shows the Cloudflare setup tab/flows, umbrelOS backup guidance, and
-  "restart from Umbrel" copy.
-- **unset / standalone** — **hides** the Cloudflare setup UI and `/cloudflare-guide` (its setup API
-  routes return `404 not_supported`) because a standalone deploy has no `cloudflared` containers.
-  The read-only status views (public address, reachability, pkarr "Pubky network" check) remain, so
-  a self-managed reverse proxy or tunnel can still be verified.
+**Install on Umbrel:** add community store `https://github.com/pubky/umbrel-app-store`, install
+**Pubky Homeserver**. Manifest id `pubky-homeserver`, version `0.9.1-18`
+(`<homeserver>-<packaging revision>`), port 8812. No credentials modal; reveal the password in
+Settings with the eye icon.
 
-**Umbrel deployment** — the "Pubky Homeserver" app ships via the
-[`pubky/umbrel-app-store`](https://github.com/pubky/umbrel-app-store) community store (add the store
-URL `https://github.com/pubky/umbrel-app-store`, then install). Manifest: id `pubky-homeserver`,
-version `0.9.1-17` (scheme `<homeserver-version>-<packaging-revision>`), port `8812`, repo
-`pubky/pubky-homeserver`; `backupIgnore` excludes `homeserver.log`. Compose services:
+Compose services:
 
-- `app_proxy` — Umbrel's proxy (`APP_HOST=pubky-homeserver_web_1`, `APP_PORT=8812`).
-- `postgres` — `postgres:17-alpine` (`POSTGRES_USER=pubky`, `POSTGRES_DB=pubky_homeserver`,
-  `POSTGRES_PASSWORD=${APP_PASSWORD}`).
-- `homeserver-config-wrapper` — one-shot (`synonymsoft/homeserver-umbrel-config-wrapper`); renders
-  `/data/config.toml` from env, then exits. `homeserver` waits on it via
-  `service_completed_successfully`.
-- `homeserver` — the vanilla `synonymsoft/homeserver` binary; publishes `6286`/`6287`/`6288`;
-  `6289` (metrics) intentionally **not** published.
-- `web` — the dashboard (`synonymsoft/homeserver-dashboard:v0.1.26`, `PORT=8812`), no published
-  ports, behind `app_proxy`.
-- Cloudflared: **two** services at this commit — `cloudflared` (persistent; all tiers now write one
-  `config.yml`) and `cloudflared-preview` (account-less quick tunnel).
+- `app_proxy`
+- `postgres` (`postgres:17-alpine`)
+- `homeserver-config-wrapper`: one-shot, renders `/data/config.toml`
+- `homeserver`: publishes 6286, 6287, and **6288** on the Umbrel host; **6289 is not published**
+- `web`: dashboard `v0.1.27`, `PORT=8812`
+- `cloudflared` (persistent)
+- `cloudflared-preview`
 
-> The Umbrel README still says "three mode-gated cloudflared services"; the compose file is now down
-> to the **two** above (its comment: *"there is no separate token-mode container."*). Trust the
-> compose file.
-
-The homeserver runs the **vanilla binary as PID 1**; the surrounding FIFO + `tee` only mirrors
-stdout/stderr to `/data/homeserver.log` for the dashboard Logs tab (rotated ~10 MB → ~2 MB):
+The Umbrel README still mentions three cloudflared services; trust the compose file (two). The
+homeserver runs as PID 1 with stdout tee'd (via a FIFO set up earlier in the entrypoint) to
+`/data/homeserver.log` for the Logs tab, rotated from ~10 MB down to ~2 MB:
 
 ```bash
 exec homeserver --data-dir /data > /tmp/log-fifo 2>&1
 ```
 
-On Umbrel the admin password is Umbrel's generated **`APP_PASSWORD`** — wired as the dashboard's
-`ADMIN_TOKEN`, as the homeserver's `admin_password` (via the wrapper's `ADMIN_PASSWORD` env), and as
-`POSTGRES_PASSWORD`. `web` gets `ADMIN_PASSWORD_MANAGED="true"` + `PLATFORM=umbrel`, so the Config
-editor rejects `admin_password` edits (editing it would disconnect the dashboard). The manifest's
-empty `defaultUsername` / `defaultPassword` suppress Umbrel's credentials modal; the password is
-revealable in Settings (eye icon). Port `6288` (admin) **is** published to the LAN so users can
-point `pubky-cli` at it; `6289` (metrics, unauthenticated) is **not**.
+`exports.sh` gives other Umbrel apps `APP_PUBKY_HOMESERVER_ADMIN_URL` (`:6288`), `..._CLIENT_URL`
+(`:6286`), and `..._METRICS_URL` (`:6289`), all at `pubky-homeserver_homeserver_1` on the container
+network. **The admin token is not exported**; other apps must obtain it separately.
 
-`exports.sh` advertises three URLs to other Umbrel apps, using the **static container name**
-`pubky-homeserver_homeserver_1` (the `homeserver` compose alias resolves only inside this app's
-network): `APP_PUBKY_HOMESERVER_ADMIN_URL` (`:6288`), `APP_PUBKY_HOMESERVER_CLIENT_URL` (`:6286`),
-`APP_PUBKY_HOMESERVER_METRICS_URL` (`:6289`). The admin **token is deliberately not exported** — a
-consumer must obtain it out of band.
-
-## Homegate (signup gating)
-
-Homegate sits in front of registration and integrates with the homeserver **purely via the admin
-API**: its config has `[homeserver] admin_api_url = http://homeserver:6288` + `admin_password`. It
-verifies users (SMS / Lightning / IP), then mints a signup token through the admin API; per-tier
-signup quotas map to the same **`UserQuota`** body used by `/generate_signup_token`. Full routes and
-secrets are in [`signup-gating.md`](signup-gating.md).
+> **Tunnels on Umbrel.** Any Cloudflare tunnel carries only HTTP (6286); Pubky TLS (6287) needs
+> direct connectivity. **Preview mode** (`trycloudflare.com` quick tunnel) has an address that can
+> change on restart and **does not pass live `/events` updates, so indexers such as Nexus may miss
+> this homeserver's content.** Use a permanent Cloudflare domain.
 
 ## Security guardrails
 
-- **Change the admin password.** `admin_password` defaults to `"admin"` (testnet default) and the
-  admin server is **cleartext HTTP with no built-in TLS** — the sample warns: *"If this API is ever
-  exposed to the public internet, make sure to add a HTTPS cert."* Keep `:6288` (admin) and `:6289`
-  (metrics, unauthenticated) off the public internet / behind a reverse proxy. Admin CORS is
-  `very_permissive`.
-- **`pubky-docker` is not production.** Its README banners that it is for **local development and
-  experimentation only** — *"not production hosting infrastructure … production deployments require
-  infrastructure that is hardened, monitored, maintained, and operated for that purpose."* Use the
-  Umbrel app or a hand-rolled hardened deployment instead.
-- **`/priv` storage is in `main` but not released — don't rely on it.** `authorization.rs` enforces
-  a `/priv/` root (`PRIVATE_ROOT`): `/pub/*` is world-readable; `/priv/*` requires a session scoped
-  to the matching tenant (`401` anonymous, `403` wrong-tenant / under-scoped); a write under
-  **neither** root → `403`. It is **auth-scoped and access-controlled, *not* encrypted** — a trusted
-  operator can still read the data — and it is **not in the latest release** (the released SDK types
-  `/pub` paths only), so don't build on it from released code. Status detail:
-  [`shipped-vs-planned.md`](../../pubky/references/shipped-vs-planned.md#no-private-encrypted-or-guarded-storage).
-  The `/pub` layout itself is also not stabilized.
+- **Change `admin_password`** (default `"admin"`). The admin API is plain HTTP with permissive CORS;
+  keep it on loopback or a private network. Metrics has no auth at all.
+- **Back up** `~/.pubky/secret` (the homeserver identity: **lose it and the server cannot be
+  recovered**), user data (`data/files` by default, per `storage.type`), and the PostgreSQL
+  database.
+- **The admin sees everything.** Via WebDAV an admin can read and write all tenant data,
+  **including `/priv/`**, and the admin `/events-stream` includes `/priv` events. `/priv` is
+  **alpha (v0.10.0+), not for production, access-controlled but not encrypted from the operator**.
+  Never tell users it is private from you. Status:
+  [`shipped-vs-planned.md`](../../pubky/references/shipped-vs-planned.md).
+- **`pubky-docker` is local development only.** It uses the testnet image with
+  `signup_mode = "open"` and binds admin to `0.0.0.0:6288` with password `admin`. Never copy that
+  config. See [`local-stack.md`](local-stack.md).
+- **The `/pub` path layout is not stabilized**; the admin and client APIs are pre-1.0.
 
 ## Upstream sources of truth
 
-- Homeserver crate + `config.sample.toml` + `openapi-admin.yml` / `openapi-client.yml`:
-  [Pubky Homeserver](https://github.com/pubky/pubky-homeserver/tree/main/pubky-homeserver)
-- Full local stack: [pubky-docker](https://github.com/pubky/pubky-docker) ·
-  [`local-stack.md`](local-stack.md)
-- Dashboard: [homeserver-dashboard](https://github.com/pubky/homeserver-dashboard)
-- Umbrel app: [umbrel-app-store](https://github.com/pubky/umbrel-app-store)
+- Install / deploy: [`docs/INSTALL.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/INSTALL.md),
+  [`docs/DEPLOY.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/DEPLOY.md)
+- Config: [`config.sample.toml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/config.sample.toml)
+- APIs: [`openapi-admin.yml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/openapi-admin.yml),
+  [`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/openapi-client.yml)
+- Release notes: [pubky-homeserver releases](https://github.com/pubky/pubky-homeserver/releases)
+- Dashboard: [homeserver-dashboard](https://github.com/pubky/homeserver-dashboard) ·
+  Umbrel: [umbrel-app-store](https://github.com/pubky/umbrel-app-store)

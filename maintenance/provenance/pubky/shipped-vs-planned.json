@@ -2,7 +2,7 @@
   "path": "skills/pubky/references/shipped-vs-planned.md",
   "role": "canonical",
   "accept": true,
-  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "generatedAt": "2026-09-17T12:42:03.138Z",
   "sourcesUsed": [
     {
       "repo": "pubky-ai-kit",
@@ -10,75 +10,178 @@
     },
     {
       "repo": "pubky-homeserver",
-      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480"
     },
     {
       "repo": "pubky-app-specs",
-      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448"
+      "sha": "e9b0c9cbdc9676efb82cd00640000b66321dbe4e"
     }
   ],
   "provenance": [
     {
-      "anchor": "the-split-shipped-vs-planned",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/concepts.md",
-      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
-      "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
+      "anchor": "the-split",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/client_server/auth/authorization.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/src/client_server/auth/authorization.rs"
+    },
+    {
+      "anchor": "the-split",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "src/content/docs/explore/pubky-protocol/security-model.md",
+      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/pubky-protocol/security-model.md"
+    },
+    {
+      "anchor": "everything-is-v0",
+      "repo": "pubky/pubky-homeserver",
+      "path": "RELEASING.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/RELEASING.md"
+    },
+    {
+      "anchor": "everything-is-v0",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/v0.10-migration/README.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/README.md"
+    },
+    {
+      "anchor": "everything-is-v0",
+      "repo": "pubky/pubky-homeserver",
+      "path": "releases/tag/v0.12.0",
+      "sha": "v0.12.0",
+      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.12.0"
+    },
+    {
+      "anchor": "everything-is-v0",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/STORAGE_ADDRESSING_MIGRATION.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/STORAGE_ADDRESSING_MIGRATION.md"
     },
     {
       "anchor": "everything-is-v0",
       "repo": "pubky/pubky-app-specs",
       "path": "README.md",
-      "sha": "031b5a2d534180664b0017b345365a4d3b9f6448",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/README.md"
+      "sha": "e9b0c9cbdc9676efb82cd00640000b66321dbe4e",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/main/README.md"
     },
     {
-      "anchor": "everything-is-v0--nexus-snippet",
+      "anchor": "everything-is-v0",
       "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/v0/endpoints.rs",
-      "sha": "60d4ac625528f61bdac39d376066b836a4c60e70",
-      "url": "https://nexus.pubky.app/api-docs/v0/openapi.json"
+      "path": "README.md",
+      "sha": "794a6e103b464c6227fc89f4307508d9119be103",
+      "url": "https://github.com/pubky/pubky-nexus/blob/main/README.md"
+    },
+    {
+      "anchor": "everything-is-v0",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/js/src/quick-start-getting-started.ts",
+      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/quick-start-getting-started.ts"
     },
     {
       "anchor": "no-private-encrypted-or-guarded-storage",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/openapi.yml",
-      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
+      "path": "releases/tag/v0.10.0",
+      "sha": "v0.10.0",
+      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.10.0"
+    },
+    {
+      "anchor": "priv-private-storage-alpha",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/PRIVATE_STORAGE.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/PRIVATE_STORAGE.md"
+    },
+    {
+      "anchor": "priv-private-storage-alpha",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/bindings/js/src/actors/storage/session.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/bindings/js/src/actors/storage/session.rs"
+    },
+    {
+      "anchor": "priv-private-storage-alpha",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "src/content/docs/explore/pubky-protocol/homeserver.md",
+      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/pubky-protocol/homeserver.md"
+    },
+    {
+      "anchor": "still-planned",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "src/content/docs/explore/pubky-protocol/security-model.md",
+      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/pubky-protocol/security-model.md"
+    },
+    {
+      "anchor": "app-side-ciphertext-is-your-own-crypto",
+      "repo": "pubky/pubky-ai-kit",
+      "path": "pubky-dev-context.md",
+      "sha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
       "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
     },
     {
       "anchor": "backup-restore-and-mirroring",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/concepts.md",
-      "sha": "1d0965d183087c497278a56313ae772d7cc49b74",
-      "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
+      "repo": "pubky/pubky-backup",
+      "path": "README.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-backup"
+    },
+    {
+      "anchor": "backup-restore-and-mirroring",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "src/content/docs/explore/technologies/pubky-backup.md",
+      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/technologies/pubky-backup.md"
+    },
+    {
+      "anchor": "backup-restore-and-mirroring",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/v0.10-migration/grant-auth.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/grant-auth.md"
     },
     {
       "anchor": "shipped-with-rough-edges",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/persistence/files/events/events_service.rs",
-      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
-      "url": "https://github.com/pubky/pubky-homeserver/issues/122"
+      "path": "pubky-homeserver/src/persistence/sql/migrations",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/tree/main/pubky-homeserver/src/persistence/sql/migrations"
+    },
+    {
+      "anchor": "shipped-with-rough-edges",
+      "repo": "pubky/pubky-homeserver",
+      "path": "issues/520",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-homeserver/issues/520"
     }
   ],
   "snippet": {
-    "total": 1,
-    "pass": 0,
-    "fail": 1,
+    "total": 3,
+    "pass": 3,
+    "fail": 0,
     "unverifiable": 0,
-    "failing": [
-      "nexus-v0-fetch"
-    ]
+    "failing": []
   },
   "factCheck": {
-    "supported": 22,
-    "refuted": 1,
-    "caveated": 0,
+    "supported": 21,
+    "refuted": 0,
+    "caveated": 6,
     "unsupported": 0
   },
   "guardrailViolations": [
-    "Mirrored/fabricated Nexus API detail: line 59 hardcodes a nonexistent endpoint, `fetch(\"https://nexus.pubky.app/v0/feeds/global\")`. It 404s live and is absent from the Nexus route table and OpenAPI (real global feed = /v0/stream/posts). This is exactly the 'do not hardcode Nexus shapes' failure the surrounding prose warns against, and contradicts the file's own 'Swagger UI is the source of truth' guidance. It was copied verbatim from a stale KB snippet.",
-    "Canonical-not-copy (repo CLAUDE.md rule #2): the 'Shipped, with rough edges' section duplicates event-stream API detail (PUT/DEL, cursor, Blake3 hash, 50-user SSE cap, 1000/batch) and PostgreSQL metadata detail that are canonical in concepts.md (lines 221-225, 265-270). It does link to concepts.md, but also restates the detail rather than only summarizing the shipped/planned line — prefer linking to avoid drift."
+    "No planned feature is presented as available. /priv always appears with the alpha, not-for-production and not-encrypted caveats. Mirroring, restore, cloud backup and two-way sync are all marked as not shipped.",
+    "Copied API detail that should be a link (CLAUDE.md §2/§4): the 'What broke in v0.10.0' bullets list the SDK renames PubkyAuthFlow→PubkyCookieAuthFlow and startAuthFlow→startCookieAuthFlow, the get_homeserver_of return type, DeepLink params() and the capability trailing-slash rule. These are drift-prone and already belong in sdk-js.md, sdk-rust.md and auth.md.",
+    "No source: 'An app can store its own ciphertext as opaque bytes. That is the app's own crypto, not a Pubky feature.' No claim backs it (ai-kit L32 could), and it has no warning about security.",
+    "No source, and an overclaim: 'That is everything it does.' (Pubky Backup). ai-kit also lists force sync and key removal/deletion.",
+    "A stable-sounding claim from a stale source: '/pub is the only top-level directory the protocol requires' comes from the pre-v0.10 ai-kit. The homeserver now accepts /pub/ and /priv/ and returns 403 elsewhere."
   ],
-  "wordCount": 1173
+  "wordCount": 1632,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  }
 }

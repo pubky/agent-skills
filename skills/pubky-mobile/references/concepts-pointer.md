@@ -1,71 +1,53 @@
 # Core concepts to mobile methods
 
-Thin map from each shared Pubky protocol concept to the mobile call that implements it. Theory
-is **not** repeated here — identity, the `pubkyauth` handshake, and the on-wire data contract
-live in the canonical `pubky`-skill references (linked below).
+Maps each Pubky protocol concept to the mobile method that implements it. The theory is in the `pubky` skill, linked in the left column. For signatures, response shapes, and platform setup, see [`react-native.md`](./react-native.md), [`native-ffi.md`](./native-ffi.md), and [`ring-auth.md`](./ring-auth.md).
 
-Two SDKs sit over the same protocol spine:
+## SDKs and conventions
 
-- **React Native** — `@synonymdev/react-native-pubky` (v0.13.0; sole runtime dep
-  `@synonymdev/result`), a thin JS wrapper over the native bindings, so its function names mirror
-  the FFI exports.
-- **UniFFI bindings** — `pubky-core-ffi` (crate `pubkycore` v0.3.1, wrapping `pubky` 0.9.3;
-  "Pubky mobile SDK", emits Swift / Kotlin / Python).
+| SDK | Pin | Wraps |
+| :-- | :-- | :-- |
+| React Native: [`@synonymdev/react-native-pubky`](https://www.npmjs.com/package/@synonymdev/react-native-pubky) | `0.14.0` | the FFI below |
+| UniFFI Swift/Kotlin: [`pubky-core-ffi`](https://github.com/pubky/pubky-core-ffi) (crate `pubkycore` 0.4.0) | Pin a commit SHA. The crate is not on crates.io and the repo has no tags. | `pubky` 0.10.0 |
 
-Functions are declared in Rust `snake_case` (`sign_up`, `delete_file`, `start_auth_flow`);
-UniFFI renders them **lowerCamelCase** (`signUp`, `deleteFile`, `startAuthFlow`) in Swift/Kotlin
-(Swift call sites add named labels, e.g. `signUp(secretKey:homeserver:signupToken:)`), and
-React Native exports those same lowerCamelCase JS names — so the single method column below
-covers both bindings. Only the **call/response wrapper differs**:
-
-- **RN** returns `Promise<Result<T>>` (`@synonymdev/result`) — check `isErr()`, read `.value` on
-  success / `.error` on failure.
-- **FFI** returns a two-element `Vec<String>` `[error, data]` where `error` is the **string**
-  `"true"`/`"false"` (`"true"` = failure and `data` is the message; `"false"` = success and
-  `data` is the result, often JSON).
-
-Per-method signatures and response shapes: [`./react-native.md`](./react-native.md) (RN) and
-[`./native-ffi.md`](./native-ffi.md) (FFI); the auth flow is detailed in
-[`./ring-auth.md`](./ring-auth.md).
-
-## Canonical references (read these for the theory)
-
-- Core model — homeserver-write vs Nexus-read split, own-vs-other, PKARR, `/pub` addressing:
-  [`../../pubky/references/concepts.md`](../../pubky/references/concepts.md)
-- `pubkyauth` handshake — capabilities, relay + secret, session lifecycle:
-  [`../../pubky/references/auth.md`](../../pubky/references/auth.md)
-- On-wire data contract — pubky-app-specs models, paths, IDs:
-  [`../../pubky/references/app-specs.md`](../../pubky/references/app-specs.md)
+- **Use the `pubky` 0.10 API** when you compare against web/Rust docs, not the latest [`pubky` crate](https://crates.io/crates/pubky).
+- **Method names are the same across bindings.** Rust FFI uses `snake_case` (`delete_file`). Swift, Kotlin, and RN JS use `lowerCamelCase` (`deleteFile`). Swift adds argument labels, for example `signUp(secretKey:homeserver:signupToken:clientId:)`.
+- **The response wrapper differs by SDK:**
+  - **RN** returns `Promise<Result<T>>` and never throws. Check `isErr()` before you read `.value` ([react-native.md → The Result envelope](./react-native.md#the-result-envelope)).
+  - **FFI** returns `[error, data]` strings, and `error` is the **string** `"true"` or `"false"`. The calls block, so keep them off the UI thread ([native-ffi.md → the `[error, data]` convention](./native-ffi.md#the-error-data-convention)).
+- **Key formats:**
+  - Outputs are **bare z32** with no `pubky` prefix, and `uri` fields use `pk:<z32>`.
+  - Public-key *parameters* accept bare or prefixed keys.
+  - Keys inside URLs must be raw z32 (`pubky://<z32>/…`). `pubky` 0.10 rejects `pubky://pubky<z32>/…`.
+  - See [native-ffi.md → String Contracts](./native-ffi.md#string-contracts) and [concepts.md → Public-key string formats](../../pubky/references/concepts.md#public-key-string-formats).
+- **Android:** initialize rustls once, before any TLS call, or the first handshake panics ([native-ffi.md → MANDATORY: Android rustls init](./native-ffi.md#mandatory-android-rustls-init)). iOS needs no equivalent step.
 
 ## Concept-to-method map
 
-| Pubky concept (canonical source) | Mobile method(s) | Signature / gotchas |
+| Concept (canonical theory) | Mobile method(s) | Gotcha |
 | :-- | :-- | :-- |
-| Ed25519 identity & keygen ([concepts.md → Identity](../../pubky/references/concepts.md)) | `generateSecretKey`, `getPublicKeyFromSecretKey`, `generateMnemonicPhrase`, `mnemonicPhraseToKeypair`, `generateMnemonicPhraseAndKeypair`, `validateMnemonicPhrase` | Secret keys are 32-byte ed25519, hex-encoded; public keys come back as bare z32. |
-| Passphrase-encrypted recovery files ([concepts.md](../../pubky/references/concepts.md)) | `createRecoveryFile(secretKey, passphrase)`, `decryptRecoveryFile(recoveryFile, passphrase)` | `createRecoveryFile` returns a Base64 string; the shipped local-backup primitive. |
-| Homeserver signup / signin / session lifecycle ([concepts.md → homeserver](../../pubky/references/concepts.md), [auth.md](../../pubky/references/auth.md)) | `signUp(secretKey, homeserver, signupToken?)`, `signIn(secretKey)`, `signOut(sessionSecret)`, `revalidateSession(sessionSecret)`, `getSignupToken(homeserverPubky, adminPassword)`, `republishHomeserver(secretKey, homeserver)` | `homeserver` is a `pubky://<pk>` URL. `signupToken` is optional — omit/`null` for open/testnet homeservers, pass the string for gated ones. |
-| Write/read **own** `/pub` data with the identity key ([concepts.md → homeserver-write](../../pubky/references/concepts.md)) | `put(url, content, secretKey)`, `get(url)`, `list(url)`, `deleteFile(url, secretKey)` | Delete is `deleteFile`, **not** `delete` (FFI `delete_file`). `put`/`deleteFile` (and the `*WithSession` variants) hard-error `"Invalid URL: must contain /pub/"` when the URL lacks `/pub/`; `get`/`list` route the URL straight to `public_storage` with no `/pub/` check and only succeed on `/pub/` paths — other paths fail with a `"Request failed"`-style error, not the `/pub/` message. |
-| Act as the **signed-in user** via a session (after a Ring auth flow) | `putWithSession(url, content, sessionSecret)`, `deleteWithSession(url, sessionSecret)` | Preferred after a Ring flow; take the `<z32>:<cookie>` session secret, not a raw secret key. |
-| Public read of **another** user's `/pub` data ([concepts.md → public read](../../pubky/references/concepts.md)) | `get(url)` / `list(url)` called unauthenticated on a `pubky://<pk>/pub/…` URL | No separate `publicStorage` object on mobile — `get`/`list` always route through `public_storage`, so an unauthenticated call *is* the public read. |
-| PKARR resolution & homeserver discovery ([concepts.md → PKARR](../../pubky/references/concepts.md)) | `resolve(publicKey)`, `resolveHttps(publicKey)`, `getHomeserver(pubky)`, `republishHomeserver(secretKey, homeserver)`, `publish(recordName, recordContent, secretKey)`, `publishHttps(recordName, target, secretKey)` | `publish` = TXT (TTL 30s); `publishHttps` = HTTPS/SVCB (TTL 3600s); resolvers take a bare z32 key. |
-| `pubkyauth` — **requesting app** side ([auth.md](../../pubky/references/auth.md), [ring-auth.md](./ring-auth.md)) | `startAuthFlow(capabilities)` → `pubkyauth://` URL to show the user; `awaitAuthApproval()` blocks until approval | Returns a `session_secret` — feed it to the `*WithSession` calls above. One flow at a time (process-global). |
-| `pubkyauth` — **authenticator / Ring** side (holds the key, approves) ([ring-auth.md](./ring-auth.md)) | `auth(pubkyauthUrl, secretKey)` approves a third-party request; `parseAuthUrl(url)` decodes a `pubkyauth://` URL | — |
-| Homeserver event streams ([concepts.md → event streams](../../pubky/references/concepts.md)) | `setEventListener`, `removeEventListener` | **Not a real subscription.** The FFI callback is a demo/placeholder that emits a fixed string every 2s — it is **not** a homeserver PUT/DEL feed. The actual event stream (`/events-stream` SSE, `/events/`) is **server-side** (see [`./native-ffi.md`](./native-ffi.md) and the `pubky-infra` skill), not a mobile method. |
-| Testnet vs mainnet selection ([concepts.md → Clients](../../pubky/references/concepts.md)) | `switchNetwork(useTestnet)` | **FFI only**, synchronous (swaps the client, no I/O). React Native v0.13.0 does **not** export `switchNetwork` — do not call it from RN. |
-
-> The react-native-pubky README's "Implemented Methods" list is stale: it names `delete` and
-> `session`, but the actual exports in `src/index.tsx` are `deleteFile` and `revalidateSession`.
-> Use the names in this table; trust `src/index.tsx` + `example/src/App.tsx` over the README.
+| Ed25519 identity ([concepts.md](../../pubky/references/concepts.md#identity-the-ed25519-keypair)) | `generateSecretKey`, `getPublicKeyFromSecretKey`, `generateMnemonicPhrase`, `mnemonicPhraseToKeypair`, `generateMnemonicPhraseAndKeypair`, `validateMnemonicPhrase` | These are for authenticator-type apps only. Third-party apps must never ask for a mnemonic or secret key; use Ring ([concepts.md → Authentication](../../pubky/references/concepts.md#authentication)). |
+| Recovery files ([auth.md](../../pubky/references/concepts.md#identity-the-ed25519-keypair)) | `createRecoveryFile(secretKey, passphrase)`, `decryptRecoveryFile(recoveryFile, passphrase)` | These only create and decrypt a local Base64 backup. Backup *restore* and cloud backup are planned, not shipped ([shipped-vs-planned.md](../../pubky/references/shipped-vs-planned.md#backup-restore-and-mirroring)). |
+| `pubkyauth`, **requesting app** ([auth.md](../../pubky/references/auth.md#grant-auth-model), [capabilities](../../pubky/references/auth.md#capabilities)) | `startAuthFlow(capabilities, clientId)` returns a `pubkyauth://` URL. `awaitAuthApproval()` returns `{pubky, capabilities, grant_secret}`. | This is the primary path for third-party apps. Only one pending **grant** flow exists per process, so a new `startAuthFlow` replaces the old one. `awaitAuthApproval` consumes the flow: a second await without a new start returns an error. See [ring-auth.md](./ring-auth.md#two-roles-pick-the-right-one). |
+| `pubkyauth`, **authenticator / Ring** ([auth.md](../../pubky/references/auth.md#authenticator-side-approving-requests)) | `auth(url, secretKey)`, `parseAuthUrl(url)`, `parseDeepLink(url)` | This is Ring's job; your app rarely needs it ([ring-auth.md → Deeplink schemes](./ring-auth.md#deeplink-schemes-and-intents)). |
+| Homeserver signup/signin ([concepts.md](../../pubky/references/concepts.md#the-homeserver-model), [auth.md](../../pubky/references/auth.md#session-lifecycle)) | `signUp(secretKey, homeserver, signupToken, clientId)`, `signIn(secretKey, clientId)`. These are aliases of `signUpGrant`/`signInGrant`. | `homeserver` is a **public key**, not a `pubky://` URL. `clientId` is required. In Swift, `signupToken: String?` has no default, so pass `nil` explicitly. |
+| Session lifecycle ([auth.md](../../pubky/references/auth.md#session-lifecycle), [persisting](../../pubky/references/auth.md#persist-and-restore)) | `revalidateSession(sessionSecret)`, `signOut(sessionSecret)` | These accept a grant's `grant_secret` or a legacy cookie `session_secret`. Both are bearer secrets: store them in Keychain/Keystore and never log them ([ring-auth.md](./ring-auth.md#store-and-revoke-the-grant_secret)). |
+| Legacy cookie auth (deprecated in `pubky` 0.10) | `signUpCookie`, `signInCookie`, `startCookieAuthFlow`, `awaitCookieAuthApproval` | Don't use these in new code; use the grant methods above ([native-ffi.md](./native-ffi.md#auth-strategies-and-session-secrets)). |
+| Signup tokens ([auth.md](../../pubky/references/auth.md#signup-tokens)) | `getSignupToken(homeserverPubky, adminPassword)` | **Don't rely on it** ([native-ffi.md](./native-ffi.md#homeserver-and-session-blocking)). It targets a route and host the current homeserver doesn't serve, and it doesn't check the HTTP status. It is operator/admin only: never ship the admin password in an end-user app. For the operator side, see [signup-gating.md](../../pubky-infra/references/signup-gating.md). |
+| Write **own** `/pub` data ([concepts.md](../../pubky/references/concepts.md#own-data-vs-another-users-data), [addressing](../../pubky/references/concepts.md#addressing-and-the-pub-tree)) | Prefer `putWithSession(url, content, sessionSecret)` and `deleteWithSession(url, sessionSecret)`. Key-based: `put(url, content, secretKey, clientId)`, `deleteFile(url, secretKey, clientId)`. | The method is `deleteFile`, **not** `delete`. Writes always go to the *session's own* storage, and only the URL's `/pub/…` path counts: a URL with another user's key still writes your own `/pub`. Key-based calls sign in again on every call. RN `put` and `putWithSession` encode content differently ([react-native.md](./react-native.md#secret-key-path-and-data-operations)). You can't write `/priv` from mobile. |
+| Public read of **anyone's** data ([concepts.md](../../pubky/references/concepts.md#own-data-vs-another-users-data)) | `get(url)`, `list(url)` | Both are always unauthenticated. `get` returns text, or `base64:<…>` for non-UTF-8 bytes. `list` returns `pubky://` URLs. |
+| PKARR / discovery ([concepts.md](../../pubky/references/concepts.md#pkarr-resolution)) | `resolve`, `resolveHttps`, `getHomeserver(pubky)`, `republishHomeserver(secretKey, homeserver)`, `publish` (TXT), `publishHttps` (HTTPS/SVCB) | `getHomeserver` returns a bare z32 key, not a URL. **`publish` and `publishHttps` replace the whole signed packet**, so under a user's identity key they wipe the `_pubky` homeserver record ([native-ffi.md](./native-ffi.md#pkarr--dns-blocking)). |
+| Testnet vs mainnet | `switchNetwork(useTestnet)` | **FFI only.** RN 0.14.0 doesn't expose it. |
+| Homeserver event streams ([concepts.md](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read)) | *(none)* | `setEventListener` and `removeEventListener` (FFI and the RN wrapper) are a placeholder timer, **not** an event stream ([native-ffi.md](./native-ffi.md#eventlistener-is-a-placeholder)). No mobile method exposes `/events-stream`. |
 
 ## Not on the mobile surface
 
-- **No Nexus client.** Neither SDK ships one. The mobile surface only does homeserver writes
-  (`put` / `deleteFile` / `*WithSession`), direct public reads (`get` / `list`), PKARR
-  (`resolve` / `publish` / `getHomeserver`), and the auth flow. Aggregated/social reads (feeds,
-  tags, follows, search) must be fetched over plain HTTP against the hosted Nexus `/v0` REST API
-  — see [`../../pubky/references/nexus-api.md`](../../pubky/references/nexus-api.md), not a mobile
-  method. (`/v0` is unstable and breaking-change-prone.)
-- **No pubky-app-specs binding.** There is no model/validation object on mobile (`react-native-pubky`
-  has no `pubky-app-specs` dependency). Construct and validate the JSON yourself per
-  [`../../pubky/references/app-specs.md`](../../pubky/references/app-specs.md) (v0.x; `/pub` layout
-  not stabilized), then write it with `put` to e.g. `pubky://<pk>/pub/pubky.app/profile.json`.
+- **No Nexus client.** Call Nexus `/v0` over plain HTTP ([nexus-api.md](../../pubky/references/nexus-api.md)). `/v0` is unstable and breaking-change-prone.
+- **No pubky-app-specs binding.** Build and validate JSON yourself per [app-specs.md](../../pubky/references/app-specs.md#models), then write it with `putWithSession`. The specs are v0.x, the `/pub` layout is not stabilized, and `PubkyId` must be [raw z32](../../pubky/references/app-specs.md#pubkyid-raw-z32-only).
+
+## Ground truth
+
+The READMEs are stale: the RN README lists `delete`, and the FFI README examples omit `clientId`. Trust these sources, pinned to the reviewed commits:
+
+- RN exports: [`src/index.tsx`](https://github.com/pubky/react-native-pubky/blob/bf0b7925314031023db3ae47cdba12e23389c25e/src/index.tsx), [`example/src/App.tsx`](https://github.com/pubky/react-native-pubky/blob/bf0b7925314031023db3ae47cdba12e23389c25e/example/src/App.tsx)
+- FFI exports: [`src/lib.rs`](https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/src/lib.rs), [String Contracts](https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/README.md#string-contracts)
+- README discrepancies: [react-native.md](./react-native.md#readme-drift)

@@ -2,11 +2,11 @@
   "path": "skills/pubky/references/testing-and-testnet.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "generatedAt": "2026-09-17T12:42:03.138Z",
   "sourcesUsed": [
     {
       "repo": "pubky-homeserver",
-      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480"
     },
     {
       "repo": "pubky-ai-kit",
@@ -15,106 +15,191 @@
   ],
   "provenance": [
     {
-      "anchor": "surface-1-rust-in-process-tests",
+      "anchor": "testing-and-the-local-testnet",
+      "repo": "pubky/pubky-homeserver",
+      "path": "Cargo.toml",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/Cargo.toml#L23-L64"
+    },
+    {
+      "anchor": "testing-and-the-local-testnet",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/bindings/js/pkg/package.json",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-sdk/bindings/js/pkg/package.json#L12"
+    },
+    {
+      "anchor": "rust-in-process-tests-ephemeraltestnet",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-testnet/README.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/README.md"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-testnet/README.md#L65-L81"
     },
     {
-      "anchor": "surface-1-rust-in-process-tests",
+      "anchor": "rust-in-process-tests-ephemeraltestnet",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-testnet/src/ephemeral_testnet.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/src/ephemeral_testnet.rs"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-testnet/src/ephemeral_testnet.rs#L49-L379"
     },
     {
-      "anchor": "surface-1-rust-in-process-tests",
+      "anchor": "rust-in-process-tests-ephemeraltestnet",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-testnet/Cargo.toml",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-testnet/Cargo.toml#L16-L41"
+    },
+    {
+      "anchor": "rust-in-process-tests-ephemeraltestnet",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/data_directory/config_toml.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/data_directory/config_toml.rs#L211-L239"
+    },
+    {
+      "anchor": "rust-in-process-tests-ephemeraltestnet",
       "repo": "pubky/pubky-homeserver",
       "path": "examples/rust/8-testnet/main.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/8-testnet/main.rs"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/examples/rust/8-testnet/main.rs"
     },
     {
       "anchor": "postgresql-is-required",
       "repo": "pubky/pubky-homeserver",
-      "path": "docs/DEV_TESTING_GUIDES.md",
-      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/docs/DEV_TESTING_GUIDES.md"
+      "path": "pubky-homeserver/src/persistence/sql/database_mode.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/persistence/sql/database_mode.rs#L13-L119"
     },
     {
-      "anchor": "surface-2-standalone-local-testnet",
+      "anchor": "postgresql-is-required",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/TESTING.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/docs/TESTING.md#L5-L24"
+    },
+    {
+      "anchor": "postgresql-is-required",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-testnet/src/docker_postgres.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-testnet/src/docker_postgres.rs#L1-L124"
+    },
+    {
+      "anchor": "standalone-local-testnet",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-testnet/src/static_testnet.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/src/static_testnet.rs"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-testnet/src/static_testnet.rs#L19-L32"
     },
     {
-      "anchor": "surface-2-standalone-local-testnet",
+      "anchor": "standalone-local-testnet",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/package.json",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/bindings/js/pkg/package.json"
+      "path": "pubky-testnet/src/main.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-testnet/src/main.rs#L52-L89"
     },
     {
-      "anchor": "surface-2-standalone-local-testnet",
+      "anchor": "standalone-local-testnet",
       "repo": "pubky/pubky-homeserver",
-      "path": "examples/javascript/0-check-testnet.mjs",
-      "sha": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/ba6d69c117b927e665fa6dd6b79c0deceafceb87/examples/javascript/0-check-testnet.mjs"
+      "path": "pubky-testnet/README.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-testnet/README.md#L21-L44"
     },
     {
-      "anchor": "surface-3-scripting-with-pubky-cli",
-      "repo": "pubky/pubky-cli",
-      "path": "src/user.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/src/user.rs"
+      "anchor": "standalone-local-testnet",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/data_directory/persistent_data_dir.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/data_directory/persistent_data_dir.rs#L103-L118"
     },
     {
-      "anchor": "surface-3-scripting-with-pubky-cli",
-      "repo": "pubky/pubky-cli",
-      "path": "Cargo.toml",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-cli/blob/main/Cargo.toml"
+      "anchor": "standalone-local-testnet",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/src/client/core.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-sdk/src/client/core.rs#L99-L169"
     },
     {
-      "anchor": "writing-correct-tests",
+      "anchor": "js-against-the-local-testnet",
+      "repo": "pubky/pubky-homeserver",
+      "path": "examples/javascript/6-check-testnet.mjs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/examples/javascript/6-check-testnet.mjs#L9-L44"
+    },
+    {
+      "anchor": "js-against-the-local-testnet",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/bindings/js/src/actors/signer.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-sdk/bindings/js/src/actors/signer.rs#L41-L90"
+    },
+    {
+      "anchor": "js-against-the-local-testnet",
       "repo": "pubky/pubky-homeserver",
       "path": "examples/javascript/README.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/examples/javascript/README.md"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/examples/javascript/README.md#L7-L238"
+    },
+    {
+      "anchor": "scripting-with-pubky-cli",
+      "repo": "pubky/pubky-cli",
+      "path": "README.md",
+      "sha": "c041b2b1009267e45c1f974f34dc5c7676c00a25",
+      "url": "https://github.com/pubky/pubky-cli/blob/c041b2b1009267e45c1f974f34dc5c7676c00a25/README.md#L44-L81"
+    },
+    {
+      "anchor": "scripting-with-pubky-cli",
+      "repo": "pubky/pubky-cli",
+      "path": "src/util.rs",
+      "sha": "c041b2b1009267e45c1f974f34dc5c7676c00a25",
+      "url": "https://github.com/pubky/pubky-cli/blob/c041b2b1009267e45c1f974f34dc5c7676c00a25/src/util.rs#L11-L60"
+    },
+    {
+      "anchor": "scripting-with-pubky-cli",
+      "repo": "pubky/pubky-cli",
+      "path": "src/tools.rs",
+      "sha": "c041b2b1009267e45c1f974f34dc5c7676c00a25",
+      "url": "https://github.com/pubky/pubky-cli/blob/c041b2b1009267e45c1f974f34dc5c7676c00a25/src/tools.rs#L44-L60"
     },
     {
       "anchor": "writing-correct-tests",
-      "repo": "jasonvandenberg/agent-skills",
-      "path": "skills/pubky/references/concepts.md",
-      "sha": "main"
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/TESTING.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/docs/TESTING.md#L151-L171"
     },
     {
       "anchor": "full-self-hosted-stack",
-      "repo": "jasonvandenberg/agent-skills",
-      "path": "skills/pubky-infra/references/local-stack.md",
-      "sha": "main"
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky-infra/references",
+      "sha": "68f67fd",
+      "url": "https://github.com/pubky/agent-skills/tree/main/skills/pubky-infra/references"
     }
   ],
   "snippet": {
-    "total": 7,
-    "pass": 6,
+    "total": 6,
+    "pass": 5,
     "fail": 1,
     "unverifiable": 0,
     "failing": [
-      "snippet-pubkycli-onboarding"
+      "snippet-cli-flow"
     ]
   },
   "factCheck": {
-    "supported": 21,
-    "refuted": 0,
-    "caveated": 3,
+    "supported": 30,
+    "refuted": 1,
+    "caveated": 11,
     "unsupported": 0
   },
   "guardrailViolations": [
-    "No PLANNED/unshipped feature is presented as available: the draft correctly enumerates /priv private storage, encrypted/guarded data as a general primitive, homeserver mirroring, backup restore, cloud backup, and two-way sync as features NOT to exercise in tests, and treats /priv writes as a 403 (not a usable surface). No instability-caveat gaps either: the only /pub-reachability and facade-construction claims defer to concepts.md by link rather than restating, consistent with the maintenance rules. (No violations of the shipped-vs-planned guardrail.)",
-    "Mirrored drift-prone API detail (maintenance rule 4 / 'should be a link'): the Surface 3 section reproduces the full `pubky-cli user` subcommand signatures and the complete environment-variable table verbatim. pubky-cli is pinned pre-release (0.1.0-rc.1 on pubky 0.6.0-rc.6) and churny; per the canonical-not-copy / link-upstream rules this exact-flag enumeration should be trimmed to a short summary that defers to the linked pubky-cli README, to avoid re-creating the drift burden. The stable hardcoded testnet ports table is fine to keep inline."
+    "'Test storage paths: write under /pub/<your.app>/' gives the /pub path layout as a fixed rule with no instability caveat. shipped-vs-planned.md says the /pub path layout is not stabilized. Add 'layout not yet stabilized, pre-1.0'.",
+    "Mirrored drift-prone API detail that should be a link (CLAUDE.md section 4): the full EphemeralTestnet accessor inventory, the complete deprecated-constructor/feature/module/type list with since-versions, DockerPostgres method signatures (shared/start/connection_string/container_id), and the pubky-cli tools/completions/env-var inventory copied from its README. Keep the gotchas (http_relay panic, start() != builder().build(), shared() panics, the --testnet quirks) and link docs.rs/pubky-testnet and the pubky-cli README for the rest.",
+    "'Install it with `cargo install pubky-cli`' presents a command that doesn't work as available. No stable release exists, so it fails without --version 0.1.0-rc.1.",
+    "The persist bash snippet shows TEST_PUBKY_CONNECTION_STRING as effective, but source at the pinned commit ignores it in persist mode. It carries upstream README L30, which has been stale since PR #500, with no provenance-backed caveat."
   ],
-  "wordCount": 1490
+  "wordCount": 2922,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  }
 }

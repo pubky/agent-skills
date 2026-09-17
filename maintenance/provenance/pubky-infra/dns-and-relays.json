@@ -2,7 +2,7 @@
   "path": "skills/pubky-infra/references/dns-and-relays.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-30T12:59:21.584Z",
+  "generatedAt": "2026-09-17T11:46:08.619Z",
   "sourcesUsed": [
     {
       "repo": "pkdns",
@@ -10,107 +10,145 @@
     },
     {
       "repo": "pkarr",
-      "sha": "04c04cc7822531961815c9f91976ff0547cd4fc0"
+      "sha": "e2cd1d7e918860857ed61ec435718cda9cee966e"
     },
     {
       "repo": "mainline",
-      "sha": "e77f8060a947736a9f97d4f3001ad1b871f7bb29"
+      "sha": "375801939976f3cf0e0e4b6a6ee4b53b136dd872"
     }
   ],
   "provenance": [
     {
-      "anchor": "pkdns resolver / Run it",
-      "repo": "pubky/pkdns",
+      "anchor": "pkdns-resolver",
+      "repo": "pkdns",
       "path": "server/src/main.rs",
-      "sha": "221fe94",
+      "sha": "221fe940116b076174e67782e426b69761cc32b6",
       "url": "https://github.com/pubky/pkdns/blob/master/server/src/main.rs"
     },
     {
-      "anchor": "Config file",
-      "repo": "pubky/pkdns",
+      "anchor": "config-pkdns-dirconfigtoml",
+      "repo": "pkdns",
+      "path": "server/src/config/persistent_data_dir.rs",
+      "sha": "221fe940116b076174e67782e426b69761cc32b6",
+      "url": "https://github.com/pubky/pkdns/blob/master/server/src/config/persistent_data_dir.rs#L48"
+    },
+    {
+      "anchor": "config-pkdns-dirconfigtoml",
+      "repo": "pkdns",
       "path": "server/config.sample.toml",
-      "sha": "221fe94",
+      "sha": "221fe940116b076174e67782e426b69761cc32b6",
       "url": "https://github.com/pubky/pkdns/blob/master/server/config.sample.toml"
     },
     {
-      "anchor": "DNS-over-HTTPS (browsers)",
-      "repo": "pubky/pkdns",
+      "anchor": "dns-over-https",
+      "repo": "pkdns",
       "path": "docs/dns-over-https.md",
-      "sha": "221fe94",
+      "sha": "221fe940116b076174e67782e426b69761cc32b6",
       "url": "https://github.com/pubky/pkdns/blob/master/docs/dns-over-https.md"
     },
     {
-      "anchor": "pkdns-cli (publishing) / seed parsing + publish one-shot",
-      "repo": "pubky/pkdns",
+      "anchor": "docker",
+      "repo": "pkdns",
+      "path": "compose.yaml",
+      "sha": "221fe940116b076174e67782e426b69761cc32b6",
+      "url": "https://github.com/pubky/pkdns/blob/master/compose.yaml"
+    },
+    {
+      "anchor": "verify-record-types-logging",
+      "repo": "pkdns",
+      "path": "README.md",
+      "sha": "221fe940116b076174e67782e426b69761cc32b6",
+      "url": "https://github.com/pubky/pkdns/blob/master/README.md"
+    },
+    {
+      "anchor": "pkdns-cli-publish-your-own-records",
+      "repo": "pkdns",
       "path": "cli/src/commands/publish.rs",
-      "sha": "221fe94",
+      "sha": "221fe940116b076174e67782e426b69761cc32b6",
       "url": "https://github.com/pubky/pkdns/blob/master/cli/src/commands/publish.rs"
     },
     {
-      "anchor": "pkarr-relay / HTTP API + ?policy=",
-      "repo": "pubky/pkarr",
-      "path": "relay/src/handlers.rs",
-      "sha": "04c04cc",
-      "url": "https://github.com/pubky/pkarr/blob/main/relay/src/handlers.rs"
+      "anchor": "pkdns-cli-publish-your-own-records",
+      "repo": "pkdns",
+      "path": "cli/src/commands/publickey.rs",
+      "sha": "221fe940116b076174e67782e426b69761cc32b6",
+      "url": "https://github.com/pubky/pkdns/blob/master/cli/src/commands/publickey.rs"
     },
     {
-      "anchor": "pkarr-relay / 413 body limit",
-      "repo": "pubky/pkarr",
-      "path": "relay/src/lib.rs",
-      "sha": "04c04cc",
-      "url": "https://github.com/pubky/pkarr/blob/main/relay/src/lib.rs"
+      "anchor": "pkarr-relay",
+      "repo": "pkarr",
+      "path": "relay/README.md",
+      "sha": "04c04cc7822531961815c9f91976ff0547cd4fc0",
+      "url": "https://github.com/pubky/pkarr/blob/main/relay/README.md"
     },
     {
-      "anchor": "pkarr-relay / payload size + MAX_BYTES",
-      "repo": "pubky/pkarr",
-      "path": "pkarr/src/types/signed_packet.rs",
-      "sha": "04c04cc",
-      "url": "https://github.com/pubky/pkarr/blob/main/pkarr/src/types/signed_packet.rs"
+      "anchor": "config",
+      "repo": "pkarr",
+      "path": "relay/src/config.example.toml",
+      "sha": "04c04cc7822531961815c9f91976ff0547cd4fc0",
+      "url": "https://github.com/pubky/pkarr/blob/main/relay/src/config.example.toml"
     },
     {
-      "anchor": "mainline (the DHT) / node modes",
-      "repo": "pubky/mainline",
-      "path": "src/dht.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/mainline/blob/main/src/dht.rs"
+      "anchor": "http-api",
+      "repo": "pkarr",
+      "path": "design/relays.md",
+      "sha": "04c04cc7822531961815c9f91976ff0547cd4fc0",
+      "url": "https://github.com/pubky/pkarr/blob/main/design/relays.md"
     },
     {
-      "anchor": "mainline 7.0.0 breaking changes",
-      "repo": "pubky/mainline",
-      "path": "CHANGELOG.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/mainline/blob/main/CHANGELOG.md"
+      "anchor": "docker-and-health",
+      "repo": "pkarr",
+      "path": "docker-compose.yml",
+      "sha": "04c04cc7822531961815c9f91976ff0547cd4fc0",
+      "url": "https://github.com/pubky/pkarr/blob/main/docker-compose.yml"
     },
     {
-      "anchor": "canonical link target (PKARR resolution)",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/concepts.md",
-      "sha": "f024337f81f79d5beea14220c21873c801140e4b",
-      "url": "https://github.com/pubky/agent-skills/blob/feat/reference-content/skills/pubky/references/concepts.md"
+      "anchor": "public-relays-and-pointing-clients-at-yours",
+      "repo": "pkarr",
+      "path": "pkarr/src/client/builder.rs",
+      "sha": "04c04cc7822531961815c9f91976ff0547cd4fc0",
+      "url": "https://github.com/pubky/pkarr/blob/main/pkarr/src/client/builder.rs"
     },
     {
-      "anchor": "finalized file",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky-infra/references/dns-and-relays.md",
-      "sha": "f024337f81f79d5beea14220c21873c801140e4b",
-      "url": "https://github.com/pubky/agent-skills/blob/feat/reference-content/skills/pubky-infra/references/dns-and-relays.md"
+      "anchor": "republishing",
+      "repo": "pkarr",
+      "path": "docs/integration.md",
+      "sha": "04c04cc7822531961815c9f91976ff0547cd4fc0",
+      "url": "https://github.com/pubky/pkarr/blob/main/docs/integration.md#republishing-patterns"
+    },
+    {
+      "anchor": "mainline-the-dht-node",
+      "repo": "mainline",
+      "path": "README.md",
+      "sha": "e77f8060a947736a9f97d4f3001ad1b871f7bb29",
+      "url": "https://github.com/pubky/mainline/blob/main/README.md"
     }
   ],
   "snippet": {
-    "total": 4,
-    "pass": 4,
-    "fail": 0,
+    "total": 8,
+    "pass": 5,
+    "fail": 3,
     "unverifiable": 0,
-    "failing": []
+    "failing": [
+      "pkdns-cli-usage",
+      "client-backends",
+      "mainline-modes"
+    ]
   },
   "factCheck": {
-    "supported": 41,
-    "refuted": 0,
-    "caveated": 3,
+    "supported": 47,
+    "refuted": 3,
+    "caveated": 13,
     "unsupported": 0
   },
-  "guardrailViolations": [],
-  "wordCount": 2704,
+  "guardrailViolations": [
+    "No shipped-vs-planned violations: the draft doesn't present /priv, mirroring, backup restore, cloud backup or encrypted data as available.",
+    "Public-key string usage is correct: the relay section requires raw z-base-32 (`publicKey.z32()`), explicitly rejects the `pubky…` display string, and links concepts.md#public-key-string-formats (live check: pubky<z32> returns 400).",
+    "Mirrored drift-prone API detail (CLAUDE.md §4): the mainline 'Breaking changes' list (8.0.0 / 7.0.0) copies CHANGELOG.md. Replace it with a one-line summary and a link.",
+    "Mirrored drift-prone API detail (CLAUDE.md §4): the full pkarr-relay PUT/GET status-code table and response-header list re-express relay/src/{handlers,response,error}.rs and design/relays.md in detail. Consider keeping only the operator-relevant points (no If-Match/412/428, policy names, raw z32 key, 413 vs 400 at 1073-1104, memento-datetime missing behind the proxy) and linking design/relays.md for the rest.",
+    "Provenance gap: the operator advice for `pkdns-cli publickey` has no working-code provenance. The command fails on every seed that `generate` produces (executed evidence), so the draft documents behaviour that doesn't exist."
+  ],
+  "wordCount": 2860,
   "substance": {
     "ok": true,
     "reasons": []

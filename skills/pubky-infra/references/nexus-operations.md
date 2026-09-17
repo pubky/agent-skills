@@ -1,548 +1,515 @@
 # Operate the Nexus indexer
 
-Nexus is the **read aggregator / indexer** for the Pubky social graph: it ingests homeserver
-event streams into a Neo4j graph + Redis cache and serves a read-only `/v0` REST API. It
-**never accepts content writes** — clients write to their homeserver, then read aggregated data
-from Nexus. The protocol model behind this split is canonical in
-[`concepts.md`](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read) — read it
-first; this file is operations only. To **consume** the hosted `/v0` API, see
+Nexus is the read-side indexer for the Pubky social graph. It ingests homeserver event streams
+into Neo4j and Redis and serves a read-only `/v0` REST API; it never accepts content writes. The
+write-to-homeserver / read-from-Nexus split and the `/events/` / `/events-stream` contract are
+canonical in [`concepts.md`](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read).
+This file covers operations only. To **consume** `/v0`, see
 [`nexus-api.md`](../../pubky/references/nexus-api.md).
 
-> **Pre-1.0, drift-prone.** The `/v0` REST API is unstable and breaking-change-prone, and the
-> `/pub` path layout the watcher parses is not stabilized. Rate limiting (below) is part of that
-> unstable `/v0` stack. Treat any version-pinned or API-shape claim here as drift-prone and
-> confirm against the linked upstream. Canonical guardrail:
-> [`shipped-vs-planned.md`](../../pubky/references/shipped-vs-planned.md).
+> **Pre-1.0 and drift-prone.** `/v0` is unstable and breaks without notice, the `/pub` path layout
+> the watcher parses is not stabilized, and app-specs is v0.x. Guardrail:
+> [`shipped-vs-planned.md`](../../pubky/references/shipped-vs-planned.md). Source of truth:
+> [`pubky-nexus`](https://github.com/pubky/pubky-nexus).
 
-Versions/identifiers below are from one pinned commit of
-[`pubky-nexus`](https://github.com/pubky/pubky-nexus); confirm against upstream before relying
-on them.
+## Versions: what you are actually running
+
+- **No release matches this surface.** The latest tag, `v0.3.1` (2025-02-20), predates the
+  `nexusd` CLI. Crates on `main` are `0.4.1`. This file is pinned to `main` @ `794a6e1`.
+- **Production and staging** report `0.4.1` @ `9e20cbf` (2026-09-03), 21 commits behind the pin.
+  Check any deployment with `GET /v0/info` (`version`, `commit_hash`, `last_index_snapshot`,
+  `base_file_url`).
+- **Build the image yourself from a pinned commit** with the repo `Dockerfile` (see
+  [Deploying](#deploying)). **Do not pull `synonymsoft/pubky-nexus` from Docker Hub for this
+  surface.** Its images are stale: `latest` = `716b64f` (2026-05, 87 commits before `9e20cbf`),
+  and the only other SHA tag is older still. `716b64f` has no `jobs`, no `db clear --yes`, no
+  `db migration check`, and no `[stack.net]` (`testnet` is still under `[watcher]`, so a current
+  config's `[stack.net] testnet = true` is silently ignored). How those images are built is not
+  documented (`docker.yml` publishes only on `v*.*.*` tags).
+
+**(main-only)** below means **not** in the deployed `9e20cbf`:
+
+- `--config-dir` as a global flag (#1053). At `9e20cbf` it is honored only before a bare / `run` /
+  `db` command; `api`, `watcher` and `jobs run` take their own per-subcommand `-c`. The migration
+  config path also ignores it there.
+- the `hot-tags-cache-*` (#1069) and `influencers-cache-*` (#1052) jobs
+- `[stack.media]` and the `nexus.media` meter / `media.subprocess.timeout` (#999);
+  `[stack.net].pubky_http_request_timeout_secs` (#1043)
+- ordering external homeservers by hosted trust (#1065)
+- the `watcher.external_hs.*` gauges (#1068)
+- every hs-resolver instrument except `total` / `failed`: `resolutions`, `marked_stale`,
+  `mapped_users`, `stale_users`, `heartbeat_timestamp` (#1063)
+- `http.server.requests`, `http.server.request.duration`, `neo4j.query.requests` and the neo4j
+  label restructuring (#1033)
+- the moderated-post safe-delete gate (#971). `9e20cbf` calls `post::sync_del` unconditionally.
+- the Prometheus alerts file mount (#1064)
+- the `CollectedEdgesBackfill1789344000` migration (#1067)
+
+Already deployed at `9e20cbf`: `jobs`, `trust-recompute`, `db clear --yes`, `db migration check`,
+`[stack.net]` `testnet` / `external_hs_pk_blacklist`, `[watcher.retry]`.
 
 ## Architecture
 
-Four crates:
-
 | Crate | Role |
 | :-- | :-- |
-| `nexus-webapi` | the REST API server (README also calls it "nexus-service") |
-| `nexus-watcher` | event aggregator — ingests homeserver events into the social graph |
-| `nexus-common` | shared lib: DB connectors, models, queries, config |
-| `nexusd` | orchestrator binary — runs the components and performs DB migrations/reindexing |
+| `nexus-webapi` | REST API server |
+| `nexus-watcher` | ingests homeserver events into the graph |
+| `nexus-common` | shared DB connectors, models, queries, config |
+| `nexusd` | runs the components, DB migrations, reindexing |
 
-Backing stores: **Neo4j** (the social graph) + **Redis** (cache, with RediSearch FT indexes).
-The graph/cache split and the homeserver → Nexus indexing model are canonical in
-[`concepts.md`](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read) — don't
-restate.
+Stores: **Neo4j** (graph, complex queries) and **Redis** (cache, RediSearch indexes). Treat
+**both** as durable (see [Redis is state](#redis-is-state-not-just-cache)).
 
-## Run it
+## nexusd CLI
 
-The daemon is the `nexusd` crate; its CLI is named `pubky-nexus`. A global `--config-dir` / `-c`
-flag (default `$HOME/.pubky-nexus`) names the directory that must contain `config.toml`. Run
-from source with `cargo run -p nexusd`; the built binary is `nexusd`.
+Binary `nexusd` (clap name `pubky-nexus`). `-c/--config-dir` is **global** (main-only, see
+above): place it before or after any subcommand. Default `$HOME/.pubky-nexus`; a leading `~` is
+expanded; the directory need not exist, but a path to a file is rejected.
+
+| Command | Does |
+| :-- | :-- |
+| _(none)_ / hidden `run` | API + watcher + scheduled jobs. Validates every `[jobs.*]` schedule first (bad cron or unknown job fails fast), then runs all three via `try_join!` on one shutdown channel (Ctrl-C). Exits when one errors or all stop. |
+| `api` | API only |
+| `watcher` | watcher only |
+| `jobs list` / `jobs run <name>` | list registered jobs / run one now |
+| `db clear --yes` | **Destructive.** `FLUSHDB`s the configured Redis DB and deletes **every** Neo4j node. Without `--yes` it exits `1`. **Before #974 (2026-09-03), incl. Docker Hub `latest`, bare `db clear` wipes immediately with no prompt and uses `FLUSHALL`, wiping every logical DB on the Redis server.** |
+| `db mock [--mock-type redis\|graph]` | **Destructive, no `--yes` gate.** `DETACH DELETE`s every Neo4j node and `FLUSHDB`s Redis, then loads `docker/test-graph/mocks` (both stores when the flag is omitted). **Never run it with a `--config-dir` that points at real data.** |
+| `db migration new <NAME>` / `run` / `check` | see [Migration Manager](#migration-manager) |
 
 ```bash
-# Run both API + Watcher (default — no subcommand)
+# API + watcher + scheduled jobs; config from $HOME/.pubky-nexus/config.toml
 cargo run -p nexusd
-
-# Run components individually
-cargo run -p nexusd -- watcher
-cargo run -p nexusd -- api
-
 # Custom config directory
 cargo run -p nexusd -- --config-dir="custom/config/folder"
-
-# Wipe the databases before a fresh watcher run
-cargo run -p nexusd -- db clear
+# Run services individually, e.g. clear the DBs (destructive) before starting the watcher
+# cargo run -p nexusd -- db clear --yes
+cargo run -p nexusd -- watcher
+cargo run -p nexusd -- api
 ```
 
-Subcommands (each also accepts its own `--config-dir`):
-
-| Command | Does |
-| :-- | :-- |
-| _(none)_ | hidden default `run` — starts **both** API and Watcher concurrently via `try_join!` sharing one shutdown channel, blocking until one errors or Ctrl-C |
-| `api` | run the REST API service only |
-| `watcher` | run the event watcher only |
-| `db` | database operations (see below) |
-
-Two standalone **example binaries** run the API and watcher individually against an existing
-Neo4j/Redis: `cargo run --bin api_example` and `cargo run --bin watcher_example`, each taking an
-optional `--config=<dir>` (expecting `api-config.toml` / `watcher-config.toml`; a default
-`config.toml` is created if absent). The api example serves on `localhost:8081`.
-
-> **Example config has a different shape from the daemon.** The example `api-config.toml` is
-> *flattened* — top-level `public_ip` / `public_addr` / … and a bare `[rate_limit]` table, **not**
-> `[api]` / `[api.rate_limit]`. Don't reuse a daemon `config.toml` for the example binaries.
-
-### db subcommands
-
-| Command | Does |
-| :-- | :-- |
-| `db clear` | wipe the databases (`MockDb::clear_database`) |
-| `db mock [--mock-type redis\|graph]` | load mock test data (default `both` when `--mock-type` omitted; the flag itself accepts only `redis` or `graph`) |
-| `db migration new <NAME>` | scaffold a new migration (NAME required) |
-| `db migration run` | run all pending migrations, advancing phases |
+`db mock` then runs `$CONTAINER_RUNTIME exec neo4j bash /test-graph/run-queries.sh`
+(`CONTAINER_RUNTIME` defaults to `docker`). It needs a running container named exactly `neo4j`
+with `./test-graph` mounted; the dev compose provides one.
 
 ## config.toml
 
-`config.toml` is read from the `--config-dir` directory (default `$HOME/.pubky-nexus/`). On
-startup nexusd **creates the directory and writes a default `config.toml`** from the embedded
-template (`include_str!` of `nexus-common/default.config.toml`) if absent, then parses it. Three
-top-level tables: `[api]` and `[watcher]` are omittable; `[stack]` (with `[stack.otlp]`,
-`[stack.db]`, `[stack.db.neo4j]`) is required.
+Nexus reads only `<config-dir>/config.toml`. If missing, nexusd creates the directory and writes
+the embedded
+[`nexus-common/default.config.toml`](https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-common/default.config.toml)
+as shipped. **Read that file for the full annotated key list**; it is not mirrored here.
 
-The shipped default — the verbatim file an operator edits (note OTLP `endpoint` is commented
-out, so observability is **off by default**, and `[api.rate_limit]` ships disabled):
+- **Required:** `[stack]` with `log_level`, `files_path`, `[stack.db].redis`, and
+  `[stack.db.neo4j]` `uri` + `password`.
+- **Optional (defaulted):** `[api]`, `[watcher]`, `[jobs]`, `[trust_rank]`, `[stack.otlp]`,
+  `[stack.net]`, `[stack.media]`.
+- **Unknown keys are silently ignored** except in `[jobs.<name>]` and `[trust_rank]`
+  (`deny_unknown_fields`). A typo or moved key raises no error.
 
-```toml
-[api]
-public_ip = "127.0.0.1"
-public_addr = "127.0.0.1:8080"
-pubky_listen_socket = "127.0.0.1:8081"
-request_timeout_secs = 30
-max_body_size_bytes = 1048576
+### Change before production
 
-[api.rate_limit]
-# Enable rate limiting (disabled by default for permissiveness behind NATs)
-enabled = false
-# Trust forwarded-IP headers (X-Forwarded-For / X-Real-IP) for real-IP extraction.
-# Only enable behind a known reverse proxy — clients can spoof these headers otherwise.
-# trust_proxy_headers = false
-# Default bucket for standard endpoints (300 req/min, burst 50)
-[api.rate_limit.default_bucket]
-rate = 300
-burst = 50
-# Expensive bucket for high-cost endpoints (20 req/min, burst 5)
-[api.rate_limit.expensive_bucket]
-rate = 20
-burst = 5
-
-[watcher]
-testnet = false
-testnet_host = "localhost"
-homeserver = "8um71us3fyw6h8wbcxb5ar3rwusy1a6u49956ikzojg3gcwd1dty"
-events_limit = 50
-monitored_homeservers_limit = 50
-watcher_sleep = 5000
-initial_backoff_secs = 60
-max_backoff_secs = 3600
-max_file_size = 52428800
-moderation_id = "uo7jgkykft4885n8cruizwy6khw71mnu5pq3ay9i8pw1ymcn85ko"
-moderated_tags = [
-    "hatespeech",
-    "harassement",
-    "terrorism",
-    "violence",
-    "illegal_activities",
-    "il_adult_nu_sex_act",
-]
-
-[stack]
-log_level = "info"
-files_path = "~/.pubky-nexus/static/files"
-
-[stack.otlp]
-name = "nexusd"
-#endpoint = "http://localhost:4317"
-
-[stack.db]
-redis = "redis://127.0.0.1:6379"
-#ft_search_timeout_ms = 50
-
-[stack.db.neo4j]
-uri = "bolt://localhost:7687"
-#user = "neo4j"
-password = "12345678"
-slow_query_logging_threshold_ms = 100
-#slow_query_logging_include_cypher = false
-```
-
-Field semantics that change behavior (the full field list is the verbatim default above):
-
-**`[api]`** — `public_ip` (IP advertised outward, default `127.0.0.1`); `public_addr` (ICANN/HTTP
-bind socket for a reverse proxy / DNS-TLS, default `127.0.0.1:8080`); `pubky_listen_socket`
-(HTTPS PubkyTLS bind socket, default `127.0.0.1:8081`); `request_timeout_secs` (default `30`) —
-`0` is clamped up to a 1 s timeout via `.max(1)`, so the effective minimum is 1 s and `0` does
-**not** disable the API (the `api.rs` doc comment about "taking the API offline" is the rationale
-*for* the clamp, not current behavior); `max_body_size_bytes` (default `1048576` = 1 MiB);
-`[api.rate_limit]` (optional, whole table omittable; off by default) — see
-[API rate limiting](#api-rate-limiting). Within a *present* `[api]` table only `public_ip`,
-`public_addr`, `pubky_listen_socket` are required — the rest carry field defaults.
-
-**`[watcher]`** — `events_limit` (max events fetched per run per homeserver);
-`monitored_homeservers_limit` (default `50`; set to **`1` to monitor only the default
-homeserver**); `watcher_sleep` (ms between full runs, default `5000`); `initial_backoff_secs`
-(`60`) / `max_backoff_secs` (`3600`); `max_file_size` (bytes, default `52428800` = 50 MiB —
-**oversized files are permanent failures, not retried**); `moderation_id` + `moderated_tags`
-(see [Content moderation](#content-moderation)).
-
-**`[stack]`** — `log_level` (`error|warn|info|debug|trace`, default `info`); `files_path`
-(where ingested static files are stored).
-
-- `[stack.otlp]` — `name` (OpenTelemetry service name; `"nexusd"` in the shipped config) and
-  optional `endpoint` (unset = export off; point at an OTLP collector e.g.
-  `http://localhost:4317` to enable). See [Observability](#observability-opentelemetry-and-signoz).
-- `[stack.db]` — `redis` (URL, default `redis://127.0.0.1:6379`); `ft_search_timeout_ms`
-  (default `50`) caps RediSearch `FT.SEARCH` execution time, returning **partial results**.
-- `[stack.db.neo4j]` — `uri` (default `bolt://localhost:7687`); `user` (default `neo4j`; **not
-  needed in Community Edition**); `password`; `slow_query_logging_threshold_ms`
-  (`Option<u64>`, default `None` = disabled; the shipped config sets `100`; the migration config
-  leaves it commented, disabled for CLI commands); `slow_query_logging_include_cypher` (default
-  `false`).
-
-> **Two `events_limit` defaults.** The shipped `config.toml` sets `events_limit = 50`, but the
-> code constant `DEFAULT_EVENTS_LIMIT = 1000` applies only when the **whole `[watcher]` section
-> is absent** (the field has no `#[serde(default)]`; a present `[watcher]` missing just this line
-> fails to parse rather than falling back to `1000`). Only `initial_backoff_secs`,
-> `max_backoff_secs`, `max_file_size`, and `stack` carry field defaults — the other `[watcher]`
-> fields are required when the table is present. A fresh install gets the full default file
-> written verbatim, so **50 is the effective shipped default** — but be aware of both.
-
-> **Don't hardcode the default homeserver pubky.** The shipped config's `homeserver`
-> (`8um71us3fyw6h8wbcxb5ar3rwusy1a6u49956ikzojg3gcwd1dty`, "Synonym homeserver") differs from the
-> in-code `HOMESERVER_PUBKY` default (`8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo`,
-> "Testnet homeserver", used only by `WatcherConfig::Default` when `[watcher]` is absent). The
-> disk value wins for a fresh install. Treat neither as a stable identity to hardcode — set it
-> for your deployment.
-
-## API rate limiting
-
-`nexus-webapi` ships an optional [`tower_governor`](https://docs.rs/tower_governor) token-bucket
-rate limiter, wired into the **live router** (not just a config struct): the builder passes
-`api_config.rate_limit` into `app_routes()`, which applies a `GovernorLayer` to two route groups
-via `apply_rate_limit_default` / `apply_rate_limit_expensive`. It is **off by default**
-(`enabled = false`) — permissive so deployments behind NATs / shared IPs don't throttle
-legitimate clients. It is part of the unstable `/v0` stack
-([guardrail](../../pubky/references/shipped-vs-planned.md)).
-
-**Two buckets** (each its own `GovernorLayer`; the two routers are merged):
-
-| Bucket | Default | Covers |
+| Key | Shipped value | Why |
 | :-- | :-- | :-- |
-| `default_bucket` | 300 req/min, burst 50 | standard `/v0` routes + static-file routes + Swagger/OpenAPI docs |
-| `expensive_bucket` | 20 req/min, burst 5 | high-cost `/v0` + static endpoints |
+| `[api].public_ip` | `127.0.0.1` | Advertised in the API's pkarr packet. Set the real public IP. |
+| `[api].public_addr` / `pubky_listen_socket` | `127.0.0.1:8080` / `:8081` | Plain-HTTP bind (behind a reverse proxy) / HTTPS with Pkarr raw-public-key TLS. Loopback is unreachable from outside a container. |
+| `[watcher].homeserver` | `8um71us3…d1dty` ("Synonym homeserver") | Primary HS. The in-code `HOMESERVER_PUBKY` (`8pinxxgq…35ewo`, testnet) applies only when `[watcher]` is absent. Always set it. |
+| `[watcher].moderation_id` | `uo7jgkyk…n85ko` | A **test key**. Set your own moderator. |
+| `[stack.db.neo4j].password` | `12345678` | Dev default |
+| `[stack.otlp].endpoint` | commented out | Export off (see [Observability](#observability)) |
 
-Token bucket: refill period = `60_000 / rate` ms (min 1 ms), burst size = `burst`. A background
-task calls `retain_recent()` every 60 s to evict idle keys.
+Both pubkeys are raw z-base-32, no `pubky` prefix; use that form. See
+[public-key string formats](../../pubky/references/concepts.md#public-key-string-formats).
 
-**No-op conditions.** When `enabled = false` *both* apply functions return the router unchanged
-(a true no-op, zero overhead). A bucket with `rate == 0` or `burst == 0` is also skipped.
+> **The API keypair is a secret.** `<config-dir>/secret` is the Nexus API identity, randomly
+> generated if missing. By default the API publishes a pkarr packet (HTTPS/SVCB record on
+> `public_ip` + TLS port, plus an A record) at startup and hourly. Back it up and restrict its
+> permissions; losing it changes the Nexus pubky identity.
 
-**Keying (security-sensitive).**
+### [api]
 
-- `trust_proxy_headers = false` (default) → key on the real **TCP peer IP**
-  (`PeerIpKeyExtractor`).
-- `trust_proxy_headers = true` → key on forwarded headers `X-Forwarded-For` / `X-Real-IP`
-  (`SmartIpKeyExtractor`).
+- In a present `[api]` table only `public_ip`, `public_addr`, `pubky_listen_socket` are required.
+- `request_timeout_secs` (default `30`) returns 408. Clamped with `.max(1)`: `0` means a 1 s
+  timeout, **not** disabled.
+- `max_body_size_bytes` defaults to 1 MiB.
+- `[api.rate_limit]` is **off** by default. When on, `tower_governor` token buckets keyed by TCP
+  peer IP: `default_bucket` (300/min, burst 50) for standard `/v0`, static and Swagger routes;
+  `expensive_bucket` (20/min, burst 5) for high-cost routes. Refill period
+  `max(60000/rate, 1)` ms; a bucket with `rate` or `burst` = `0` is skipped. Rejection: 429 +
+  `Retry-After`.
+  - **Enable `trust_proxy_headers` only behind a trusted proxy that overwrites
+    `X-Forwarded-For` / `X-Real-IP`**, or clients can spoof their bucket key.
 
-> **Only enable `trust_proxy_headers` behind a known reverse proxy.** Direct-to-internet clients
-> can forge `X-Forwarded-For` / `X-Real-IP` to dodge their own limit or pin it on another IP.
-> Enable it only when a trusted proxy that overwrites those headers sits in front of the API.
+### [watcher]
 
-**On limit exceeded:** HTTP `429 Too Many Requests` with a `Retry-After` header (seconds), plus
-a metric increment — meter `nexus`, `u64` counter `http.rate_limit.rejected.total`, tagged
-`bucket = "default" | "expensive"`. See [Observability](#observability-opentelemetry-and-signoz).
+- **Required in a present `[watcher]`:** `homeserver`, `events_limit` (1..=1000),
+  `monitored_homeservers_limit`, `primary_hs_monitoring_interval_ms` (alias `watcher_sleep`),
+  `moderation_id`, `moderated_tags`. With the table absent, `DEFAULT_EVENTS_LIMIT = 1000`; the
+  shipped file sets `50`.
+- **Defaulted:** `key_based_events_limit` 50 (1..=100); `external_hs_monitoring_interval_ms`
+  5000; `hs_resolver_interval_ms` 10000 (alias `hs_resolver_sleep`); `hs_resolver_ttl` 3600000 ms;
+  `initial_backoff_secs` / `max_backoff_secs` 60 / 3600; `retry_processor_interval_ms` 10000;
+  `max_file_size`; all of `[watcher.retry]`.
+- Any `*_interval_ms = 0` is a parse error.
+- **Never set `initial_backoff_secs > max_backoff_secs`**: `HomeserverBackoff::new` panics.
+- **`max_file_size` defaults to 100 MiB** (104857600, pubky-app-specs 0.7.0
+  `max_blob_size_bytes`), **not** the 50 MiB older docs state. Oversized files are permanent
+  failures, never retried. `[stack.net].pubky_http_request_timeout_secs` (default 300, nonzero,
+  main-only) must be long enough to download a file that size.
+- **`testnet` / `testnet_host` moved to `[stack.net]`** (#985). `testnet = true` under
+  `[watcher]` still parses but is silently ignored on current binaries.
+- `[stack.net].external_hs_pk_blacklist` blocks indexing and ingestion of users on the listed
+  homeservers.
 
-## Dev dependencies (Neo4j and Redis)
+### [stack.db] and [stack.media]
 
-The repo's `docker/docker-compose.yml` provisions **dev dependencies only — not `nexusd`
-itself**: `neo4j:5.26.27-community` (7474 browser + 7687 bolt), `redis:8.0.6-alpine` (6379),
-`redis/redisinsight:3.0.3` (5540), and `postgres:18-alpine` (5432) — an **active** service (with
-a `pg_isready` healthcheck), only needed for tests that involve homeservers (the sole
-commented-out service is `jaeger`). All ports bind to `127.0.0.1`. Run `nexusd` separately
-(cargo, or its own container).
+- `[stack.db.neo4j].user` defaults to `neo4j`; Community Edition needs only the password.
+- `slow_query_logging_threshold_ms`: unset = off, `0` = warn on every query, shipped `100`.
+  `slow_query_logging_include_cypher` defaults to `false`.
+- `ft_search_timeout_ms` (default 50) caps RediSearch `FT.SEARCH`, which returns **partial
+  results** on timeout.
+- **`[stack.media]` (main-only):** `max_concurrency` caps ImageMagick/ffmpeg subprocesses
+  (default CPU count, min 4; config comments suggest cores/2); `process_timeout_secs` default 180.
+  Both reject `0`. Keep `process_timeout_secs` below `request_timeout_secs` (else callers get a
+  408) and below the 1 h temp-file sweep.
 
-```bash
-cd docker
-cp .env-sample .env
-docker compose up -d
-```
+## Scheduled jobs
 
-> **Neo4j Community Edition gotchas.** The database name and username must both be `neo4j` (the
-> `.env` defaults) — Community Edition allows no custom name/user. **Changing `NEO4J_AUTH` after
-> the config/data volumes already exist has no effect** — you must `docker compose down -v` to
-> reset. The `.env-sample` default password is `12345678`. Memory is preset (pagecache 1G, heap
-> 2G) and telemetry disabled.
+Registered: `trust-recompute`; `influencers-cache-{today,this-week,this-month}` (main-only);
+`hot-tags-cache-{today,this-week,this-month,all-time}` (main-only). `nexusd jobs list` prints them.
 
-The Postgres credentials in `.env-sample` (`POSTGRES_USER=test_user`,
-`POSTGRES_PASSWORD=test_pass`, `POSTGRES_DB=postgres`, port `5432`, and
-`TEST_PUBKY_CONNECTION_STRING=postgres://test_user:test_pass@localhost:5432/postgres?pubky-test=true`)
-exist solely for the `nexus-watcher` test suite.
+- Configure as `[jobs.<name>]` with `cron` as the **only** key. `cron` is **seconds-first**:
+  `sec min hour dom month dow [year]`, e.g. `"0 0 3 * * *"`.
+- No `cron` = unscheduled, still runnable via `jobs run <name>`. Every cache job ships commented
+  out.
+- A `[jobs.<name>]` matching no registered job fails startup (`UnknownJobConfig`). **Before
+  rolling back to an older binary, comment out newer job sections** (e.g. `9e20cbf` rejects
+  `[jobs.hot-tags-cache-today]`).
+- A Redis run lock (`LOCK_TTL_SECS` = 3600 + 60 s lease) serializes each job across processes, so
+  multiple scheduled nexusd instances don't double-run it. The lease expires if a process crashes.
 
-Local UIs when running against the dev stack:
+**`trust-recompute`** runs seeded personalized PageRank via the **Neo4j Graph Data Science (GDS)**
+plugin. Before it works:
 
-| UI | URL | Note |
+- **Set `[trust_rank].seed`.** It ships empty and the job refuses to run without it.
+- **Install GDS.** Stock `neo4j:5.26` Community lacks it. Production Neo4j needs what the dev image
+  has: the GDS jar (dev pins 2.13.10), `NEO4J_PLUGINS='["graph-data-science"]'`,
+  `dbms.security.procedures.unrestricted=gds.*`, and a procedure allowlist.
+
+Users' `trust` scores also order external-homeserver polling (main-only).
+
+## Watcher: event ingestion
+
+At startup the watcher calls `Homeserver::persist_if_unknown(homeserver)`, then runs four
+independent periodic tasks, each on its own tokio interval with `MissedTickBehavior::Skip`:
+
+| Task | Interval key | Does |
 | :-- | :-- | :-- |
-| Swagger (nexus API) | `http://localhost:8080/swagger-ui` | the `/v0` surface |
-| Redis Insight | `http://localhost:5540/0/browser` | accept the TOS popup on first run |
-| Neo4j Browser | `http://localhost:7474/browser/` | |
-| Signoz | `http://localhost:3301` | only if observability is enabled |
+| primary-homeserver | `primary_hs_monitoring_interval_ms` | cursor-paged `/events/` from `[watcher].homeserver` |
+| external-homeservers | `external_hs_monitoring_interval_ms` | per-user event streams from other homeservers |
+| user-hs-resolver | `hs_resolver_interval_ms` | maps users to their homeserver |
+| retry-processor | `retry_processor_interval_ms` | replays failed events |
 
-Hosted Swagger UIs are the source of truth for the unstable `/v0` surface:
-[staging](https://nexus.staging.pubky.app/swagger-ui/) ·
-[production](https://nexus.pubky.app/swagger-ui/). For running `nexusd` alongside a homeserver,
-relays, and DNS as one orchestrated deployment, use the
-[`pubky-docker`](https://github.com/pubky/pubky-docker) stack — see
-[`local-stack.md`](local-stack.md) — since this repo's compose file only provisions Nexus's
-databases.
+A task error is logged and the loop continues. A task **panic** cancels its siblings after their
+current iteration.
 
-## Production image
-
-The repo `Dockerfile` is a multi-stage build on `rust:1.90.0-alpine3.22` with static OpenSSL
-(`OPENSSL_STATIC=yes`, `cargo build --release --bin nexusd`, then stripped). The runtime stage is
-`alpine:3.22` with `ca-certificates` plus **imagemagick and codec plugins** (webp, heic, svg,
-jpeg, tiff, raw) — required to transcode ingested image files. The binary lands at
-`/usr/local/bin/nexusd`. `EXPOSE 8080`, `CMD ["nexusd"]` (i.e. runs both API + Watcher by
-default).
-
-## The watcher: event ingestion
-
-The watcher polls each homeserver's events endpoint with a persisted cursor and the configured
-`events_limit`; the response body is trimmed and split into newline-separated lines, and a line
-beginning `cursor: ` updates the stored cursor for the next request.
+### Primary homeserver
 
 ```http
-GET https://<homeserver-pubky>/events/?cursor=<cursor>&limit=<events_limit>
+GET https://<homeserver>/events/?cursor=<cursor>&limit=<events_limit>
 ```
 
-The **homeserver event-stream contract itself** (paginated `GET /events/`, cursor + Blake3 hash,
-the `GET /events-stream` SSE variant) is canonical in
-[`concepts.md`](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read) — link, don't
-restate.
+(`<homeserver>` is the homeserver's z-base-32 pubky. Verified against a local testnet homeserver:
+newline-separated `PUT|DEL pubky://…` lines ending in `cursor: N`.)
 
-**Ingestion flow.** The main loop ticks every `watcher_sleep` ms (a tokio interval) and runs
-`run_all` over all monitored homeservers. For each homeserver it polls `/events/`, then per line:
+- Body capped at 5 MiB, split into lines. `cursor: ` lines are extracted (position irrelevant,
+  last one wins).
+- The cursor is validated **before** any handler runs and persisted to Redis **only after the
+  whole batch succeeds**. A shutdown mid-batch replays the batch on restart.
+- A rejected cursor skips the batch and keeps the stored cursor. Alert on any sustained non-zero
+  rate:
+  - `watcher.primary_hs.cursor.invalid{hs_id}`: unparseable, would rewind, or advances on an empty
+    batch.
+  - `watcher.primary_hs.cursor.stalled{hs_id}`: events present but cursor doesn't advance, or no
+    cursor line.
+- A Redis infrastructure error fails the run rather than skipping the batch.
+- Only events from users with no `HOSTED_BY` edge, or a non-stale `HOSTED_BY` to this homeserver,
+  are indexed; others are skipped with a warning.
+- **No per-HS backoff** for the primary homeserver.
 
-- a `cursor: ` line **persists the new cursor** (`Homeserver::try_from_cursor(...).put_to_index()`);
-- a **PUT** event fetches the resource blob from the author's homeserver, validates it with
-  pubky-app-specs, and dispatches to a per-type handler (user / post / follow / bookmark / tag /
-  file) that writes to **Neo4j + Redis**;
-- a **DEL** event removes the corresponding node;
-- **mute events are no longer handled** — `events/mod.rs` logs "Mute events are no longer handled
-  by nexus" and silently skips both PUT and DEL `Mute` resources (no mute handler exists; the
-  `RemoveMuted1771718400` migration tears down legacy muted data);
-- tag PUTs are checked against moderation before indexing.
+### External homeservers
 
-**Multi-homeserver.** On startup the watcher calls `Homeserver::persist_if_unknown` for its
-configured `homeserver`, then each run `homeservers_by_priority()` reads all homeservers from the
-graph and moves the configured default to index 0 so it is processed first. The list is then
-truncated to `monitored_homeservers_limit` (set `1` to watch only the default). Backoff state is
-updated per homeserver after each run.
+- **Targets** (from Neo4j): homeservers with non-deleted users on non-stale `HOSTED_BY` edges,
+  ordered by summed user `trust` (main-only) then active user count, excluding the primary and
+  blacklisted homeservers, truncated to `monitored_homeservers_limit`.
+- **Fetch:** per user, one non-live SDK
+  `event_stream_for(hs).add_users([(user, cursor)]).limit(key_based_events_limit).path("/pub/")`
+  call, resuming from a per-user Redis cursor (`UserHsCursor`).
+- **Timeouts:** 8 min per HS run; processor default 3600 s.
+- **Safety checks:**
+  - Any event cursor at or below the floor rejects the **whole** per-user batch
+    (`EventCursorOutOfOrder`, `watcher.external_hs.cursor.out_of_order{hs_id}`).
+  - An event owned by a different user is rejected (`UserIdMismatch`); the cursor doesn't advance.
+- **Failures:** 429 is retried after 1, 2, 3 s, then fails `HsEventsStreamRateLimitExhausted`. A
+  404 makes that user skip 1, 2, … up to 10 runs. A failed HS run applies per-HS backoff
+  `min(initial_backoff_secs * 2^n, max_backoff_secs)`.
 
-**Per-homeserver exponential backoff.** On failure a homeserver is **Skipped** for
-`min(initial_backoff_secs * 2^failures, max_backoff_secs)` — with defaults 60 s, 120 s, 240 s, …
-capped at 3600 s. A successful run clears the state (next failure restarts at initial). Backoff is
-tracked independently per homeserver. `HomeserverBackoff::new` **panics if
-`initial_backoff_secs > max_backoff_secs`** — that's the config-validation guard, so don't invert
-them. There is also a hard per-homeserver processing timeout: `PROCESSING_TIMEOUT_SECS = 3_600`
-(each processor run is wrapped in `tokio::time::timeout`, surfacing `Timeout` in run stats
-alongside `Ok` / `Error` / `Panic` / `Skipped`).
+### User homeserver resolver
 
-**Fetch size caps and retry classification.** Caps: events-response body `MAX_EVENTS_BODY` =
-5 MiB; per-resource (user/post/tag/file-meta) `MAX_RESOURCE_SIZE` = 2 MiB; error-body truncation
-`MAX_ERROR_BODY` = 4 KiB; file content = `max_file_size` config (50 MiB default). `fetch_capped`
-enforces caps first by a Content-Length precheck, then by streaming via `read_stream_capped` with
-a running byte count (catching a lying/missing Content-Length), returning `FetchSizeExceeded` on
-violation. Error classification matters:
+- Each tick selects non-deleted users with no `HOSTED_BY` edge or one older than `hs_resolver_ttl`.
+- Resolves each user's published HS via PKDNS/DHT **sequentially** (parallel DHT resolution proved
+  unreliable). PKARR itself: [`concepts.md`](../../pubky/references/concepts.md#pkarr-resolution).
+- New user → `(:User)-[:HOSTED_BY]->(:Homeserver)`. Match → clears `stale`. Changed or missing HS →
+  mapping marked **stale**. **Switching homeservers is not implemented**: a user's bound homeserver
+  never changes.
 
-- **`FetchSizeExceeded`, `SpecValidation`, `InvalidEventLine`** are **PERMANENT** failures —
-  returned as `None`, **not enqueued** (they would re-fail identically and poison the retry
-  queue). `FetchSizeExceeded` also increments the `watcher.fetch.rejected` counter.
-- All other errors are enqueued to a Redis retry index keyed `{event_type}:{compressed-index}`.
+### Event dispatch
 
-### Content moderation
+- **PUT:** blob fetched (capped at 2 MiB), validated with `PubkyAppObject::from_resource` (see
+  [`app-specs.md`](../../pubky/references/app-specs.md)), routed to the user, post, follow,
+  bookmark, tag or file handler. Tags pass a moderation check first.
+- **DEL:** routed to the matching delete handler.
+- **Mute PUT and DEL are ignored**; Nexus no longer handles mutes.
+- **Moderation:** when `moderation_id` tags content with a label in `moderated_tags`, the target is
+  de-indexed: a tag, user or file is removed; a post is hard-deleted if it has no edges and
+  tombstoned otherwise (main-only, #971; `9e20cbf` calls `post::sync_del`).
 
-The watcher trusts **one** moderator pubky (`moderation_id`). When that user (`tagger_id == id`)
-places a tag whose label is in `moderated_tags`, the watcher **de-indexes** the target
-(`Moderation::apply_moderation`) instead of indexing the tag — a tag-storage URI does `tag::del`,
-otherwise the parsed URI deletes the `Post` / `Tag` / `User` / `File`. Default `moderated_tags`:
-`hatespeech`, `harassement`, `terrorism`, `violence`, `illegal_activities`, `il_adult_nu_sex_act`.
-Both the moderator key and the tag list are operator-configurable in `[watcher]`.
+### Retry queue
 
-> **The shipped `moderation_id` is a test key.** The default
-> `uo7jgkykft4885n8cruizwy6khw71mnu5pq3ay9i8pw1ymcn85ko` (`DEFAULT_MODERATION_ID`) is a test
-> identity — set your own moderator pubky for any real deployment, or moderation is effectively
-> inert.
+Redis prefix `RetryManagerV2` (sorted set `events` + JSON `state`).
 
-## The Migration Manager
+- **Dropped, never enqueued or retried:** `InvalidEventLine`, `SkipIndexing`, `SpecValidation`,
+  `HsBlacklisted`, `HsEventsStreamRateLimitExhausted`, `FetchSizeExceeded`, `UserIdMismatch`,
+  `EventCursorOutOfOrder`; client 404, auth, build and parse errors.
+- **Retried** with backoff `min(initial * 2^n, max)`, up to 100 ready events per tick:
+  - `MissingDependency` from `initial_missing_dep_backoff_secs`, up to `max_dependency_retries`.
+  - Other errors from `initial_backoff_secs`, up to `max_retries`.
+- **Exhausted budget = dropped.** The entry is deleted from Redis (`store.remove`). There is **no
+  dead-letter store** to inspect or replay.
+- **Rescheduled without spending budget** (and the batch stops): Neo4j/Redis outages and
+  `HsEventsStreamTransportFailed`.
 
-The Migration Manager coordinates **phased data migrations across Neo4j + Redis** during
-breaking data-source changes, with minimal app disruption. It tracks each migration's status as
-a `Migration` node in Neo4j (`id`, `phase`, `created_at`, `updated_at` — the timestamps use Neo4j
-`timestamp()`) via `MERGE` Cypher and advances phases automatically on each `db migration run`.
+### Redis is state, not just cache
 
-**Phases** (`enum MigrationPhase`, serde `snake_case`, ordered): `DualWrite → Backfill → Cutover
-→ Cleanup → Done`. `next()` advances one step (`Done → None`).
+The primary HS cursor lives **only in Redis**. If Redis loses the `Homeserver` key while Neo4j
+keeps the node, `persist_if_unknown` re-seeds cursor `0` and the watcher **re-indexes that
+homeserver from the start**. Restoring a lagging snapshot resumes from that snapshot's cursor.
+**Run Redis with persistence** (the dev compose mounts `.database/redis/data`).
 
-1. **Dual Write** — mirror all writes old → new source for consistency during normal operation;
-   the data layer calls `MigrationManager::dual_write`. Mark ready to advance via the
-   `backfill_ready` list in the migration config.
-2. **Backfill** — copy missing/historical data old → new (the most important phase; new must be
-   consistent with old afterward).
-3. **Cutover** — the app starts reading from the new source — for Redis often a `RENAME` of the
-   new key to the old key name; for the graph, change app-layer code and remove `dual_write`
-   calls.
-4. **Cleanup** — delete old Redis keys / Neo4j nodes no longer needed.
+## Migration Manager
 
-**Single- vs multi-stage** (`is_multi_staged()`): returning `true` runs the full
-`DualWrite → … → Done` sequence (initial stored phase `DualWrite`, advancing via `phase.next()`);
-returning `false` is a single-stage migration that runs **only** `Backfill` then jumps straight
-to `Done` (initial stored phase `Backfill`). On `db migration run`: migrations listed in
-`backfill_ready` are first advanced from `DualWrite` to `Backfill`; new migrations are stored;
-migrations already at `Done` are skipped; the handler for the current phase runs, then advances.
+Phased data migrations across Neo4j and Redis. Status per migration is a
+`(:Migration {id, phase, created_at, updated_at})` node. Phases:
+`DualWrite → Backfill → Cutover → Cleanup → Done`.
 
-Each migration file implements the `Migration` trait:
+| Phase | Meaning |
+| :-- | :-- |
+| DualWrite | Data layer calls `MigrationManager::dual_write::<T>(data)`. No handler runs. Waits until the id is added to `backfill_ready`. |
+| Backfill | Copy old → new; afterwards new must be consistent with old. |
+| Cutover | Reads switch to new. Redis: usually `RENAME` new key → old key. Graph: app-code change + removing `dual_write` calls. |
+| Cleanup | Delete old keys / nodes. |
 
-```rust
-#[async_trait]
-pub trait Migration {
-    fn id(&self) -> &'static str;
-    /* multi-staged -> full phase sequence; false -> backfill-only */
-    fn is_multi_staged(&self) -> bool;
-    /* write data to the new source (called from the app data layer) */
-    async fn dual_write(data: Box<dyn Any + Send + 'static>) -> Result<(), DynError>
-    where
-        Self: Sized;
-    /* copy data old -> new; new must be consistent with old after this */
-    async fn backfill(&self) -> Result<(), DynError>;
-    /* app starts reading from new source (e.g. Redis RENAME new->old) */
-    async fn cutover(&self) -> Result<(), DynError>;
-    /* delete old nodes/keys no longer needed */
-    async fn cleanup(&self) -> Result<(), DynError>;
-}
+**`db migration run`:**
+
+1. Sets **every** stored migration whose id is in `backfill_ready` to `Backfill`, whatever its
+   current phase (DualWrite, Cutover, Cleanup or Done).
+2. For each registered migration:
+   - **Unstored:** MERGE at its initial phase. Multi-staged starts at `dual_write` and is skipped
+     this run; single-staged starts at `backfill` and runs now.
+   - **`Done`:** skip.
+   - **Otherwise:** run the current phase's handler, then advance: multi-staged one step,
+     single-staged straight to `Done`.
+
+A multi-staged migration advances one phase per invocation **only after its id is removed from
+`backfill_ready`**. Every migration registered at the pin is single-staged.
+
+> **Bug (upstream #967): remove ids from `backfill_ready` as soon as their backfill finishes.**
+> Step 1 resets a listed migration in **any** phase. A single-staged one re-runs its backfill on
+> every `run`. A multi-staged one loops Backfill → Cutover forever and never reaches its cutover
+> handler; `check` keeps reporting it pending while `run` makes no progress. For a listed `Done`
+> migration, `check` says nothing is pending but `run` still re-runs it.
+
+**`db migration check` is a deploy gate:** prints `<id> (<phase>)` per pending migration (`new` if
+never stored) and exits `10`; with nothing pending prints `No pending migrations` and exits `0`;
+config/DB errors exit `1`.
+
+```bash
+nexusd --config-dir /etc/pubky-nexus db migration check
+case $? in
+  0)  echo "no pending migrations" ;;
+  10) echo "pending migrations: run 'nexusd --config-dir /etc/pubky-nexus db migration run'"; exit 1 ;;
+  *)  echo "migration check failed (config/DB error)"; exit 1 ;;
+esac
 ```
 
-### Migration config (its own file)
+### Migration config (separate file)
 
-The Migration Manager uses its **own** config, separate from nexusd's: at runtime it
-loads/creates **`~/.pubky-nexus/migrations/config.toml`** (`MIGRATIONS_CONFIG_DIR =
-".pubky-nexus/migrations"`), auto-created from the embedded
-`nexusd/src/migrations/default.config.toml` if absent. It holds `backfill_ready = [ ... ]`
-(migration ids to advance to `Backfill`) plus a `[stack]` block (`log_level = "debug"`,
-`files_path = "./static/files"`, `[stack.otlp]` name `nexusd.migration`, `[stack.db]`,
-`[stack.db.neo4j]` with slow-query logging commented out).
-
-> **Edit the home-dir copy, not the source tree.** The README's parenthetical naming
-> `nexusd/src/migrations/config.toml` points at the in-repo **template**
-> (`default.config.toml`). At runtime the loader uses `~/.pubky-nexus/migrations/config.toml` —
-> editing `backfill_ready` means editing that home-dir file, not a file inside the source tree.
+- Path: `<config-dir>/migrations/config.toml` (default `~/.pubky-nexus/migrations/config.toml`).
+  **At `9e20cbf` it is always `$HOME/.pubky-nexus/migrations/config.toml`; `--config-dir` is
+  ignored.**
+- Auto-created from the embedded `nexusd/src/migrations/default.config.toml`. The README points at
+  that template; **edit the runtime copy**.
+- Holds `backfill_ready = [ids]` plus a **full, independent `[stack]`** (`log_level = "debug"`,
+  otlp name `nexusd.migration`, its own `[stack.db]`). **Point its Redis and Neo4j at the same
+  databases as `config.toml`.**
+- The loader **panics** on a parse error.
 
 ### Adding a migration
 
 ```bash
-# Scaffold a new migration (creates the file + appends the module declaration)
 cargo run -p nexusd -- db migration new TagCountsReset
 
-# Run all pending migrations, advancing phases as needed
 cargo run -p nexusd -- db migration run
 ```
 
-1. `db migration new <Name>` scaffolds
-   `nexusd/src/migrations/migrations_list/<snake_name>_<unix_ts>.rs` and appends
-   `pub mod <file>;` to `migrations_list/mod.rs`.
-2. **Register it** in `import_migrations` in `nexusd/src/migrations/mod.rs` — every migration
-   must be added to this vec to run:
+1. **Scaffold** from the **repo root** (`MIGRATION_PATH` is relative; no DB or config needed).
+   Writes `nexusd/src/migrations/migrations_list/<snake_name>_<unix_ts>.rs` and appends
+   `pub mod …;` to `migrations_list/mod.rs`.
+2. **Register** `Box::new(YourStruct)` in the vec in `import_migrations`
+   (`nexusd/src/migrations/mod.rs`). Unregistered migrations never run.
+3. **Implement** the `Migration` trait (`#[async_trait]`): `id() -> &'static str`,
+   `is_multi_staged() -> bool` (`false` = only backfill runs), associated
+   `dual_write(data: Box<dyn Any + Send + 'static>)` (`where Self: Sized`), and `backfill`,
+   `cutover`, `cleanup`, all returning `Result<(), DynError>`. Definition and phase docs:
+   [`manager.rs`](https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexusd/src/migrations/manager.rs).
+   The README's `/examples/migration.rs` does not exist; copy a real file instead, e.g. the
+   single-stage
+   [`users_by_pk_reindex_1751635096.rs`](https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexusd/src/migrations/migrations_list/users_by_pk_reindex_1751635096.rs)
+   (no-op `dual_write` / `cutover` / `cleanup`; `backfill` does the work).
 
-```rust
-pub fn import_migrations(migration_manager: &mut MigrationManager) {
-    let migrations: Vec<Box<dyn Migration>> = vec![
-        // Note: Add your migrations here to be picked up by the manager
-        Box::new(UsersByPkReindex1751635096),
-        Box::new(RemoveMuted1771718400),
-        Box::new(ResourceNodeSetup1774000000),
-        Box::new(PostContentIndexSetup1780444800),
-        Box::new(PostContentIndexAuthorSetup1780531200),
-    ];
-    for migration in migrations {
-        migration_manager.register(migration);
-    }
-}
-```
+## Observability
 
-3. Implement the `dual_write` / `backfill` / `cutover` / `cleanup` phases in the generated file.
+- **Export:** setting `[stack.otlp].endpoint` (e.g. `"http://localhost:4317"`) enables OTLP/gRPC
+  export of **traces, logs and metrics** (exporter timeout 3 s, metrics every 30 s).
+  `service.name` = `[stack.otlp].name` (wins over conflicts); optional
+  `[stack.otlp.resource_attributes]` are added.
+- **Without an endpoint:** logs go to stdout (compact); metrics are disabled.
+- **Log filtering (both modes):** `RUST_LOG` (an `EnvFilter`) overrides `log_level`. Noisy crates
+  are capped; pkarr/pubky/mainline are capped unless `log_level = "trace"`.
 
-A real single-stage migration (`UsersByPkReindex1751635096`) is the canonical template —
-`is_multi_staged` returns `false`, `dual_write`/`cutover`/`cleanup` are no-ops, and the real work
-lives in `backfill`. (The README's reference to `/examples/migration.rs` is **stale** — that file
-does not exist; `examples/` holds only `api/`, `watcher/`, `Cargo.toml`, `README.md`. Copy a real
-file under `migrations_list/` instead.)
+**Local stack** (`docker/docker-compose.observability.yml`, separate from the DB compose):
+otel-collector (4317 gRPC / 4318 HTTP) → Tempo (traces), Prometheus (`:9090`, 24 h retention,
+remote-write), Loki (`:3100`); Grafana on `:3000`. SigNoz also works: point `endpoint` at its OTLP
+port (dashboard `http://localhost:3301`).
 
-```rust
-pub struct UsersByPkReindex1751635096;
-
-#[async_trait]
-impl Migration for UsersByPkReindex1751635096 {
-    fn id(&self) -> &'static str {
-        "UsersByPkReindex1751635096"
-    }
-
-    fn is_multi_staged(&self) -> bool {
-        false
-    }
-
-    async fn dual_write(_data: Box<dyn std::any::Any + Send + 'static>) -> Result<(), DynError> {
-        Ok(())
-    }
-
-    async fn backfill(&self) -> Result<(), DynError> {
-        let mut users_details = vec![];
-        for user_id in get_all_user_ids().await? {
-            match UserDetails::get_by_id(&user_id).await {
-                Ok(Some(details)) => users_details.push(details),
-                Ok(None) => tracing::warn!("No UserDetails for {user_id}"),
-                Err(e) => tracing::warn!("Failed to reindex UserDetails for {user_id}: {e}"),
-            }
-        }
-        let users_details_refs = users_details.iter().collect::<Vec<&UserDetails>>();
-        UserSearch::put_to_index(&users_details_refs).await.map_err(Into::into)
-    }
-
-    async fn cutover(&self) -> Result<(), DynError> { Ok(()) }
-    async fn cleanup(&self) -> Result<(), DynError> { Ok(()) }
-}
-```
-
-## Observability (OpenTelemetry and Signoz)
-
-Setting `[stack.otlp].endpoint` to an OTLP collector enables export of **traces, logs, and
-metrics** (export is off when `endpoint` is `None`). The recommended local target is
-**Signoz**: install it locally (see the [Signoz install guide](https://signoz.io/docs/install)),
-point `[stack.otlp].endpoint` at it, run `nexusd`, then view the dashboard at
-`http://localhost:3301`.
-
-- **Watcher** — meter `nexus.watcher` with counter `watcher.fetch.rejected`
-  (`reason = "size_exceeded"`); tracing spans `events.poll`, `event_batch.process`,
-  `event.process`, each recording `otel.status_code` (OK/ERROR) + `otel.status_message`.
-- **API server** — a *separate* meter `nexus` with `u64` counter `http.rate_limit.rejected.total`
-  (tagged `bucket = "default" | "expensive"`), emitted when a request is throttled. See
-  [API rate limiting](#api-rate-limiting).
-
-## Mock data and tests
+> **Grafana runs anonymous Admin with no login form.** Localhost only; **never expose this compose
+> file as-is.**
 
 ```bash
-# Load mock data (docker/test-graph/mocks) into Neo4j + Redis
-cargo run -p nexusd -- db mock        # set CONTAINER_RUNTIME=podman for podman
+docker compose -f docker/docker-compose.observability.yml up -d
 
-# Wipe the databases
-cargo run -p nexusd -- db clear
+curl -X POST http://localhost:9090/-/reload
+
+docker run --rm -v "$PWD/docker/otel:/rules:ro" --entrypoint promtool prom/prometheus:v2.55.1 check rules /rules/alerts.yaml
 ```
 
-Tests run with cargo-nextest per crate:
-`cargo nextest run -p nexus-common|nexus-webapi|nexus-watcher --no-fail-fast`. The
-`nexus-watcher` tests additionally require `TEST_PUBKY_CONNECTION_STRING` (a Postgres URL, see
-[Dev dependencies](#dev-dependencies-neo4j-and-redis)). Benchmarks: `cargo bench -p nexus-webapi`.
+Run from the repo root (the promtool mount needs a path Docker Desktop shares).
+
+- Alert rules: `docker/otel/alerts.yaml`; override with `PROMETHEUS_ALERTS_FILE` in `docker/.env`
+  (relative to `docker/`; mount is main-only). Shipped: `NexusNeo4jQueryErrors`
+  (`sum(rate(neo4j_query_errors_total[5m])) > 0` for 5m) and `NexusWatcherCursorStalled`
+  (`increase(watcher_primary_hs_cursor_stalled_total[15m]) > 0`).
+- Prometheus remote-write turns dotted OTLP names into underscores, appends `_total` to counters,
+  and maps `service.name` to the `service_name` label.
+
+**Metrics worth alerting on.** Instrument names are unstable and drift between builds; confirm
+against the source (`global::meter` call sites, e.g.
+[`user_hs_resolver.rs`](https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-watcher/src/service/user_hs_resolver.rs),
+[`graph/instrumented.rs`](https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-common/src/db/graph/instrumented.rs))
+for the binary you run.
+
+| Meter | Instruments (at the pin) |
+| :-- | :-- |
+| `nexus.watcher` | `watcher.primary_hs.cursor.{invalid,stalled}{hs_id}`, `watcher.external_hs.cursor.out_of_order{hs_id}`, `watcher.fetch.rejected{reason}`; gauges `watcher.external_hs.{monitored_limit,indexed}` (main-only; indexed/limit = 1 means the cap binds) |
+| `hs-resolver-meter` | `nexus.task.hs-resolver.{total,failed}`; main-only: `.resolutions{outcome,mapping}`, `.marked_stale{reason}`, gauges `mapped_users`, `stale_users`, `heartbeat_timestamp` |
+| `neo4j` | `neo4j.query.{duration,execute_duration,rows,errors,slow}`; `neo4j.query.requests` main-only |
+| `nexus` | `http.rate_limit.rejected.total{bucket}`; main-only: `http.server.requests`, `http.server.request.duration` |
+| `nexus.jobs` / `nexus.trust` / `nexus.media` | `jobs.run.{attempts,completed,skipped}`, `jobs.scheduler.stopped`, `jobs.lock.{operations,duration}`, `trust.recompute.max_iterations_reached`; `media.subprocess.timeout` main-only |
+
+Watcher trace spans: `event_processor.run`, `events.poll`, `event_batch.process`, `event.process`
+(attrs `event.uri`, `event.type`, `event.user_id`, `otel.status_code`;
+`otel.status_message = SKIPPED` marks filtered events), `dx.users.resolve`,
+`dx.user_events.process`, `moderation.apply`.
+
+## Deploying
+
+**Production image** (repo `Dockerfile`): builds on `rust:1.91.0-alpine3.22` with static OpenSSL
+(`cargo build --release --bin nexusd`, stripped); runtime `alpine:3.22` with `ca-certificates` and
+imagemagick + webp/heic/svg/jpeg/tiff/raw plugins (needed for media transcoding).
+
+- **No `ENTRYPOINT`.** It sets `WORKDIR /usr/local/bin` and `CMD ["nexusd"]` (API + watcher +
+  jobs). Overriding the command replaces `nexusd`, so name it explicitly:
+  `docker run IMAGE nexusd --config-dir=/config db migration check` (pubky-docker uses
+  `command: nexusd --config-dir=/config`).
+- **Without `--config-dir`** the config dir is `$HOME/.pubky-nexus` = `/root/.pubky-nexus`.
+- **Only `8080` is `EXPOSE`d.** Publish `pubky_listen_socket` (8081) yourself to serve Pkarr TLS.
+- **In a container,** bind `public_addr` / `pubky_listen_socket` to a non-loopback address and
+  mount `<config-dir>` (holds `config.toml`, `secret`, `migrations/`).
+
+**Dev dependencies** (`docker/docker-compose.yml`) are databases only; **`nexusd` is not
+included.** Neo4j `pubky-nexus/neo4j:5.26.27-gds2.13.10` (built locally from `docker/neo4j` on
+first `up`, so slow; 7474 browser, 7687 bolt; pagecache 1G, heap 2G), `redis:8.0.6-alpine` (6379),
+RedisInsight (5540). Postgres 18 (5432) only with `--profile tests`. All ports bind `127.0.0.1`.
+
+```bash
+cd docker
+cp .env-sample .env
+
+# Lean stack: Neo4j + Redis + Redis Insight
+docker compose up -d
+
+# With Postgres (for watcher tests)
+docker compose --profile tests up -d
+```
+
+> **Neo4j Community Edition:** DB name and username must both be `neo4j`; `.env-sample` password
+> is `12345678`. Changing `NEO4J_AUTH` after data exists has no effect. The compose comment says to
+> reset with `docker compose down -v`, but data is **bind-mounted** under
+> `docker/.database/neo4j/{conf,data,logs}` and `down -v` doesn't delete bind mounts, so a real
+> reset probably also requires deleting those directories (not confirmed upstream).
+
+**Local UIs:** Swagger `http://localhost:8080/swagger-ui` (OpenAPI at
+`/api-docs/v0/openapi.json`); RedisInsight `http://localhost:5540/0/browser` (accept TOS on first
+run); Neo4j Browser `http://localhost:7474/browser/`.
+
+For Nexus with a homeserver, relays and the app as one stack, see
+[`local-stack.md`](local-stack.md) (pubky-docker).
+
+**Example binaries:** `cargo run --bin api_example [-- --config=<dir>]` and `watcher_example` read
+`api-config.toml` / `watcher-config.toml`, a **flattened** layout (top-level keys + `[rate_limit]`
+/ `[retry]`), not daemon `[api]` / `[watcher]` tables. A missing or unparseable file silently falls
+back to `<dir>/config.toml`. Don't copy `NexusWatcher::start_from_path(path)` /
+`builder().run()` from `nexus-watcher/README.md`; the real signatures are
+`start_from_path(config_dir, shutdown_rx)` and `NexusWatcherBuilder::start(shutdown_rx)`.
+
+## Tests
+
+> **`db mock` wipes the configured Neo4j graph and `FLUSHDB`s Redis first.** Run it only against the
+> local dev compose databases.
+
+```bash
+cargo run -p nexusd -- db mock
+cargo nextest run -p nexus-common --no-fail-fast
+cargo nextest run -p nexus-webapi --no-fail-fast
+cargo nextest run -p nexusd --no-fail-fast
+TEST_PUBKY_CONNECTION_STRING='postgres://test_user:test_pass@localhost:5432/postgres?pubky-test=true' \
+  cargo nextest run -p nexus-watcher --no-fail-fast
+cargo bench -p nexus-webapi
+```
+
+Commands match upstream CI; the suites were not executed here. `nexus-watcher` tests need Postgres
+(`docker compose --profile tests up -d`); `nexusd` trust-rank tests need the Neo4j image with GDS.
 
 ## Upstream references
 
-- **Repo (source of truth):** [pubky-nexus](https://github.com/pubky/pubky-nexus) — README,
-  `nexus-common/default.config.toml`, `nexusd/src/cli.rs`, `nexus-watcher/`,
-  `nexus-webapi/src/routes/middlewares/rate_limit.rs`, `nexusd/src/migrations/`.
-- **Hosted Swagger / `/v0` (unstable):**
-  [production](https://nexus.pubky.app/swagger-ui/) ·
-  [staging](https://nexus.staging.pubky.app/swagger-ui/).
-- **Consuming the `/v0` API:** [`nexus-api.md`](../../pubky/references/nexus-api.md).
-- **Canonical concepts (never restate):**
-  [`concepts.md`](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read) (write/read
-  split, event-stream contract, Neo4j+Redis model).
-- **Guardrail:** [`shipped-vs-planned.md`](../../pubky/references/shipped-vs-planned.md).
-- **Full orchestrated local stack:** [`local-stack.md`](local-stack.md) ·
-  [pubky-docker](https://github.com/pubky/pubky-docker).
+- [pubky-nexus README](https://github.com/pubky/pubky-nexus/blob/794a6e103b46/README.md) (pinned) ·
+  [releases](https://github.com/pubky/pubky-nexus/releases)
+- [`default.config.toml`](https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-common/default.config.toml): every config key, annotated
+- [`nexusd/src/cli.rs`](https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexusd/src/cli.rs) ·
+  [`migrations/manager.rs`](https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexusd/src/migrations/manager.rs) ·
+  [`migrations_list/`](https://github.com/pubky/pubky-nexus/tree/794a6e103b46/nexusd/src/migrations/migrations_list)
+- [`9e20cbf...794a6e1` compare](https://github.com/pubky/pubky-nexus/compare/9e20cbff89f6...794a6e103b46): what main-only means
+- Hosted Swagger (`/v0`, unstable): [production](https://nexus.pubky.app/swagger-ui/) ·
+  [staging](https://nexus.staging.pubky.app/swagger-ui/)
+- Canonical (don't restate): [`concepts.md`](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read) ·
+  [`app-specs.md`](../../pubky/references/app-specs.md) ·
+  [`shipped-vs-planned.md`](../../pubky/references/shipped-vs-planned.md) ·
+  [`nexus-api.md`](../../pubky/references/nexus-api.md)
