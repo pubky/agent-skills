@@ -2,15 +2,15 @@
   "path": "skills/pubky/references/nexus-api.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "generatedAt": "2026-09-17T11:46:08.619Z",
   "sourcesUsed": [
     {
       "repo": "nexus-swagger",
-      "sha": "60d4ac625528f61bdac39d376066b836a4c60e70"
+      "sha": "794a6e103b464c6227fc89f4307508d9119be103"
     },
     {
       "repo": "pubky-nexus",
-      "sha": "60d4ac625528f61bdac39d376066b836a4c60e70"
+      "sha": "794a6e103b464c6227fc89f4307508d9119be103"
     },
     {
       "repo": "pubky-ai-kit",
@@ -19,159 +19,151 @@
   ],
   "provenance": [
     {
-      "anchor": "Nexus read API (intro / write-read split)",
-      "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/v0/bootstrap.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-webapi/src/routes/v0/bootstrap.rs"
-    },
-    {
-      "anchor": "Base URLs and Swagger (source of truth)",
+      "anchor": "intro-and-instability",
       "repo": "pubky/pubky-nexus",
       "path": "README.md",
-      "sha": "main",
-      "url": "https://nexus.pubky.app/api-docs/v0/openapi.json"
+      "sha": "794a6e103b46",
+      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/README.md#L20"
     },
     {
-      "anchor": "Base URLs and Swagger (browser-callable / CORS)",
+      "anchor": "nexus-scout-routing",
+      "repo": "pubky/nexus-scout",
+      "path": "SKILL.md",
+      "sha": "0636e0127380",
+      "url": "https://github.com/pubky/nexus-scout/blob/0636e0127380/SKILL.md#L8-L49"
+    },
+    {
+      "anchor": "base-urls-local-dev",
+      "repo": "pubky/pubky-nexus",
+      "path": "README.md",
+      "sha": "794a6e103b46",
+      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/README.md#L87"
+    },
+    {
+      "anchor": "base-urls-cors-limits",
       "repo": "pubky/pubky-nexus",
       "path": "nexus-webapi/src/routes/mod.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-webapi/src/routes/mod.rs"
+      "sha": "794a6e103b46",
+      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/routes/mod.rs#L150-L158"
     },
     {
-      "anchor": "Instability: the /v0 guardrail (README warning)",
+      "anchor": "base-url-snippet",
+      "repo": "pubky/pubky-ai-kit",
+      "path": "pubky-dev-context.md",
+      "sha": "5654d0d27218",
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md#L872-L878"
+    },
+    {
+      "anchor": "endpoint-map",
       "repo": "pubky/pubky-nexus",
-      "path": "README.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/README.md"
+      "path": "nexus-webapi/src/routes/v0/endpoints.rs",
+      "sha": "794a6e103b46",
+      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/routes/v0/endpoints.rs#L24-L46"
     },
     {
-      "anchor": "Instability: the /v0 guardrail (version drift proof)",
-      "repo": "nexus.pubky.app",
-      "path": "/v0/info",
-      "sha": "0.4.1",
-      "url": "https://nexus.pubky.app/v0/info"
+      "anchor": "nonexistent-routes-feeds-global",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/js/src/quick-start-getting-started.ts",
+      "sha": "2bcd30cc8fe5",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/snippets/js/src/quick-start-getting-started.ts#L1-L6"
     },
     {
-      "anchor": "ID formats in paths and queries",
-      "repo": "pubky/pubky-app-specs",
-      "path": "src/types.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/types.rs"
+      "anchor": "ai-kit-param-drift",
+      "repo": "pubky/pubky-ai-kit",
+      "path": "pubky-dev-context.md",
+      "sha": "5654d0d27218",
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md#L863-L1004"
     },
     {
-      "anchor": "Endpoint catalog",
-      "repo": "nexus.pubky.app",
-      "path": "/api-docs/v0/openapi.json",
-      "sha": "0.4.1",
+      "anchor": "id-formats-and-post-user-streams-search",
+      "repo": "pubky/pubky-nexus",
+      "path": "live OpenAPI /api-docs/v0/openapi.json (deployed commit 9e20cbff)",
+      "sha": "9e20cbff",
       "url": "https://nexus.pubky.app/api-docs/v0/openapi.json"
     },
     {
-      "anchor": "Post streams (the source footgun)",
-      "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/v0/stream/posts.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-webapi/src/routes/v0/stream/posts.rs"
-    },
-    {
-      "anchor": "viewer_id vs observer_id",
-      "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/v0/stream/posts.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-webapi/src/routes/v0/stream/posts.rs"
-    },
-    {
-      "anchor": "kind filter",
-      "repo": "pubky/pubky-app-specs",
-      "path": "src/models/post.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/models/post.rs"
-    },
-    {
-      "anchor": "User streams",
-      "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/v0/stream/users.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-webapi/src/routes/v0/stream/users.rs"
-    },
-    {
-      "anchor": "Single post view",
-      "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/v0/post/view.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-webapi/src/routes/v0/post/view.rs"
-    },
-    {
-      "anchor": "Pagination",
+      "anchor": "pagination-bounded-limit",
       "repo": "pubky/pubky-nexus",
       "path": "nexus-webapi/src/models/bounded_limit.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-webapi/src/models/bounded_limit.rs"
+      "sha": "794a6e103b46",
+      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/models/bounded_limit.rs#L11-L45"
     },
     {
-      "anchor": "Errors",
+      "anchor": "status-codes-503-unreleased",
       "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/models/error_response.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-webapi/src/models/error_response.rs"
+      "path": "nexus-webapi/src/error.rs",
+      "sha": "794a6e103b46",
+      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/error.rs#L134-L185"
     },
     {
-      "anchor": "Files and media (metadata lookup)",
+      "anchor": "rate-limits-buckets",
       "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/v0/file/details.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-webapi/src/routes/v0/file/details.rs"
+      "path": "nexus-webapi/src/routes/mod.rs",
+      "sha": "794a6e103b46",
+      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/routes/mod.rs#L189-L208"
     },
     {
-      "anchor": "Files and media (static routes)",
+      "anchor": "rate-limits-static-expensive",
       "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/static/endpoints.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-webapi/src/routes/static/endpoints.rs"
+      "path": "nexus-webapi/src/routes/static/mod.rs",
+      "sha": "794a6e103b46",
+      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/routes/static/mod.rs#L19-L28"
     },
     {
-      "anchor": "Events feed (plain text)",
+      "anchor": "files-details-urls-string",
+      "repo": "pubky/pubky-nexus",
+      "path": "nexus-common/src/models/file/details.rs",
+      "sha": "794a6e103b46",
+      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-common/src/models/file/details.rs#L48-L83"
+    },
+    {
+      "anchor": "files-urls-parse-snippet",
+      "repo": "pubky/pubky-app",
+      "path": "src/core/application/file/file.ts",
+      "sha": "8de93300ae3c",
+      "url": "https://github.com/pubky/pubky-app/blob/8de93300ae3c/src/core/application/file/file.ts#L269-L275"
+    },
+    {
+      "anchor": "static-legacy-redirect",
+      "repo": "pubky/pubky-nexus",
+      "path": "live OpenAPI /api-docs/static/openapi.json",
+      "sha": "9e20cbff",
+      "url": "https://nexus.pubky.app/api-docs/static/openapi.json"
+    },
+    {
+      "anchor": "events-feed",
       "repo": "pubky/pubky-nexus",
       "path": "nexus-webapi/src/routes/v0/events.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-webapi/src/routes/v0/events.rs"
+      "sha": "794a6e103b46",
+      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/routes/v0/events.rs#L18-L66"
     },
     {
-      "anchor": "Response models (ServerInfo / info)",
-      "repo": "nexus.pubky.app",
-      "path": "/v0/info",
-      "sha": "0.4.1",
-      "url": "https://nexus.pubky.app/v0/info"
-    },
-    {
-      "anchor": "Response models (UserView/PostView)",
-      "repo": "pubky/pubky-nexus",
-      "path": "nexus-common/src/models/user/view.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-common/src/models/user/view.rs"
-    },
-    {
-      "anchor": "Upstream references",
-      "repo": "nexus.pubky.app",
-      "path": "/swagger-ui/",
-      "sha": "0.4.1",
-      "url": "https://nexus.pubky.app/swagger-ui/"
+      "anchor": "canonical-links",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "68f67fd23e2715007860395e0ed80d6cbd2caf5e",
+      "url": "https://github.com/pubky/agent-skills/blob/main/skills/pubky/references/concepts.md"
     }
   ],
   "snippet": {
-    "total": 5,
-    "pass": 5,
+    "total": 6,
+    "pass": 6,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 23,
-    "refuted": 0,
-    "caveated": 1,
+    "supported": 37,
+    "refuted": 1,
+    "caveated": 3,
     "unsupported": 0
   },
-  "guardrailViolations": [],
-  "wordCount": 1657
+  "guardrailViolations": [
+    "Status table row '503 | JSON | media load shedding' presents a behavior that exists only in the pubky-nexus main branch (added after deployed commit 9e20cbff that prod/staging /v0/info report) as available on the hosted API. It needs an 'unreleased, main-only' caveat or should be removed."
+  ],
+  "wordCount": 2817,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  }
 }

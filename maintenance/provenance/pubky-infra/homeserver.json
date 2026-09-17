@@ -2,157 +2,306 @@
   "path": "skills/pubky-infra/references/homeserver.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-30T12:59:21.584Z",
+  "generatedAt": "2026-09-17T12:42:03.138Z",
   "sourcesUsed": [
     {
       "repo": "pubky-homeserver",
-      "sha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480"
     },
     {
       "repo": "pubky-docker",
-      "sha": "a5544e6247c1f7195ae116586a578d6a8a007a67"
+      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800"
     },
     {
       "repo": "homeserver-dashboard",
-      "sha": "b3be93d8d2a9d93a9670983f28bed5fb380431af"
+      "sha": "9ac019ad00d99911382559916d90209f51347b20"
     },
     {
       "repo": "umbrel-app-store",
-      "sha": "d0b96adf0a217dd4f682d364100d9c460a9b9c7b"
+      "sha": "f0e4d5aea8b862f48d75fd5dbaa1241f6c1ade4e"
     }
   ],
   "provenance": [
     {
-      "anchor": "Run it",
+      "anchor": "versions",
+      "repo": "pubky/pubky-homeserver",
+      "path": "Cargo.toml",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/Cargo.toml#L22-L25"
+    },
+    {
+      "anchor": "install-and-run",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/main.rs",
-      "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/main.rs"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/main.rs#L23-L93"
     },
     {
-      "anchor": "Three servers, four sockets",
+      "anchor": "install-and-run",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/data_directory/config_toml.rs",
-      "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/data_directory/config_toml.rs"
+      "path": "docs/INSTALL.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/docs/INSTALL.md#L27-L299"
     },
     {
-      "anchor": "config.toml",
+      "anchor": "install-and-run",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/config.sample.toml",
-      "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/config.sample.toml"
+      "path": "Dockerfile",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/Dockerfile#L37-L72"
     },
     {
-      "anchor": "config.toml",
+      "anchor": "install-and-run",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/data_directory/config.default.toml",
-      "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/data_directory/config.default.toml"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/data_directory/config.default.toml#L1-L4"
     },
     {
-      "anchor": "Admin API (:6288)",
+      "anchor": "install-and-run",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/tracing.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/tracing.rs#L22-L58"
+    },
+    {
+      "anchor": "embedding-as-a-library",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/homeserver_app.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/homeserver_app.rs#L62-L175"
+    },
+    {
+      "anchor": "embedding-as-a-library",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/README.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/README.md#L34-L80"
+    },
+    {
+      "anchor": "servers-and-sockets",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/data_directory/config.default.toml",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/data_directory/config.default.toml"
+    },
+    {
+      "anchor": "configtoml",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/data_directory/config_toml.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/data_directory/config_toml.rs#L170-L352"
+    },
+    {
+      "anchor": "configtoml",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/shared/toml_merge.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/shared/toml_merge.rs#L31"
+    },
+    {
+      "anchor": "configtoml",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/data_directory/storage_config/storage_config_toml.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/data_directory/storage_config/storage_config_toml.rs#L13"
+    },
+    {
+      "anchor": "deploy-publicly",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/DEPLOY.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/docs/DEPLOY.md#L16-L33"
+    },
+    {
+      "anchor": "deploy-publicly",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/deploy/domain.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/docs/deploy/domain.md#L43-L113"
+    },
+    {
+      "anchor": "deploy-publicly",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/deploy/ip-only.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/docs/deploy/ip-only.md#L91-L147"
+    },
+    {
+      "anchor": "deploy-publicly",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/deploy/cloudflare-tunnel.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/docs/deploy/cloudflare-tunnel.md#L1-L105"
+    },
+    {
+      "anchor": "deploy-publicly",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/deploy/post-setup.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/docs/deploy/post-setup.md#L18-L62"
+    },
+    {
+      "anchor": "deploy-publicly",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/README.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/README.md#L95-L110"
+    },
+    {
+      "anchor": "pkarr-republishing",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/republishers/key_republisher.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/republishers/key_republisher.rs#L102-L165"
+    },
+    {
+      "anchor": "pkarr-republishing",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/republishers/user_keys_republisher.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/republishers/user_keys_republisher.rs#L13-L75"
+    },
+    {
+      "anchor": "pkarr-republishing",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/app_context.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/app_context.rs#L224-L245"
+    },
+    {
+      "anchor": "admin-api-6288",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/admin_server/app.rs",
-      "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/admin_server/app.rs"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/admin_server/app.rs#L23-L62"
     },
     {
-      "anchor": "Signup tokens and quotas",
+      "anchor": "admin-api-6288",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/shared/webdav/entry_path_pub.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/shared/webdav/entry_path_pub.rs#L25-L35"
+    },
+    {
+      "anchor": "signup-tokens-and-quotas",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/openapi-admin.yml",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/openapi-admin.yml#L399-L643"
+    },
+    {
+      "anchor": "signup-tokens-and-quotas",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/persistence/sql/entities/signup_code.rs",
-      "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/persistence/sql/entities/signup_code.rs"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/persistence/sql/entities/signup_code.rs#L271-L297"
     },
     {
-      "anchor": "Enable and disable users",
+      "anchor": "enable-and-disable-users",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/admin_server/routes/disable_users.rs",
-      "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/admin_server/routes/disable_users.rs"
+      "path": "e2e/src/tests/auth/grant.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/e2e/src/tests/auth/grant.rs#L415-L492"
     },
     {
-      "anchor": "Metrics (:6289)",
+      "anchor": "admin-event-stream",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/metrics_server/mod.rs",
-      "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/metrics_server/mod.rs"
+      "path": "pubky-homeserver/src/admin_server/routes/admin_events.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/admin_server/routes/admin_events.rs#L1-L209"
     },
     {
-      "anchor": "Event streams (client server)",
+      "anchor": "admin-event-stream",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/client_server/routes/events.rs",
-      "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/client_server/routes/events.rs"
+      "path": "pubky-homeserver/src/persistence/files/events/events_entity.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/persistence/files/events/events_entity.rs#L34-L42"
+    },
+    {
+      "anchor": "metrics-6289",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/observability.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/pubky-homeserver/src/observability.rs#L24-L31"
+    },
+    {
+      "anchor": "metrics-6289",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/STORAGE_ADDRESSING_MIGRATION.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/docs/STORAGE_ADDRESSING_MIGRATION.md"
     },
     {
       "anchor": "homeserver-dashboard",
       "repo": "pubky/homeserver-dashboard",
       "path": "README.md",
-      "sha": "b3be93d",
-      "url": "https://github.com/pubky/homeserver-dashboard/blob/b3be93d/README.md"
+      "sha": "9ac019ad00d99911382559916d90209f51347b20",
+      "url": "https://github.com/pubky/homeserver-dashboard/blob/9ac019ad00d99911382559916d90209f51347b20/README.md#L1-L132"
     },
     {
-      "anchor": "Cloudflare-tunnel exposure",
+      "anchor": "homeserver-dashboard",
       "repo": "pubky/homeserver-dashboard",
-      "path": "CLOUDFLARE_TUNNEL.md",
-      "sha": "b3be93d",
-      "url": "https://github.com/pubky/homeserver-dashboard/blob/b3be93d/CLOUDFLARE_TUNNEL.md"
+      "path": "CHANGELOG.md",
+      "sha": "9ac019ad00d99911382559916d90209f51347b20",
+      "url": "https://github.com/pubky/homeserver-dashboard/blob/9ac019ad00d99911382559916d90209f51347b20/CHANGELOG.md#L8-L16"
     },
     {
-      "anchor": "Umbrel vs standalone",
+      "anchor": "umbrel-vs-standalone",
       "repo": "pubky/umbrel-app-store",
       "path": "pubky-homeserver/docker-compose.yml",
-      "sha": "d0b96ad",
-      "url": "https://github.com/pubky/umbrel-app-store/blob/d0b96ad/pubky-homeserver/docker-compose.yml"
+      "sha": "f0e4d5aea8b862f48d75fd5dbaa1241f6c1ade4e",
+      "url": "https://github.com/pubky/umbrel-app-store/blob/f0e4d5aea8b862f48d75fd5dbaa1241f6c1ade4e/pubky-homeserver/docker-compose.yml#L1-L196"
     },
     {
-      "anchor": "Umbrel vs standalone",
+      "anchor": "umbrel-vs-standalone",
       "repo": "pubky/umbrel-app-store",
       "path": "pubky-homeserver/umbrel-app.yml",
-      "sha": "d0b96ad",
-      "url": "https://github.com/pubky/umbrel-app-store/blob/d0b96ad/pubky-homeserver/umbrel-app.yml"
+      "sha": "f0e4d5aea8b862f48d75fd5dbaa1241f6c1ade4e",
+      "url": "https://github.com/pubky/umbrel-app-store/blob/f0e4d5aea8b862f48d75fd5dbaa1241f6c1ade4e/pubky-homeserver/umbrel-app.yml"
     },
     {
-      "anchor": "Umbrel vs standalone",
+      "anchor": "umbrel-vs-standalone",
       "repo": "pubky/umbrel-app-store",
       "path": "pubky-homeserver/exports.sh",
-      "sha": "d0b96ad",
-      "url": "https://github.com/pubky/umbrel-app-store/blob/d0b96ad/pubky-homeserver/exports.sh"
+      "sha": "f0e4d5aea8b862f48d75fd5dbaa1241f6c1ade4e",
+      "url": "https://github.com/pubky/umbrel-app-store/blob/f0e4d5aea8b862f48d75fd5dbaa1241f6c1ade4e/pubky-homeserver/exports.sh"
     },
     {
-      "anchor": "Security guardrails",
+      "anchor": "security-guardrails",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/client_server/auth/authorization.rs",
-      "sha": "d6c5afc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/d6c5afc/pubky-homeserver/src/client_server/auth/authorization.rs"
+      "path": "docs/PRIVATE_STORAGE.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198be7a067bdae6e57df13c4402f480/docs/PRIVATE_STORAGE.md#L1-L20"
     },
     {
-      "anchor": "Security guardrails",
+      "anchor": "security-guardrails",
       "repo": "pubky/pubky-docker",
-      "path": "README.md",
-      "sha": "a5544e6",
-      "url": "https://github.com/pubky/pubky-docker/blob/a5544e6/README.md"
+      "path": "homeserver.config.toml",
+      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
+      "url": "https://github.com/pubky/pubky-docker/blob/75b1121f3e90b9b44d9416ca4f5ba87a4984e800/homeserver.config.toml"
     }
   ],
   "snippet": {
-    "total": 5,
-    "pass": 5,
+    "total": 12,
+    "pass": 12,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 40,
-    "refuted": 0,
-    "caveated": 0,
+    "supported": 58,
+    "refuted": 2,
+    "caveated": 8,
     "unsupported": 0
   },
-  "guardrailViolations": [],
-  "wordCount": 3140,
+  "guardrailViolations": [
+    "/priv appears without the required 'alpha (v0.10.0+), not for production, not encrypted from the operator' caveat nearby in three places: the Reverse-proxy caching paragraph (`/storage/{user_z32}/priv/...`, deprecated `/priv/...`), the admin route table ('SSE stream of all users' events, including /priv'), and the Umbrel table's 'Missing on this version: ... grant auth, /priv'. The caveat exists only in Security guardrails, much further down. Add a short inline '(alpha, not for production)' marker or a link to shipped-vs-planned.md at each mention.",
+    "Metrics section: 'Legacy addressing, pubky-host, and cookie auth all still work. Removing them requires at least one year after the first stable path-addressing SDK (not yet released)'. The /storage path-addressing layout is stated as settled with no pre-1.0 or /pub-layout instability caveat nearby, and 'not yet released' conflicts with the pubky / @synonymdev/pubky 0.12.0 SDKs, which ship path addressing."
+  ],
+  "wordCount": 3663,
   "substance": {
     "ok": true,
     "reasons": []
-  },
-  "promotion": "human-promoted after reconciling canonical shipped-vs-planned.md (/priv: implemented in main, not released); consistency auto-gate resolved by making canonical + this file agree"
+  }
 }

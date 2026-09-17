@@ -2,66 +2,220 @@
   "path": "skills/pubky-mobile/references/react-native.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-30T12:59:21.584Z",
+  "generatedAt": "2026-09-17T12:42:03.138Z",
   "sourcesUsed": [
     {
       "repo": "react-native-pubky",
-      "sha": "84ec77af1dd52c5cb37648467954c159aba5719e"
+      "sha": "bf0b7925314031023db3ae47cdba12e23389c25e"
     },
     {
       "repo": "pubky-knowledge-base-v2",
-      "sha": "c9981c6501456f9305918820017134af40d278c0"
+      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517"
     },
     {
       "repo": "npm:@synonymdev/react-native-pubky",
-      "sha": "84ec77af1dd52c5cb37648467954c159aba5719e"
+      "sha": "bf0b7925314031023db3ae47cdba12e23389c25e"
     }
   ],
   "provenance": [
     {
-      "anchor": "Result envelope / method signatures",
+      "anchor": "version-and-breaking-changes",
+      "repo": "pubky/react-native-pubky",
+      "path": "package.json",
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/package.json"
+    },
+    {
+      "anchor": "version-and-breaking-changes",
       "repo": "pubky/react-native-pubky",
       "path": "src/index.tsx",
-      "sha": "main",
-      "url": "https://github.com/pubky/react-native-pubky/blob/main/src/index.tsx"
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/src/index.tsx#L248-L512"
     },
     {
-      "anchor": "Android rustls auto-init",
+      "anchor": "version-and-breaking-changes",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/react-native",
+      "sha": "2bcd30cc8fe5",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/tree/2bcd30cc8fe5/snippets/react-native"
+    },
+    {
+      "anchor": "install-and-linking",
       "repo": "pubky/react-native-pubky",
-      "path": "android/src/main/java/com/pubky/PubkyModule.kt",
-      "sha": "main",
-      "url": "https://github.com/pubky/react-native-pubky/blob/main/android/src/main/java/com/pubky/PubkyModule.kt"
+      "path": "src/index.tsx",
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/src/index.tsx#L4-L21"
     },
     {
-      "anchor": "iOS native session: method unreachable from JS",
+      "anchor": "install-and-linking",
+      "repo": "pubky/react-native-pubky",
+      "path": "android/src/main/java/com/pubky/RustlsInit.kt",
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/android/src/main/java/com/pubky/RustlsInit.kt"
+    },
+    {
+      "anchor": "the-result-envelope",
+      "repo": "pubky/react-native-pubky",
+      "path": "src/index.tsx",
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/src/index.tsx#L23-L45"
+    },
+    {
+      "anchor": "pick-an-auth-path",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-common/src/auth/jws.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-common/src/auth/jws.rs"
+    },
+    {
+      "anchor": "pick-an-auth-path",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/src/actors/auth/grant/view.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/src/actors/auth/grant/view.rs"
+    },
+    {
+      "anchor": "grant-auth-via-ring-no-secret-key",
+      "repo": "pubky/react-native-pubky",
+      "path": "README.md",
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/README.md#startAuthFlow"
+    },
+    {
+      "anchor": "grant-auth-via-ring-no-secret-key",
+      "repo": "pubky/react-native-pubky",
+      "path": "example/src/App.tsx",
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/example/src/App.tsx#L245-L268"
+    },
+    {
+      "anchor": "grant-auth-via-ring-no-secret-key",
       "repo": "pubky/react-native-pubky",
       "path": "ios/Pubky.mm",
-      "sha": "main",
-      "url": "https://github.com/pubky/react-native-pubky/blob/main/ios/Pubky.mm"
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/ios/Pubky.mm"
     },
     {
-      "anchor": "canonical public-key string formats",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/concepts.md",
-      "sha": "f024337f81f79d5beea14220c21873c801140e4b",
-      "url": "skills/pubky/references/concepts.md#public-key-string-formats"
+      "anchor": "grant-auth-via-ring-no-secret-key",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "74fea50702cd",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs#L1086-L1158"
+    },
+    {
+      "anchor": "secret-key-path-and-data-operations",
+      "repo": "pubky/react-native-pubky",
+      "path": "README.md",
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/README.md#put"
+    },
+    {
+      "anchor": "secret-key-path-and-data-operations",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "74fea50702cd",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs#L699-L916"
+    },
+    {
+      "anchor": "key-management",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/react-native/src/key-management.ts",
+      "sha": "2bcd30cc8fe5",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/snippets/react-native/src/key-management.ts"
+    },
+    {
+      "anchor": "key-management",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "74fea50702cd",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs#L212-L250"
+    },
+    {
+      "anchor": "homeserver-and-session-methods",
+      "repo": "pubky/react-native-pubky",
+      "path": "src/index.tsx",
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/src/index.tsx#L92-L146"
+    },
+    {
+      "anchor": "homeserver-and-session-methods",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "74fea50702cd",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs#L387-L425"
+    },
+    {
+      "anchor": "homeserver-and-session-methods",
+      "repo": "pubky/react-native-pubky",
+      "path": "ios/Pubky.mm",
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/ios/Pubky.mm"
+    },
+    {
+      "anchor": "pkarr-publish-and-resolve",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "74fea50702cd",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs#L773-L870"
+    },
+    {
+      "anchor": "pkarr-publish-and-resolve",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/react-native/src/resolve.ts",
+      "sha": "2bcd30cc8fe5",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/snippets/react-native/src/resolve.ts"
+    },
+    {
+      "anchor": "runtime-return-values-vs-typescript-types",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "74fea50702cd",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs"
+    },
+    {
+      "anchor": "things-that-are-not-what-they-look-like",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "74fea50702cd",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs#L161-L175"
+    },
+    {
+      "anchor": "things-that-are-not-what-they-look-like",
+      "repo": "pubky/react-native-pubky",
+      "path": "ios/Pubky.mm",
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/ios/Pubky.mm"
+    },
+    {
+      "anchor": "readme-drift",
+      "repo": "pubky/react-native-pubky",
+      "path": "README.md",
+      "sha": "bf0b79253140",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b79253140/README.md#L11-L70"
+    },
+    {
+      "anchor": "shipped-vs-planned",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "74fea50702cd",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs#L1220-L1270"
     }
   ],
   "snippet": {
-    "total": 10,
-    "pass": 10,
+    "total": 6,
+    "pass": 6,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 37,
-    "refuted": 0,
-    "caveated": 0,
+    "supported": 35,
+    "refuted": 1,
+    "caveated": 2,
     "unsupported": 0
   },
   "guardrailViolations": [],
-  "wordCount": 2013,
+  "wordCount": 2627,
   "substance": {
     "ok": true,
     "reasons": []

@@ -1,286 +1,303 @@
 # Pubky Ring integration
 
-How a third-party mobile app gets a capability-scoped session through the **Pubky Ring**
-authenticator — without ever holding the user's key — and how Ring itself parses the
-deeplinks, QR frames, and migrate payloads.
+How a mobile app gets a capability-scoped **grant** through the **Pubky Ring** authenticator
+without holding the user's key. Also covers Ring's deeplink, QR and animated-migrate-frame
+parsing, and grant revocation. Ring-specific only; shared protocol is linked:
 
-This file owns the **Ring-specific** surface: the `pubkyauth://` / `pubkyring://` deeplink
-schemes, the React Native calls that drive a Ring auth flow, x-callback inter-app return,
-animated-QR key migration, and session revoke. The **protocol** underneath is shared and
-documented canonically elsewhere — do not expect it restated here:
+- **Relay + secret handshake, relays:** [`auth.md` § handshake](../../pubky/references/auth.md#grant-auth-model),
+  [§ Relays](../../pubky/references/auth.md#relays). In grant flows the signer sends an
+  encrypted, signed `pubky-grant` JWS instead of the legacy `AuthToken`.
+- **Capability syntax** (and why to avoid root `/:rw`): [`auth.md` § Capabilities](../../pubky/references/auth.md#capabilities).
+- **Identity, key string formats, homeserver model:** [`concepts.md`](../../pubky/references/concepts.md).
+- **Full RN / FFI API surface, `Result`/`isErr()`:** [`react-native.md`](./react-native.md), [`native-ffi.md`](./native-ffi.md).
 
-- **The `pubkyauth` handshake** — relay subscribe + `channel_id` derivation, `AuthToken`
-  encoding/verification, the ~3-minute validity window, why the token is encrypted:
-  [`../../pubky/references/auth.md`](../../pubky/references/auth.md) (canonical).
-- **Capability-scoped sessions, the single-shared-cookie caveat, write-vs-Nexus-read split:**
-  [`../../pubky/references/concepts.md`](../../pubky/references/concepts.md). Its
-  [Stability and known limits](../../pubky/references/concepts.md#stability-and-known-limits)
-  section covers the single cookie ([pubky-homeserver#122](https://github.com/pubky/pubky-homeserver/issues/122))
-  and the ~3-minute token window, and itself defers the full flow to `auth.md`.
-- **Method surface, `Result` handling, the `<z32>:<cookie>` session-secret format:**
-  [`./react-native.md`](./react-native.md), [`./native-ffi.md`](./native-ffi.md).
-
-**Upstream (summarize, don't mirror):**
+**Upstream (source of truth):**
 [pubky-ring README](https://github.com/pubky/pubky-ring/blob/main/README.md) ·
-[`pubky-ring/src/utils/inputParser.ts`](https://github.com/pubky/pubky-ring/blob/main/src/utils/inputParser.ts) ·
+[`inputParser.ts`](https://github.com/pubky/pubky-ring/blob/main/src/utils/inputParser.ts) ·
 [`@synonymdev/react-native-pubky`](https://www.npmjs.com/package/@synonymdev/react-native-pubky)
-([README](https://github.com/pubky/react-native-pubky), [`src/index.tsx`](https://github.com/pubky/react-native-pubky/blob/main/src/index.tsx)) ·
-[pubky-homeserver `docs/AUTH.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/AUTH.md).
+([README](https://github.com/pubky/react-native-pubky/blob/main/README.md),
+[`src/index.tsx`](https://github.com/pubky/react-native-pubky/blob/main/src/index.tsx)) ·
+[pubky-homeserver `docs/AUTH.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/AUTH.md) ·
+[grant-auth migration guide](https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/grant-auth.md).
 
-> **Drift warning.** Versions pinned at research time: `@synonymdev/react-native-pubky`
-> **0.13.0** (git `84ec77af`), pubky-ring git `ce0e083145b0`, pubky-homeserver docs `ba6d69c1`. All
-> are pre-1.0 / v0.x — deeplink param names and flow change. Trust your installed typings and
-> the linked sources over any table here.
+> **Drift warning: grant auth replaced cookie auth.** Checked against Pubky Ring `f142436`
+> (app 0.0.32), which pins `@synonymdev/react-native-pubky` **0.14.0** (npm `latest`). 0.14.0
+> is built on **grant auth**, which shipped in the `pubky` crate **0.10.0** (crates.io is now at
+> 0.12.0). Code written for 0.13.0 does not compile against 0.14.0:
+> - `startAuthFlow`, `signIn` and `signUp` **require a `clientId`**.
+> - `SessionInfo` carries **`grant_secret`**, not `session_secret`.
+> - The old `<z32>:<cookie>` secret format is gone.
+>
+> The `pubky-knowledge-base-v2` react-native snippets still pin 0.13.0, so nothing here is
+> KB-CI-verified. The auth snippets below were type-checked (`tsc`) against the published
+> 0.14.0 typings but not run, because the package is a native bridge. Everything here is
+> pre-1.0: if this file disagrees with your installed typings, trust the typings.
+> `docs/AUTH.md` still describes only the legacy URL and does not cover `cid`/`cpk`.
 
-## Two roles — pick the right one
+## Two roles: pick the right one
 
-**Integrating app (almost everyone).** You request capabilities and receive a session; you
-**never see the user's secret key**. Use `startAuthFlow` + `awaitAuthApproval`. Present the
-returned `pubkyauth://` URL as a QR code, or open `pubkyring://…` to hand off to Ring.
+| You are building… | Hold the user's key? | Use |
+| :-- | :-- | :-- |
+| **A normal app** (almost everyone) | **Never** | `startAuthFlow(caps, clientId)`, then `awaitAuthApproval()`. Show the URL as a QR code or open it as a deeplink. |
+| **A key-holding authenticator like Ring** (rare) | Yes | `parseDeepLink(url)`, then `auth(url, secretKey)` ([README `auth` example](https://github.com/pubky/react-native-pubky/blob/main/README.md#auth)) |
 
-**Authenticator (rare — only if you are building a key-holding wallet like Ring).** You hold
-the secret key, parse the inbound `pubkyauth://` URL, and sign + encrypt the `AuthToken`. Use
-`parseAuthUrl` + `auth(url, secretKey)`. A normal app must **not** do this.
+Do not ask for, import or store the user's secret key just to authenticate. Helpers that take a
+secret key (`signIn`, `signUp`, `put`, `deleteFile`) are for authenticators and key-owning apps
+only.
 
-## Request a session via Ring (primary path)
+## Request a scoped grant via Ring (primary path)
+
+Adapted from the `startAuthFlow` and `awaitAuthApproval` examples in the react-native-pubky
+0.14.0 README (cookie variants removed). Type-checked against 0.14.0, not run.
 
 ```react-native
 import { startAuthFlow, awaitAuthApproval } from '@synonymdev/react-native-pubky';
 
-// 1. Request capabilities; get an auth URL to show the user (QR / deeplink).
-const startRes = await startAuthFlow('/pub/att.app/:rw');
+const startRes = await startAuthFlow('/pub/att.app/:rw', 'my-app.example');
 if (startRes.isErr()) {
   console.log(startRes.error.message);
   return;
 }
-const authUrl = startRes.value; // present as QR or open pubkyring://...
+console.log(startRes.value); // Auth URL to present to user
 
-// 2. Wait for the user to approve in Pubky Ring.
 const approvalRes = await awaitAuthApproval();
 if (approvalRes.isErr()) {
   console.log(approvalRes.error.message);
   return;
 }
-console.log(approvalRes.value); // { pubky, capabilities, session_secret }
+console.log(approvalRes.value); // { pubky, capabilities, grant_secret }
 ```
 
-Signatures (react-native-pubky 0.13.0). Every function returns a `@synonymdev/result`
-`Result` — check `.isErr()`, then read `.value` / `.error.message`:
+These are the 0.14.0 signatures that matter for Ring. Each one was checked for exact type
+equality against the published typings. This is a signature listing, not compilable TS;
+[`src/index.tsx`](https://github.com/pubky/react-native-pubky/blob/main/src/index.tsx) is authoritative.
 
 ```react-native
-export async function startAuthFlow(capabilities: string): Promise<Result<string>>;
+// Grant auth. The unprefixed names are aliases of the *Grant functions.
+export async function startAuthFlow(capabilities: string, clientId: string): Promise<Result<string>>;
 export async function awaitAuthApproval(): Promise<Result<SessionInfo>>;
-
-export interface SessionInfo {
-  pubky: string;
-  capabilities: string[];
-  session_secret: string;
-}
-```
-
-`SessionInfo.session_secret` is a `<z32>:<cookie>` **bearer credential** (format in
-[`./native-ffi.md`](./native-ffi.md)) — treat it like a password. It is what you pass to
-`putWithSession` / `deleteWithSession` / `signOut`.
-
-## Deeplink schemes and the single parser
-
-Ring registers two custom URL schemes: **`pubkyring://`** and **`pubkyauth://`**. Every input
-— deeplink, QR scan, clipboard paste — flows through one entry point,
-`parseInput(rawInput, source)` in `src/utils/inputParser.ts`. A `pubkyring://` URL may also
-**wrap** a `pubkyauth` URL (e.g. `pubkyring://pubkyauth:///?…`); the parser strips the
-`pubkyring://` wrapper first.
-
-**Parse priority — first match wins:**
-
-| # | Form | Example shape |
-| :-- | :-- | :-- |
-| 1 | Migrate | `pubkyring://migrate?index={n}&total={total}&key={key}` |
-| 2 | Signup | `pubkyring://signup?hs=…&st=…&relay=…&secret=…&caps=…` (or `pubkyauth://signup?…`) |
-| 3 | Session | `pubkyring://session?x-success=…&x-error=…&x-cancel=…&x-source=…` |
-| 4 | Sign-in | `pubkyring://signin?caps=…&secret=…&relay=…` |
-| 5 | Auth | `pubkyauth:///?relay=…&secret=…&caps=…` |
-| 6 | Invite code in URL | `…/invite/XXXX-XXXX-XXXX` |
-| 7 | Standalone invite code | `XXXX-XXXX-XXXX` |
-| 8 | Recovery phrase | 12 BIP39 words |
-| 9 | Encrypted secret key | (opaque string) |
-| 10 | Unknown | fallback |
-
-**Auth** — `pubkyauth:///?relay={url}&secret={secret}&caps={caps}`. `relay` = HTTP relay base
-URL; `secret` = the 3rd-party app's client secret (`base64url` of 32 random bytes); `caps` =
-comma-separated capabilities. Example from pubky-homeserver `AUTH.md`:
-
-```text
-pubkyauth:///?relay=https://httprelay.pubky.app/inbox&caps=/pub/pubky.app/:rw,/pub/example.com/nested:rw&secret=mAa8kGmlrynGzQLteDVW6-WeUGnfvHTpEmbNerbWfPI
-```
-
-**Sign In** — `pubkyring://signin?caps=…&secret=…&relay=…` (same params as Auth). The parser
-rewrites it to `pubkyauth:///?{query}` internally before parsing; a trailing-slash `signin/?`
-is normalized to `signin?`.
-
-**Signup** — `pubkyring://signup?hs={homeserver}&st={signup_token}&relay=…&secret=…&caps=…`
-(also accepted as `pubkyauth://signup?…`). `hs` = homeserver public key; `st` = invite/signup
-token and is **OPTIONAL** (homeservers without invite requirements omit it). Routed to the
-Signup action **only if `hs` is present** — a signup link missing `hs` falls through to auth
-parsing. The handler creates a new keypair, signs up to the homeserver, then forwards into the
-auth/consent flow.
-
-**Session** — lets an external app (e.g. Bitkit) ask Ring to sign in and hand a session back.
-Modern form above; legacy form documented in the README is
-`pubkyring://session?callback={callback_url}` (`callback` maps to `x-success` as a fallback).
-The session action **REQUIRES** an `x-success` (or legacy `callback`) URL containing `://` or
-it is rejected. On success Ring opens the `x-success` URL with `pubky`, `session_secret`, and
-`capabilities` (comma-joined) appended as query params.
-
-**Migrate** — `pubkyring://migrate?index={n}&total={total}&key={key}`. Bulk key transfer
-between Ring installs; checked **first** (before protocol stripping); `migrate/?` is normalized
-to `migrate?`. See [Key migration](#key-migration-animated-qr) below.
-
-## Capabilities (Ring view)
-
-Format is `scope:actions` (e.g. `/pub/pubky.app/:rw`), comma-separated. The full model —
-grammar, trailing-slash significance, no string-prefix matching, the typed builders — lives in
-[auth.md → Capabilities](../../pubky/references/auth.md#capabilities); don't restate it. Ring
-renders each capability as a path row with **Read / Write** labels in its consent UI. The
-native `parseAuthUrl` returns capabilities as `{ path, permission }` objects; Ring flattens
-them back to `` `${path}:${permission}` `` strings.
-
-## relay + secret (summary)
-
-The 3rd-party app generates a 32-byte `client_secret`, subscribes to the relay channel
-`channel_id = base64url(hash(client_secret))`, and embeds `relay` (the base URL, **without**
-`channel_id`) + `secret=base64url(client_secret)` in the `pubkyauth` URL. Ring signs +
-**encrypts** the `AuthToken` with that secret and POSTs it to `relay + channel_id`; the app
-decrypts with its `client_secret`. Encryption is **required** because the `AuthToken` is a
-bearer token — the relay must never be able to use it. Full handshake:
-[auth.md](../../pubky/references/auth.md). When you call `startAuthFlow`, the SDK does all of
-this for you — you only handle the returned URL and the resulting `SessionInfo`.
-
-## x-callback return (inter-app)
-
-For an external app to regain control after Ring finishes (x-callback-url convention):
-
-- **`x-source`** — calling app name; rendered in the consent title as "Authorize {app}".
-- **`x-success`** — opened on approval (session-flow extras appended).
-- **`x-error`** — opened on failure, with `errorCode` + `errorMessage` appended.
-- **`x-cancel`** — opened on user deny / timeout.
-- legacy **`callback`** — accepted as a fallback for `x-success`.
-
-Ring opens these via React Native `Linking.openURL`; errors from unregistered schemes are
-swallowed.
-
-> **GOTCHA — never multi-decode callback URLs.** `parseInput` URL-decodes input up to **3
-> passes** to survive double-encoding, but it snapshots the **original still-encoded** query
-> string (`rawEncodedQuery`) for x-callback extraction. This is deliberate: a callback URL
-> whose inner `?` / `=` / `&` are percent-encoded (`%3F` / `%3D` / `%26`) must round-trip
-> byte-for-byte after **exactly one** decode, because callers like Bitkit verify a nonce in the
-> callback URL they originally supplied. If you build the return URL, encode it once and expect
-> exactly one decode.
-
-## Consent flow and timeouts
-
-On a manual (non auto-auth) request Ring shows a `ConfirmAuth` sheet: the requested
-capabilities (path + Read/Write), the selected pubky, and a trust warning. The title is
-"Authorize {x-source}" when `x-source` is present (i18n key `authorizeForApp`).
-
-- **Auto-deny timeout: 60000 ms** (`CONFIRM_AUTH_TIMEOUT_MS`) — on timeout or Cancel it calls
-  `openXCancel`.
-- **`performAuth` network timeout: 20000 ms** (`TIMEOUT_MS`).
-- **Auto-auth** (a user setting) skips the sheet entirely.
-
-## Signup deeplinks and homeserver keys
-
-The `hs` param is a **bare z-base32** homeserver public key — i.e. `publicKey.z32()`, **not**
-the `pubky<z32>` display string from `.toString()`. Ring's built-in homeservers:
-
-| Constant | Bare z-base32 key |
-| :-- | :-- |
-| `PRODUCTION_HOMESERVER` (default) | `8um71us3fyw6h8wbcxb5ar3rwusy1a6u49956ikzojg3gcwd1dty` |
-| `STAGING_HOMESERVER` | `ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy` |
-
-## Authenticator side (only if building a wallet)
-
-If you are building a key-holding authenticator (not a normal app), you parse and approve
-inbound requests yourself.
-
-```react-native
-export type Capability = { path: string; permission: string };
-
-export type PubkyAuthDetails = {
-  relay: string;
-  capabilities: Capability[];
-  secret: string;
-  kind?: 'signin' | 'signup';
-  homeserver?: string;   // bare z-base32 from `hs`
-  signup_token?: string; // from `st`
-};
-
+export async function signUp(secretKey: string, homeserver: string, signupToken: string | undefined, clientId: string): Promise<Result<SessionInfo>>;
+export async function signIn(secretKey: string, clientId: string): Promise<Result<SessionInfo>>;
+export async function signOut(sessionSecret: string): Promise<Result<string>>;
+export async function revalidateSession(sessionSecret: string): Promise<Result<SessionInfo | CookieSessionInfo>>;
+// Deeplinks
+export async function parseDeepLink(url: string): Promise<Result<PubkyDeepLinkDetails>>;
 export async function parseAuthUrl(url: string): Promise<Result<PubkyAuthDetails>>;
-export async function auth(url: string, secretKey: string): Promise<Result<string[]>>;
+export async function auth(url: string, secretKey: string): Promise<Result<string[]>>; // authenticator only
+
+export interface GrantSessionInfo { pubky: string; capabilities: string[]; grant_secret: string; }
+export type SessionInfo = GrantSessionInfo;
 ```
 
-> **GOTCHA — `PubkyAuthDetails.kind`.** A legacy `pubkyauth:///?…` URL parses as
-> `kind='signin'`. Well-formed signup links (those carrying `hs`) are routed to the **Signup**
-> action *before* reaching this parse — so seeing `kind='signup'` from `parseAuthUrl` means a
-> **malformed** signup link that was missing its homeserver, not a normal signup. `kind` is
-> absent only against a pre-0.9.1 native binary.
+Gotchas:
 
-`auth(url, secretKey)` parses the `pubkyauth` URL, signs an `AuthToken` with the user's key,
-encrypts it with the embedded client secret, POSTs it to the relay channel, and returns the
-granted capability strings:
+- **`clientId`** is a non-empty, domain-like string of at most 253 characters that identifies
+  your app (for example `pubkyapp.synonym.to` or `example-app`). The homeserver stores it with
+  the grant and shows it when grants are listed. Recommendation (not an upstream rule): keep it
+  stable across releases.
+- **`signUp`, `signIn`, `startAuthFlow` and `awaitAuthApproval` are grant aliases.** Use the
+  explicit `*Grant` names when the distinction matters. **Do not use the `*Cookie` variants**
+  (`startCookieAuthFlow`, `signInCookie`, …). Cookie auth is deprecated, insecure (every app
+  shares one homeserver-domain cookie,
+  [pubky-homeserver#520](https://github.com/pubky/pubky-homeserver/issues/520)) and scheduled
+  for removal.
+- **The binding tracks only one pending flow.** `startAuthFlow` silently replaces any flow in
+  progress. `awaitAuthApproval` takes the flow once and returns `No auth flow in progress` if
+  there is none. Start one flow, then await it.
+- **Pending flows do not survive an app kill.** The RN binding has no save/resume for grant
+  flows, and the URL alone cannot resume one: the client's proof-of-possession key must also be
+  kept. If the OS kills your app while the user is in Ring, start a new flow. Resumable
+  `pubkyauth` flows exist in the Rust/JS SDKs, but this binding does not expose them.
+- **You cannot choose a relay from RN.** The flow uses the SDK's default relay with `signin`
+  kind.
+- **Grant model:** the SDK exchanges the grant plus a short-lived proof-of-possession for an
+  opaque bearer token valid for one hour, and refreshes it automatically. Each app/client key
+  gets its own grant, which can be listed and revoked on its own
+  ([grant-auth guide](https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/grant-auth.md)).
 
-```react-native
-import { auth } from '@synonymdev/react-native-pubky';
+## Store and revoke the `grant_secret`
 
-const authRes = await auth(
-  'pubkyauth:///?caps=/pub/pubky.app/:rw,/pub/foo.bar/file:r&secret=U55XnoH6vsMCpx1pxHtt8fReVg4Brvu9C0gUBuw-Jkw&relay=http://167.86.102.121:4173/',
-  'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
-);
-if (authRes.isErr()) {
-  console.log(authRes.error.message);
-  return;
-}
-console.log(authRes.value);
-```
+- **`grant_secret` is bearer-equivalent**
+  ([grant-auth guide](https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/grant-auth.md)).
+  It holds the grant plus the proof-of-possession key material, and it works until the grant is
+  revoked. Store it only in the Keychain (iOS) or Keystore (Android). **Never** put it in
+  AsyncStorage, Redux, logs or analytics.
+- **`signOut`, `revalidateSession`, `putWithSession` and `deleteWithSession`** restore the
+  session from the secret. They accept either a `grant_secret` or a legacy cookie
+  `session_secret` (see the String Contracts in the
+  [pubky-core-ffi README](https://github.com/pubky/pubky-core-ffi/blob/main/README.md)).
+- **Revoke your own grant:** call `signOut(grant_secret)`, which sends `DELETE` to the grant
+  session endpoint. Then delete your stored copy.
+- **Listing or revoking other grants** needs `GrantManager` and a session with the **root**
+  capability (non-root sessions get `403 Forbidden`). **react-native-pubky 0.14.0 does not
+  expose it.** In JS: `new GrantManager(session).revoke(id)`. See the upstream
+  [JS example](https://github.com/pubky/pubky-homeserver/blob/main/examples/javascript/8-session-management.mjs)
+  and [Rust example](https://github.com/pubky/pubky-homeserver/tree/main/examples/rust/6-session_management).
+- **Do not tell users they can revoke your app's access from inside Ring.** The Ring README says
+  "view and control active sessions", but no Ring screen calls sign-out: `c6e73d0` deleted the
+  session item UI, and Ring shows only a session count. Ring tracks only its **own** sessions
+  (from `signIn`/`signUp`). Grants it approves for third-party apps through `auth()` are not
+  stored or listed. Put a sign-out option inside your own app.
+- Legacy `AUTH.md` tokens have no delegation: the issuer is always the pubky itself.
 
-## Sessions: revoke and re-auth
+## Deeplink schemes and intents
 
-`signOut(sessionSecret: string): Promise<Result<string>>` revokes a session at the homeserver.
-Ring's `signOutOfHomeserver(pubky, sessionSecret, dispatch)` calls it, then drops the session
-from local state. The `sessionSecret` is the `session_secret` from `SessionInfo` (returned by
-`signIn` / `signUp` / `awaitAuthApproval`), in `<z32>:<cookie>` format — a bearer credential.
+Ring registers both `pubkyauth` and `pubkyring` (iOS `CFBundleURLSchemes`, Android
+intent-filter). The SDK marks `pubkyring` as deprecated but still parses it. **Emit
+`pubkyauth://` for auth and signup links.** `session` and `migrate` exist only as `pubkyring://`.
 
-```react-native
-import { signUp, signIn, signOut, getHomeserver } from '@synonymdev/react-native-pubky';
+The SDK chooses the intent from the URL **host**
+([`deep_link.rs`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/src/actors/auth/deep_links/deep_link.rs)).
+An empty host (`pubkyauth:///?…`) means `signin`. Any other host returns `InvalidIntent`.
 
-// Standard signup
-const signUpRes = await signUp(secretKey, 'pubky://8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo');
-// Signup with token (gated homeservers)
-const signUpWithTokenRes = await signUp(secretKey, 'pubky://8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo', 'your_signup_token');
-// Sign in
-const signInRes = await signIn(secretKey);
-// Resolve a pubky's homeserver
-const homeserverRes = await getHomeserver(publicKey);
-```
+| Intent (host) | Required params | What Ring `f142436` does |
+| :-- | :-- | :-- |
+| `signin_grant` | `caps`, `relay`, `secret`, `cid`, `cpk` | Shows auth consent. |
+| `signup_grant` | `caps`, `relay`, `secret`, `cid`, `cpk`, `hs` [+`st`] | Creates a key and signs up. **Consent is broken:** Ring rebuilds the consent URL as `signin_grant` without `cid`/`cpk`, so `parseDeepLink` fails and the user sees an error toast instead of consent. |
+| `signin` (legacy cookie; also `pubkyauth:///?`) | `caps`, `relay`, `secret` | Shows auth consent. |
+| `signup` (legacy cookie) | `caps`, `relay`, `secret`, `hs` [+`st`] (**all required**) | Signs up, then shows consent. |
+| `direct_signup` | `hs` [+`st`] | Creates an account with no app authorization. **Use this for account-only links.** |
+| `secret_export` | `secret` | Intended to import a key. **Apparently non-functional** (from reading the code, not a runtime test): the FFI returns `secret` as base64url, but Ring's import path hex-decodes it. |
 
-`signUp(secretKey, homeserver, signupToken?)`'s third arg is the gated-homeserver invite token
-— pass it or omit it. (Signup-token issuance is the homeserver operator's domain;
-[auth.md → Signup tokens](../../pubky/references/auth.md#signup-tokens) links it.)
+Param rules
+([`query_params.rs`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/src/actors/auth/deep_links/query_params.rs)):
 
-> **Single shared cookie** ([pubky-homeserver#122](https://github.com/pubky/pubky-homeserver/issues/122)):
-> signing into App B currently overwrites App A's session — plan re-auth UX around this until
-> the JWT/grant rework lands. Canonical:
-> [concepts.md → Stability and known limits](../../pubky/references/concepts.md#stability-and-known-limits).
+- `secret`: base64url, no padding, decodes to exactly **32 bytes**.
+- `relay`: a URL.
+- `cid`: the grant ClientId.
+- `cpk`: the client public key in z-base32, bound by the grant's `cnf` claim.
+- `st`: optional signup token.
+- **`hs` must be the bare z-base32 key (`publicKey.z32()`), not the `pubky<z32>` display
+  string.** The SDK parses it with `PublicKey::try_from_z32`. Ring's built-in values are
+  production `8um71us3fyw6h8wbcxb5ar3rwusy1a6u49956ikzojg3gcwd1dty` and staging
+  `ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy` (staging is used in `__DEV__`).
 
-## Key migration (animated QR)
+Example `signin_grant` URL from an SDK unit test. **Never build this by hand:** use the URL
+`startAuthFlow` returns, because `cpk` must match the key your flow holds.
+`pubkyauth://signin_grant?caps=/pub/pubky.app/:rw&relay=https://httprelay.pubky.app/inbox/&secret=kqnceEMgrNQM_xi06oQXjA3cJHX_RQmw1BY6JE1bse8&cid=franky.pubky.app&cpk=<client_pk_z32>`
 
-Ring transfers keys between installs as one `pubkyring://migrate?…` frame **per key**, rendered
-as an **animated multi-frame QR** when there is more than one key. Frame params: `index` =
-0-based frame index, `total` = frame count, `key` = a BIP39 mnemonic phrase **or** an
-(encrypted) secret key, URL-encoded. The bounds (`total > 0`, `0 <= index < total`) are
-enforced in the migrate **action handler** (`migrateAction.ts`), not the parser — `parseInput`
-itself only requires `index`/`total` to be numbers and `key` non-empty.
+Parsing notes:
 
-**Generating frames** (`MigrateModal`):
+- `parseDeepLink` handles every intent. `parseAuthUrl` accepts only
+  `signin`/`signup`/`signin_grant`/`signup_grant` and returns `Invalid auth URL intent '<intent>'`
+  for anything else.
+- `kind` can be missing only from `parseAuthUrl` (`PubkyAuthDetails`), and only against a native
+  binary older than 0.9.1. In `parseDeepLink` (`PubkyDeepLinkDetails`), `kind` is always present.
+- `auth()` accepts the legacy and grant signin/signup intents, and rejects `direct_signup` and
+  `secret_export`.
+- Before parsing, Ring normalizes input: it strips a `pubkyring://` wrapper around
+  `pubkyauth://…`, fixes `pubkyauth///` to `pubkyauth:///`, rewrites
+  `pubkyring://signin|signup|direct_signup?` to `pubkyauth://…`, and collapses `…/?` to `…?`.
+  **Do not rely on this. Emit well-formed URLs.**
+- The Ring README's deeplink table is stale. It leaves out `signin_grant`, `signup_grant` and
+  `secret_export`. Its "Legacy Direct Signup" row (`pubkyauth://signup?hs=..[&st=..]`) fails the
+  native parser, which requires `caps`/`relay`/`secret`, so Ring treats it as Unknown. Emit
+  `direct_signup` instead.
+
+## x-callback return to your app
+
+Ring reads x-callback-url metadata from the link
+([`AUTH.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/AUTH.md),
+[`xCallback.ts`](https://github.com/pubky/pubky-ring/blob/main/src/utils/xCallback.ts)):
+
+| Param | Meaning | What Ring opens |
+| :-- | :-- | :-- |
+| `x-source` | Human-readable name of your app | Shown in the consent title ("Authorize {{appName}}") |
+| `x-success` | Where to go after success | Auth: the URL unchanged. Session: the URL with params appended. |
+| `x-error` | Where to go after an error | The URL with `errorCode` and `errorMessage` appended |
+| `x-cancel` | Where to go after cancel or timeout | The URL unchanged |
+
+- **Encode each value exactly once** with `encodeURIComponent` (spaces become `%20`, not `+`).
+  Do not double-encode or form-encode.
+- **Decoding depends on the link type (Ring `f142436`):**
+  - `session` and invite links: Ring reads values from the original, still-encoded query and
+    decodes once, so nested `%3F`/`%3D`/`%26` survive byte-for-byte (Bitkit relies on this to
+    check a nonce).
+  - `pubkyauth` auth/signup links: Ring runs `decodeURIComponent` up to 3 times over the
+    **whole** input before `parseDeepLink`, and the SDK splits the query on `&`. A callback like
+    `bitkit%3A%2F%2Fcb%3Fnonce%3Dabc%26reason%3Duser` is cut to `bitkit://cb?nonce=abc`. **Do
+    not put a nested query containing `&` (or other percent-escapes you need preserved) in
+    callbacks on auth/signup links.**
+- `callback` is still parsed as a fallback for `x-success`. Emit `x-success` in new links.
+- Callbacks are **untrusted navigation hints**, not proof of approval. Authentication completes
+  over the encrypted relay, and only `awaitAuthApproval()` proves it.
+- If your scheme is not registered, `Linking.openURL` fails and Ring ignores the error, so the
+  user stays in Ring.
+- Error codes Ring sends: `AUTH_FAILED`, `AUTH_ERROR`, `SESSION_FAILED`, `SESSION_ERROR`,
+  `SIGNUP_FAILED`, `SIGNUP_ERROR`, `INVITE_FAILED`, `INVITE_ERROR`, `OFFLINE`.
+
+## `pubkyring://session`: root grant (avoid for third-party apps)
+
+`pubkyring://session?x-success={url}[&x-error=…&x-cancel=…&x-source=…]`
+
+- Needs a pubky selected in Ring.
+- `x-success`, and `x-error`/`x-cancel` if present, must match `^[A-Za-z][A-Za-z0-9+.-]*://`.
+- Ring shows a ConfirmSession sheet with the requesting app and `scheme://host`. Deny opens
+  `x-cancel`. Allow signs in and opens `x-success` with `pubky`, `grant_secret` and
+  `capabilities` (comma-joined) appended.
+- **Security:** this hands your app a **root** homeserver grant (read/write on everything),
+  created under **Ring's** client id (iOS `app.pubkyring`, Android `to.pubky.ring`), not a scoped
+  grant under yours. Ring's own warning says to allow it only for trusted apps. **Use the scoped
+  `startAuthFlow` path instead.**
+
+## What Ring does when a link arrives (predicting UX and timeouts)
+
+Ring-internal behaviour at `f142436`. These details can change without notice.
+
+- **Auth consent.**
+  - Needs a pubky selected in Ring. Ring re-parses the raw URL with `parseDeepLink`.
+  - The sheet lists each path with Read/Write, based on whether the permission string contains
+    `r` or `w`.
+  - **If the user does nothing for 60 s, Ring denies automatically** and opens `x-cancel`.
+  - With auto-auth turned on, Ring skips the sheet.
+  - After approval, the network step has a **20 s timeout**.
+- **Approval (`performAuth`).** Ring loads the key from the Keychain, signs up to the homeserver
+  if needed, and calls `auth(url, secretKey)`. If that fails, Ring signs in again (which creates
+  and stores a **new root session under Ring's client id**) and retries once. It then
+  republishes the homeserver record in the background.
+- **Signup / direct signup.**
+  - Returns `OFFLINE` if there is no network.
+  - Reuses an existing pubky already tied to the same `st`.
+  - Otherwise generates a mnemonic and keypair, then calls
+    `signUp(secretKey, hs, st, appApplicationId)`.
+  - If signup fails, the link has auth params and signed-up pubkys exist, Ring falls back to
+    auth consent. That fallback uses the newly generated (failed) pubky as context, not an
+    existing signed-up one.
+  - A legacy `signup` link continues to consent. A `signup_grant` link errors at consent (see the
+    intent table). A `direct_signup` link stops after creating the account.
+- **Ring's own session storage, a pattern worth copying:** secrets live in the Keychain, keyed by
+  a uuid v5 of `grant_secret`. Redux holds only `{id, capabilities, created_at}`. If the Keychain
+  save fails, Ring revokes the new session immediately. A store migration revoked and removed
+  all legacy cookie sessions.
+
+## QR and clipboard input
+
+Ring accepts any of these by scan or paste: a deeplink, a 12-word BIP39 phrase, a secret key, an
+invite code `XXXX-XXXX-XXXX` or `…/invite/XXXX-XXXX-XXXX`, and (QR only) animated multi-frame
+migrate codes.
+
+Check order in
+[`inputParser.ts`](https://github.com/pubky/pubky-ring/blob/main/src/utils/inputParser.ts)
+(differs from the README):
+
+0. Decode with `decodeURIComponent` up to 3 times, keeping the still-encoded query.
+1. `pubkyring://migrate?`
+2. Native `parseDeepLink`: DirectSignup, Signup, Auth (built only for `signin`/`signin_grant`) or Import (`secret_export`).
+3. `session?`, which requires `x-success` or `callback`.
+4. An invite URL.
+5. A standalone invite code.
+6. An import: tried as a mnemonic first, then as a secret key.
+7. Retry as a lowercased 12-word phrase.
+8. Unknown.
+
+When importing, Ring strips `pubkyring://`/`pubkyauth://` and turns runs of `-`, `_` and `+`
+into spaces.
+
+## Key migration: animated QR (`pubkyring://migrate`)
+
+Ring shows one frame per key, cycled with `AnimatedQR`. This is a byte copy of Ring `f142436`
+[`MigrateQRCode.tsx`](https://github.com/pubky/pubky-ring/blob/main/src/screens/MigrateQRCode.tsx).
+It was lint- and type-checked, and its frames were round-tripped through Ring's migrate parser:
 
 ```react-native
 const migrateFormattedData = useMemo(() => {
@@ -289,26 +306,38 @@ const migrateFormattedData = useMemo(() => {
   }));
 }, [keyValues]);
 
-// rendered as an animated multi-frame QR:
-// <AnimatedQR data={migrateFormattedData} startCycleInterval={200} cycleInterval={600} transitionDuration={60000} />
+// <AnimatedQR data={isRevealed ? migrateFormattedData : placeholderData} startCycleInterval={200} cycleInterval={600} transitionDuration={60000} size={qrSize} />
 ```
 
-**`AnimatedQR` component.** Defaults: `cycleInterval` 600 ms, `transitionDuration` 5000 ms;
-`startCycleInterval` is optional (fast initial cycling that linearly eases to `cycleInterval`).
-`MigrateModal` uses `startCycleInterval=200`, `cycleInterval=600`, `transitionDuration=60000`.
-Tapping the QR pauses cycling and reveals prev/next chevrons. A single frame (`data.length <= 1`)
-does not animate.
+- **Frames are plaintext secrets.** How `key` is chosen:
+  - If the pubky's backup preference is `encryptedFile`, `key` is the **raw, unencrypted secret
+    key**, even when a mnemonic exists. (`encryptedFile` is only a preference label; nothing is
+    encrypted.)
+  - Otherwise `key` is the recovery **mnemonic** if there is one, falling back to the raw secret
+    key.
 
-**Receiver accumulation.** `total === 1` imports the single key immediately and shows success
-UI. For multi-key, frames are accumulated by `index` into a `Set`; each newly-seen frame fires
-an import immediately in parallel (fire-and-forget with progress tracking); when
-`importedIndices.size === expectedTotal`, all imports are awaited and a summary toast is shown.
-Duplicate frames are ignored; closing the scanner early shows a partial-import summary.
+  Anyone who captures the frames owns the identity. Ring's precautions: the QR stays blurred
+  until "Tap to reveal", Android sets `FLAG_SECURE` (iOS has no equivalent), brightness goes to
+  max, and the code hides when the app goes to the background. If you produce or consume these
+  frames, apply the same precautions and never log them.
+- **What Ring accepts when receiving:**
+  - `index` and `total` are numbers, `key` is non-empty, `total > 0`, and `0 ≤ index < total`.
+  - `total === 1` imports right away.
+  - With more than one key, Ring collects frames by index. A different `total` resets the
+    collection, and duplicate frames are ignored. Each new frame starts importing in parallel.
+  - Ring shows a summary once all indices have arrived. Closing the scanner early shows a
+    partial summary only if at least one import has already succeeded.
+  - Each key is tried as a lowercased mnemonic first, then as a secret key.
+- **`AnimatedQR` props:**
+  - `data: {value}[]`
+  - `cycleInterval`: default 600 ms
+  - `startCycleInterval`: optional; eases linearly to `cycleInterval` over
+    `transitionDuration` (default 5000 ms)
+  - `size`: default 250
 
-## Clipboard / QR input formats
+  It does not cycle with a single frame or while paused. Tapping pauses it and shows prev/next
+  controls.
 
-Paste accepts: a 12-word BIP39 recovery phrase, an encrypted secret-key string, an invite code
-(`XXXX-XXXX-XXXX`), an invite URL (`…/invite/XXXX-XXXX-XXXX`), or any deeplink. Pasted input is
-normalized — hyphens, underscores, and plus signs become spaces (for recovery phrases), and
-`pubkyring://` / `pubkyauth://` prefixes are stripped before validation. QR scanning accepts
-all the same formats plus animated multi-frame migrate QRs.
+Backup *restore* and cloud backup are **not shipped**
+([`shipped-vs-planned.md`](../../pubky/references/shipped-vs-planned.md)). Migrate moves keys
+from one device to another. It is not a backup service.

@@ -2,91 +2,229 @@
   "path": "skills/pubky-mobile/references/native-ffi.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-06-29T11:38:23.320Z",
+  "generatedAt": "2026-09-17T11:46:08.619Z",
   "sourcesUsed": [
     {
       "repo": "pubky-core-ffi",
-      "sha": "782d6c0c842c793b1a43ecc0931d2127e9bba841"
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396"
     }
   ],
   "provenance": [
     {
-      "anchor": "The crate",
+      "anchor": "native-ffi-pubky-core-ffi",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "README.md",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/README.md"
+    },
+    {
+      "anchor": "native-ffi-pubky-core-ffi",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "src/content/docs/explore/pubky-protocol/sdk.mdx",
+      "sha": "2bcd30c",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30c/src/content/docs/explore/pubky-protocol/sdk.mdx#L25-L26"
+    },
+    {
+      "anchor": "the-crate",
       "repo": "pubky/pubky-core-ffi",
       "path": "Cargo.toml",
-      "sha": "782d6c0c842c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/Cargo.toml"
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/Cargo.toml"
     },
     {
-      "anchor": "Building the bindings",
+      "anchor": "building",
       "repo": "pubky/pubky-core-ffi",
       "path": "build.sh",
-      "sha": "782d6c0c842c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/build.sh"
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/build.sh"
     },
     {
-      "anchor": "iOS — build_ios.sh",
+      "anchor": "building",
       "repo": "pubky/pubky-core-ffi",
       "path": "build_ios.sh",
-      "sha": "782d6c0c842c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/build_ios.sh"
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/build_ios.sh"
     },
     {
-      "anchor": "Android — build_android.sh",
+      "anchor": "building",
       "repo": "pubky/pubky-core-ffi",
       "path": "build_android.sh",
-      "sha": "782d6c0c842c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/build_android.sh"
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/build_android.sh"
     },
     {
-      "anchor": "MANDATORY: initialize rustls on Android",
+      "anchor": "building",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/tests.rs",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/tests.rs#L9-L37"
+    },
+    {
+      "anchor": "consuming-on-ios",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "bindings/ios/PubkyCore.xcframework/Info.plist",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/bindings/ios/PubkyCore.xcframework/Info.plist"
+    },
+    {
+      "anchor": "consuming-on-ios",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "bindings/ios/pubkycore.swift",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/bindings/ios/pubkycore.swift#L1-L12"
+    },
+    {
+      "anchor": "consuming-on-ios",
+      "repo": "pubky/react-native-pubky",
+      "path": "react-native-pubky.podspec",
+      "sha": "bf0b7925314031023db3ae47cdba12e23389c25e",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b7925314031023db3ae47cdba12e23389c25e/react-native-pubky.podspec"
+    },
+    {
+      "anchor": "consuming-on-android",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "bindings/android/pubkycore.kt",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/bindings/android/pubkycore.kt#L357-L385"
+    },
+    {
+      "anchor": "consuming-on-android",
+      "repo": "pubky/react-native-pubky",
+      "path": "android/build.gradle",
+      "sha": "bf0b7925314031023db3ae47cdba12e23389c25e",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b7925314031023db3ae47cdba12e23389c25e/android/build.gradle#L100-L106"
+    },
+    {
+      "anchor": "mandatory-android-rustls-init",
       "repo": "pubky/pubky-core-ffi",
       "path": "src/rustls_init.rs",
-      "sha": "782d6c0c842c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/rustls_init.rs"
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/rustls_init.rs#L21-L35"
     },
     {
-      "anchor": "The [error, data] convention",
+      "anchor": "mandatory-android-rustls-init",
+      "repo": "pubky/react-native-pubky",
+      "path": "android/src/main/java/com/pubky/RustlsInit.kt",
+      "sha": "bf0b7925314031023db3ae47cdba12e23389c25e",
+      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b7925314031023db3ae47cdba12e23389c25e/android/src/main/java/com/pubky/RustlsInit.kt"
+    },
+    {
+      "anchor": "mandatory-android-rustls-init",
+      "repo": "pubky/pkarr",
+      "path": "pull/262",
+      "sha": "unmerged",
+      "url": "https://github.com/pubky/pkarr/pull/262"
+    },
+    {
+      "anchor": "mandatory-android-rustls-init",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pull/456",
+      "sha": "merged-2026-06-24",
+      "url": "https://github.com/pubky/pubky-homeserver/pull/456"
+    },
+    {
+      "anchor": "the-error-data-convention",
       "repo": "pubky/pubky-core-ffi",
       "path": "src/utils.rs",
-      "sha": "782d6c0c842c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/utils.rs"
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/utils.rs"
     },
     {
-      "anchor": "Session-secret format",
+      "anchor": "the-error-data-convention",
       "repo": "pubky/pubky-core-ffi",
-      "path": "src/utils.rs",
-      "sha": "782d6c0c842c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/utils.rs"
+      "path": "bindings/python/README.md",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/bindings/python/README.md"
     },
     {
-      "anchor": "Exported function surface",
+      "anchor": "string-contracts",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "README.md",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/README.md#L5-L38"
+    },
+    {
+      "anchor": "auth-strategies-and-session-secrets",
       "repo": "pubky/pubky-core-ffi",
       "path": "src/lib.rs",
-      "sha": "782d6c0c842c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/lib.rs"
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs"
     },
     {
-      "anchor": "pubkyauth functions",
+      "anchor": "auth-strategies-and-session-secrets",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/utils.rs",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/utils.rs"
+    },
+    {
+      "anchor": "keys-sync-no-network",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/keypair.rs",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/keypair.rs#L48-L66"
+    },
+    {
+      "anchor": "homeserver-and-session-blocking",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/admin_server/app.rs",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/src/admin_server/app.rs"
+    },
+    {
+      "anchor": "storage-blocking-pub-only",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs"
+    },
+    {
+      "anchor": "pubkyauth-blocking",
       "repo": "pubky/pubky-core-ffi",
       "path": "src/auth.rs",
-      "sha": "782d6c0c842c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/782d6c0c842c/src/auth.rs"
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/auth.rs"
+    },
+    {
+      "anchor": "pkarr-dns-blocking",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs"
+    },
+    {
+      "anchor": "eventlistener-is-a-placeholder",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd/src/lib.rs"
     }
   ],
   "snippet": {
-    "total": 9,
-    "pass": 9,
-    "fail": 0,
+    "total": 10,
+    "pass": 7,
+    "fail": 3,
     "unverifiable": 0,
-    "failing": []
+    "failing": [
+      "ios-build",
+      "android-build",
+      "kotlin-io-dispatch"
+    ]
   },
   "factCheck": {
-    "supported": 29,
-    "refuted": 0,
-    "caveated": 3,
+    "supported": 36,
+    "refuted": 2,
+    "caveated": 11,
     "unsupported": 0
   },
-  "guardrailViolations": [],
-  "wordCount": 2087
+  "guardrailViolations": [
+    "Mirrored, drift-prone build-script detail (CLAUDE.md §4): the '### iOS (build_ios.sh, key commands)' and '### Android (build_android.sh, key commands)' blocks re-copy upstream scripts, and both copies are broken (they fail when run). Link to build_ios.sh / build_android.sh and summarize, or use the verified corrected code.",
+    "Unprovenanced dependency citation: 'pubky's own ICANN client stopped using the platform verifier in pubky-core#456 … until pkarr#262 lands'. The repo is now pubky/pubky-homeserver (#456), and pkarr#262 was closed unmerged, so the sentence presents a dead PR as pending.",
+    "Mirrored internal encoding: the grant secret layout `pubky-grant-credential-v1:<homeserver_z32>:<client_key_secret b64url>:<grant_jws>` copies a pubky-internal v1 token format. Keep only the prefix-routing fact, tell readers to treat the token as opaque, and link docs.rs Pubky::restore_session."
+  ],
+  "wordCount": 3088,
+  "substance": {
+    "ok": true,
+    "reasons": []
+  }
 }

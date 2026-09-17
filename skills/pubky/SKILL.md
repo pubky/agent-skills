@@ -55,7 +55,7 @@ it is an app-chosen **scope** (e.g. `/pub/pubky.app/*`).
 | Rust client (`pubky` crate) — usage, idioms | `references/sdk-rust.md` |
 | Querying aggregated social data (the Nexus read API) | `references/nexus-api.md` |
 | Local development with `pubky-testnet`; scripting with the CLI | `references/testing-and-testnet.md` |
-| Worked reference apps and patterns (pubky.app, explorer, workshop) | `references/reference-apps.md` |
+| Worked reference apps, starter templates, and patterns (pubky.app, explorer, workshop, pubky-app-templates) | `references/reference-apps.md` |
 | Advanced: E2E messaging (`pubky-noise`), payments (`paykit`) | `references/advanced-messaging-payments.md` |
 | What's shipped vs planned (guardrails) | `references/shipped-vs-planned.md` |
 

@@ -1,35 +1,26 @@
 # JavaScript / WASM client (`@synonymdev/pubky`)
 
-`@synonymdev/pubky` is the official JS/WASM SDK — auth + data ops over `pubky://`, for browsers
-and Node. Canonical protocol knowledge lives elsewhere: identity, `pubky://` addressing, PKARR,
-the homeserver model, public-key string formats, and the write-own vs public-read split are in
-[`./concepts.md`](./concepts.md); the full `pubkyauth` flow, capabilities, signup tokens, and
-session-persistence semantics are in [`./auth.md`](./auth.md); testnet defaults and local dev are
-in [`./testing-and-testnet.md`](./testing-and-testnet.md). The Rust sibling SDK is
-[`./sdk-rust.md`](./sdk-rust.md).
+The official JS/WASM SDK for browsers and Node: identity, auth and `pubky://` storage. This page covers only JS-specific usage. For everything else:
 
-**Upstream (authoritative — summarize, don't mirror):** the surface `npm install` resolves to is
-the published TypeScript declarations
-([`pubky.d.ts` @ 0.9.3](https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts)); package page on
-[npm](https://www.npmjs.com/package/@synonymdev/pubky). Runnable programs:
-[`pubky-homeserver/examples/javascript`](https://github.com/pubky/pubky-homeserver/tree/main/examples/javascript)
-(track `main`/HEAD — see the drift note). CI type-checked snippets:
-[`pubky-knowledge-base-v2/snippets/js/src`](https://github.com/pubky/pubky-knowledge-base-v2/tree/main/snippets/js/src).
-When a signature here looks stale, trust the published `.d.ts` for the version you installed.
+- **Protocol concepts** (identity, `pubky://` addressing, PKARR, homeserver model, key string formats, own data vs public reads): [`./concepts.md`](./concepts.md)
+- **Auth** (`pubkyauth` flow, capabilities, signup tokens, session persistence): [`./auth.md`](./auth.md)
+- **Local testnet:** [`./testing-and-testnet.md`](./testing-and-testnet.md)
+- **Data schemas:** [`./app-specs.md`](./app-specs.md)
+- **Rust SDK:** [`./sdk-rust.md`](./sdk-rust.md)
 
-> **Version:** latest published is **0.9.3** (dist-tag `latest`) — what `npm install
-> @synonymdev/pubky` resolves to today and what this page is anchored on. Pubky is pre-1.0;
-> treat APIs as **unstable**.
+**Upstream (authoritative; this page summarizes, it does not mirror):**
 
-> **Version drift — do NOT code against this.** The `pubky-homeserver` `main` checkout (binding source,
-> `examples/javascript/*.mjs`, `pkg/README.md`) is a dev HEAD **ahead of 0.9.3** with a different,
-> **unpublished** API: (a) `signer.signup(homeserver, token?)` returns `Promise<void>` and you
-> must then call `signer.signin(clientId)`; (b) `signin(clientId)` / `signinBlocking(clientId)`
-> **require** a `clientId`; (c) `startAuthFlow` / `resumeAuthFlow` are split into
-> `startCookieAuthFlow` + `startGrantAuthFlow` and `resumeCookieAuthFlow` + `resumeGrantAuthFlow`;
-> (d) grant-session persistence via `session.exportSecret()` + `pubky.restoreSession()`, with
-> `session.export()` demoted to legacy cookie sessions. **None of this is in 0.9.3.** Trust the
-> 0.9.3 surface (published `.d.ts`, KB snippets) for what you installed.
+- **Typings:** [`pubky.d.ts` @ 0.12.0](https://unpkg.com/@synonymdev/pubky@0.12.0/pubky.d.ts), the exact surface `npm install` gives you. Full member lists for `Signer`, `Session`, `SessionStorage`, `PublicStorage` live here.
+- **API docs:** [TypeDoc](https://pubky.github.io/pubky-homeserver/js-sdk-typedoc/), rebuilt on every `v*` tag.
+- **Package README:** [README @ v0.12.0](https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/bindings/js/pkg/README.md)
+- **Runnable programs:** [`examples/javascript`](https://github.com/pubky/pubky-homeserver/tree/main/examples/javascript)
+- **CI type-checked snippets:** [`pubky-knowledge-base-v2/snippets/js/src`](https://github.com/pubky/pubky-knowledge-base-v2/tree/main/snippets/js/src)
+
+If a signature here looks stale, trust the `.d.ts` for your installed version.
+
+> **Version:** this page targets **0.12.0** (npm dist-tag `latest`, released 2026-09-14 from `pubky-homeserver` tag `v0.12.0`). Earlier releases: 0.11.0, 0.10.0, 0.9.3. Do not install the other dist-tags (`alpha` = 0.10.0-alpha.0, `next` = stale 0.6.0-rc.7). Pubky is pre-1.0: treat all APIs as **unstable**.
+>
+> **Drift:** `pubky-homeserver` `main` adds a `Client` config key `maxErrorBodyBytes` that is **not in 0.12.0**; do not use it. The KB snippets are type-checked against **0.10.0** (not executed); the APIs they use (`signup` → void, `signin(clientId)`, `startGrantAuthFlow`) are unchanged in 0.12.0. Snippets marked "Verified" below were type-checked and executed against 0.12.0 on a local testnet.
 
 ## Install and runtime
 
@@ -37,61 +28,33 @@ When a signature here looks stale, trust the published `.d.ts` for the version y
 npm install @synonymdev/pubky
 ```
 
-- Works in **browsers** and **Node 20+** (Node needs `undici` fetch + WebCrypto, both standard on
-  20+).
-- Ships both **ESM** and **CommonJS**; TypeScript typings (generated via `tsify`) are bundled —
-  no `@types` package needed.
+- **Runtimes:** browsers and **Node 20+** (needs `undici` fetch and WebCrypto). `package.json` has no `engines` field, so npm will not enforce the Node version.
+- **Modules:** ESM (`import { Pubky } from "@synonymdev/pubky"`) and CJS (`require`). TypeScript typings bundled. Only runtime dependency: `fetch-cookie`.
+- **No WASM init step.** The package instantiates the WASM module before exposing any API. Do not call `init()` or await anything first; long-polling calls (`authFlow.awaitApproval()`, `tryPollOnce()`) wait for readiness themselves.
+- **Create one shared `Pubky` facade** and pass it around (context/props). Do not create one per request: each facade reinitializes its transports.
+- **Freeing WASM objects:** exported classes have `free()` and `[Symbol.dispose]()`. GC handles typical apps; call `free()` in long-running workers that create many short-lived instances.
 
-```js
-// ESM
-import { Pubky } from "@synonymdev/pubky";
-// CommonJS
-const { Pubky } = require("@synonymdev/pubky");
-```
+## The facade
 
-## Initialize the facade
+| Constructor | Use |
+|---|---|
+| `new Pubky()` | Mainnet, default public PKARR relays |
+| `Pubky.testnet(host?)` | Local testnet. `host` defaults to `"localhost"`. Pass a **hostname or IP** (`"127.0.0.1"`, `"docker-host"`), not a URL. PKARR relay becomes `http://<host>:15411`. |
+| `Pubky.withClient(client)` | Custom `Client` (relays, timeout) |
 
-**WASM is auto-initialized.** The npm package bundles the WebAssembly module and instantiates it
-*before* exposing any API — there is **no** manual `init()` / `await` step. This avoids the
-wasm-pack pitfall where a relay long-poll fires before the module finishes instantiating. Just
-import and construct:
-
-```js
-import { Pubky } from "@synonymdev/pubky";
-
-const pubky = new Pubky();
-```
-
-Construction variants (published 0.9.3 `.d.ts`):
-
-- `new Pubky()` — mainnet PKARR defaults.
-- `Pubky.testnet(host?)` — local dev. `host` is a bare **hostname**, not a URL; it defaults to
-  `localhost` and derives `http://<host>:15411/` internally (testnet ports are already
-  15411/15412). Pass a hostname for Docker/custom (`Pubky.testnet("docker-host")`) — never a full
-  URL (a URL corrupts the derived host and breaks PKDNS resolution). See
-  [`./testing-and-testnet.md`](./testing-and-testnet.md).
-- `Pubky.withClient(client)` — wrap a hand-built `Client` (the relay/timeout escape hatch below).
-
-```js
-import { Pubky } from "@synonymdev/pubky";
-
-const pubky = Pubky.testnet();
-```
-
-**Reuse one shared `Pubky`** across the app (React context / prop-drilling), not one per request
-— a fresh instance reinitializes transports. The testnet homeserver pubkey used across the JS
-examples (derived from the all-zeros secret) is
-`pubky8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo`; local-dev details live in
-[`./testing-and-testnet.md`](./testing-and-testnet.md).
+- `pubky.signer(keypair)` → `Signer`. Use it instead of `Signer.fromKeypair`.
+- Getters: `pubky.client`, `pubky.publicStorage`, `pubky.browserSessionStore`. `Client.testnet(host?)` also exists.
+- Testnet ports and setup: [`./testing-and-testnet.md#standalone-local-testnet`](./testing-and-testnet.md#standalone-local-testnet), [`./testing-and-testnet.md#js-against-the-local-testnet`](./testing-and-testnet.md#js-against-the-local-testnet).
 
 ## WASM needs PKARR relays
 
-Browsers/WASM **cannot speak the Mainline DHT directly** (the DHT runs over UDP), so PKARR
-resolve/publish must go through an HTTP relay. `new Pubky()` is pre-wired with default mainnet
-relays, so the common case needs **no config**. To override relays (or set a request timeout),
-build a `Client` and wrap it — import both `Pubky` and `Client` from the package:
+Browsers/WASM cannot reach the UDP Mainline DHT, so every PKARR resolve and publish goes through **HTTPS PKARR relays**. `new Pubky()` already uses pkarr's defaults (`https://pkarr.pubky.app`, `https://pkarr.pubky.org`); the common case needs no config. General model: [`./concepts.md#pkarr-resolution`](./concepts.md#pkarr-resolution).
+
+Override the relays (from KB `troubleshooting.ts`; Verified):
 
 ```js
+import { Client, Pubky } from "@synonymdev/pubky";
+
 const client = new Client({
   pkarr: {
     relays: ["https://pkarr.pubky.org"],
@@ -101,245 +64,246 @@ const client = new Client({
 const pubky = Pubky.withClient(client);
 ```
 
-The `pkarr` block also accepts `requestTimeout` (ms, camelCase). The *why* (PKARR resolution over
-relays) is canonical — see [`./concepts.md#pkarr-resolution`](./concepts.md#pkarr-resolution).
+Config shape (0.12.0): `{ pkarr?: { relays?: string[]; requestTimeout?: number } }`. `requestTimeout` is milliseconds, default 2000.
 
-## Quick start (end-to-end)
+- **`relays` replaces the default list; it does not append.** An invalid relay URL throws `InvalidInput` at construction.
+- **Use `requestTimeout` (camelCase).** The 0.12.0 JSDoc on `new Client` wrongly shows `request_timeout`. TypeScript rejects that key in an object literal; in plain JS it is silently ignored and the 2000 ms default applies. A negative `requestTimeout` throws.
+- **Do not pass `relays: []`.** pkarr rejects an empty relay list on every target (not only WASM), so construction throws `InternalError`.
+- **PKARR relays are not the HTTP relay.** The HTTP relay carries `pubkyauth` messages (SDK default `https://httprelay.pubky.app/inbox`). Set it via `startGrantAuthFlow(..., { clientId, relay })`, never in `pkarr.relays`. See [`./auth.md#relays`](./auth.md#relays).
+
+## Quick start (testnet, end to end)
+
+Creates an identity, signs up, signs in, writes and reads. From KB `getting-started.ts`; Verified. Needs a running local testnet; the homeserver key is the fixed testnet homeserver.
 
 ```js
-import { Pubky, Keypair } from "@synonymdev/pubky";
+import { Keypair, Pubky, PublicKey } from "@synonymdev/pubky";
 
-// Create client and signer
-const pubky = new Pubky();
-const signer = pubky.signer(Keypair.random());
+const pubky = Pubky.testnet();
 
-// Sign up (pass signup token for gated homeservers, null for open/testnet)
-const session = await signer.signup(homeserverPk, null);
+const keypair = Keypair.random();
+const signer = pubky.signer(keypair);
 console.log("Your pubky:", signer.publicKey.z32());
 
-// Store data
-await session.storage.putJson("/pub/myapp/profile", {
-  name: "Alice",
-  bio: "Building on Pubky!",
-  avatar: "https://example.com/avatar.jpg",
-});
+const homeserver = PublicKey.from(
+  "pubky8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo",
+);
 
-// Retrieve data
-const profile = await session.storage.getJson("/pub/myapp/profile");
-console.log("Profile:", profile);
+await signer.signup(homeserver, null);
 
-// List directory
-const files = await session.storage.list("/pub/myapp/");
-console.log("Files:", files);
+const session = await signer.signin("myapp.example");
 
-// Sign out
-await session.signout();
+const path = "/pub/hello-world/data.json";
+await session.storage.putJson(path, { message: "Hello Pubkyverse!" });
+
+const data = await session.storage.getJson(path);
 ```
 
-## The type model
-
-- `pubky.signer(keypair)` → **`Signer`** — the key holder; exposes `publicKey: PublicKey` and
-  `pkdns: Pkdns`.
-- `signer.signup(...)` / `signer.signin()` → **`Session`** — the authenticated per-identity API.
-
-Two storage surfaces share one read API:
-
-- `session.storage` → **`SessionStorage`** — read **and write** your **own** data, with
-  **absolute** `/pub/...` paths.
-- `pubky.publicStorage` → **`PublicStorage`** — **read-only** access to **anyone's** public data,
-  using **addressed** paths (`pubky<user>/pub/...` preferred, or `pubky://<user>/pub/...`). No
-  auth, no writes.
-
-This write-own vs read-public split is canonical — see [`./concepts.md`](./concepts.md). For the
-authoritative method surface of each type, read the published
-[`pubky.d.ts`](https://unpkg.com/@synonymdev/pubky@0.9.3/pubky.d.ts) rather than relying on a
-copied table here.
+First smoke test: [`examples/javascript/6-check-testnet.mjs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/javascript/6-check-testnet.mjs) runs signup, signin, write, read and signout without needing public PKDNS resolution.
 
 ## Sign up and sign in
 
-Signatures (published 0.9.3 `.d.ts`), all `async`:
+Key `Signer` signatures (0.12.0, all async; full list in the `.d.ts`):
 
-- `Signer.signup(homeserver: PublicKey, signup_token?: string | null): Promise<Session>`
-- `Signer.signin(): Promise<Session>`
-- `Signer.signinBlocking(): Promise<Session>`
+- `signup(homeserver: PublicKey, signupToken?: string | null): Promise<void>` creates the account and publishes PKDNS. **Returns no session.**
+- `signin(clientId: string): Promise<Session>` publishes PKDNS in the background (fast path).
+- `signinBlocking(clientId: string): Promise<Session>` waits for the PKDNS publish.
+- `signupCookie` / `signinCookie` / `signinCookieBlocking` are **deprecated and insecure** cookie auth. Do not use them.
 
-**`signup` returns a usable `Session` in 0.9.3** — you do **not** need a separate `signin` call
-(that's a dev-HEAD change; see the drift note). Pass `null` for `signup_token` on open/testnet
-homeservers, an invite token for gated ones (see [`./auth.md`](./auth.md)).
+Gotchas:
 
-`signin()` is **fast** — it refreshes/publishes PKDNS in the background. `signinBlocking()` waits
-for PKDNS to be discoverable (~3–5s); use it when the user's homeserver must be resolvable
-immediately. Both take **no arguments** in 0.9.3:
+- **Always call `signin(clientId)` after `signup()`** (breaking since 0.10). `signin()` with no argument is the removed 0.9.x form and TypeScript rejects it. Older guides (including pubky-ai-kit) show `const session = await signer.signup(...)` and `signin()`; both are wrong for 0.12.0.
+- **`clientId`:** domain-like app identifier (`"myapp.example"`), non-empty, ≤ 253 chars; the user sees it in their grant and session list. An invalid `clientId` throws **`AuthenticationError`**, not `InvalidInput`.
+- **Existing account:** signup rejects with `RequestError`, `data.statusCode === 409`. Catch that status to make signup idempotent.
+- **Signup tokens:** failures are `RequestError`, **not** `AuthenticationError` (the `.d.ts` JSDoc is wrong): `statusCode` 401 for an invalid or already-used token (tokens are single-use), 400 when the homeserver requires a token and none was sent. Pass `null` on open homeservers. See [`./auth.md#signup-tokens`](./auth.md#signup-tokens).
+- **Signer sign-in is a dev shortcut.** It needs the user's **secret key** and grants **root capabilities**. For production, use Pubky Ring: `startGrantAuthFlow` with scoped capabilities. See [`./auth.md#third-party-app-flow-js`](./auth.md#javascript).
 
-```js
-const signer = pubky.signer(keypair);
+## Session
 
-// Fast: PKDNS refresh happens in the background
-const session = await signer.signin();
+- `session.info` → `{ publicKey, capabilities: string[] }`; capabilities are normalized (e.g. `"/pub/app/:rw"`).
+- `session.storage` → `SessionStorage`. `session.grant` → grant session or undefined. `session.cookie` is deprecated.
+- `session.signout()` invalidates the session server-side. Afterwards, writes and `/priv` reads fail with 401, but **`/pub` reads still succeed** (`/pub` is public). A second `signout()` is a no-op; `info` stays readable.
+- `session.exportLocalSecret()` returns a **bearer-equivalent secret**. Treat it like a password.
 
-// Blocking: waits for PKDNS to be discoverable (~3-5s)
-// Use this when you need the user's homeserver to be resolvable immediately
-const sessionBlocking = await signer.signinBlocking();
-```
+Restoring:
 
-`session.signout()` invalidates the server session — subsequent storage calls then fail. Session
-owner is `session.info.publicKey`; granted capabilities are `session.info.capabilities`
-(`string[]`).
+- **Node / a secret store you control:** `pubky.restoreSession(exported)` accepts an `exportLocalSecret()` value (or a legacy cookie export) and mints a fresh short-lived bearer.
+- **Browsers:** use `pubky.browserSessionStore.save / list / restore` (IndexedDB).
+  - **Delegated browser grant sessions** (the `startGrantAuthFlow` default when the runtime supports non-extractable PoP keys) cannot export raw secrets via `exportLocalSecret()`; they **must** use `browserSessionStore`.
+  - Local sessions saved to `browserSessionStore` still store bearer-equivalent secrets in IndexedDB.
+- `session.export()` and `Session.restore()` are deprecated.
+
+Lifecycle and persistence semantics: [`./auth.md#session-lifecycle`](./auth.md#session-lifecycle), [`./auth.md#persisting-a-session`](./auth.md#persist-and-restore).
 
 ## Storage operations
 
-`SessionStorage` (read/write) and `PublicStorage` (read-only) share these read helpers:
-`get(→Response)`, `getJson`, `getText`, `getBytes(→Uint8Array)`, `exists(→boolean)`,
-`stats(→ResourceStats|undefined)`, `list`. `SessionStorage` adds the writes: `putJson`,
-`putText`, `putBytes`, and `delete`. All are `async` and throw `PubkyError`. Use `get()` for the
-raw `Response` when you need streaming or headers.
+Two surfaces; every method is async and throws `PubkyError`. Own data vs public reads: [`./concepts.md#own-data-vs-another-users-data`](./concepts.md#own-data-vs-another-users-data).
 
-Put / get / delete on your **own** storage (absolute `/pub/...` path):
+| Surface | Access | Path type | Methods |
+|---|---|---|---|
+| `session.storage` | Read/write **own** data | `Path` = `` `/pub/${string}` \| `/priv/${string}` `` | reads + `putJson` / `putText` / `putBytes` (→ `void`), `delete` (file or empty directory) |
+| `pubky.publicStorage` | Read-only, **anyone's** data, no auth | `Address` = `` `pubky${string}/pub/${string}` \| `pubky://${string}/pub/${string}` `` | reads only |
+
+Reads on both: `get` (→ `Response`, streamable), `getJson`, `getText`, `getBytes`, `exists`, `stats`, `list`.
+
+`SessionStorage` overview (from the 0.12.0 README; Verified):
 
 ```js
-// Write JSON
-await session.storage.putJson("/pub/myapp/profile", profile);
+const s = session.storage;
 
-// Read JSON
-const profile = await session.storage.getJson("/pub/myapp/profile");
+// Writes
+await s.putJson("/pub/example.com/data.json", { ok: true });
+await s.putText("/pub/example.com/note.txt", "hello");
+await s.putBytes("/pub/example.com/img.bin", new Uint8Array([1, 2, 3]));
+
+// Reads
+const response = await s.get("/pub/example.com/data.json"); // -> Response (stream it)
+await s.getJson("/pub/example.com/data.json");
+await s.getText("/pub/example.com/note.txt");
+await s.getBytes("/pub/example.com/img.bin");
+
+// Metadata
+await s.exists("/pub/example.com/data.json");
+await s.stats("/pub/example.com/data.json");
+
+// Listing (session-scoped absolute dir)
+await s.list("/pub/example.com/", null, false, 100, false);
 
 // Delete
-await session.storage.delete("/pub/myapp/profile");
+await s.delete("/pub/example.com/data.json");
 ```
 
-Read **another** user's public data, unauthenticated, via an addressed path. `userPk` must be the
-raw **z32 string** (not a `PublicKey` object — passing the object stringifies to a doubled `pubky`
-prefix):
+Public read, adapted from [`examples/javascript/3-storage.mjs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/javascript/3-storage.mjs) (`userPk` is a `PublicKey`; Verified with `Pubky.testnet()`):
 
 ```js
-const text = await pubky.publicStorage.getText(
-  `pubky://${userPk}/pub/myapp/profile`,
-);
+import { Pubky } from "@synonymdev/pubky";
+
+const pubky = new Pubky(); // or Pubky.testnet()
+const user = userPk.z32();
+
+const exists = await pubky.publicStorage.exists(`pubky${user}/pub/my-cool-app/hello.txt`);
+const stats = await pubky.publicStorage.stats(`pubky${user}/pub/my-cool-app/hello.txt`); // ResourceStats | undefined
+const text = await pubky.publicStorage.getText(`pubky${user}/pub/my-cool-app/hello.txt`);
 ```
 
-**Path rules.** `SessionStorage` paths are typed `` `/pub/${string}` `` — TypeScript **rejects**
-anything not under `/pub/` at compile time. `PublicStorage` addresses are typed
-`` `pubky${string}/pub/${string}` | `pubky://${string}/pub/${string}` ``.
+- **In TypeScript, write the address template literal inline** (or annotate `const resource: Address = ...`). A plain `` const resource = `pubky${...}/pub/...` `` widens to `string` and fails with TS2345.
+- Public reads need the user's PKDNS record to resolve. A brand-new testnet user may not resolve yet.
+
+### Paths and addresses
+
+Path rules: [`./concepts.md#path-rules`](./concepts.md#path-rules). Key formats: [`./concepts.md#public-key-string-formats`](./concepts.md#public-key-string-formats).
+
+- **`SessionStorage` paths are absolute.** TypeScript rejects `"data.json"` and `"/myapp/data.json"`. If a cast lets one through, writes outside `/pub/` and `/priv/` fail with 403 `RequestError`.
+- **Namespace app data** under a domain-like folder (`/pub/example.com/`). The `/pub` layout is **not stabilized**. pubky.app schemas and IDs: [`./app-specs.md`](./app-specs.md).
+- **Build `Address` as** `` `pubky${pk.z32()}/pub/...` `` or `` `${pk.toString()}/pub/...` `` (`toString()` already includes `pubky`).
+  - **Wrong:** `` `pubky${pk.toString()}` `` (double prefix), `` `pubky://${pk.toString()}` ``, or `` `${pk.z32()}/pub/...` `` (no prefix: throws `RequestError` with no `statusCode`).
+- **`Address` covers `/pub` only**; you cannot read `/priv` through `publicStorage`.
+- **`/priv/` is ALPHA. Do not use it in production.** Typed in 0.12.0; a root-capability session can write, read and delete under it. Its APIs may change or disappear (v0.10.0 release notes). It is access-controlled but **not encrypted**: the homeserver operator can read and write it. See [`./shipped-vs-planned.md#no-private-encrypted-or-guarded-storage`](./shipped-vs-planned.md#no-private-encrypted-or-guarded-storage) and [`PRIVATE_STORAGE.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/PRIVATE_STORAGE.md).
+
+### Metadata: `exists` and `stats`
+
+- **`exists(path)`** sends HEAD; returns `false` on 404/410, does not throw.
+- **`stats(path)`** returns `ResourceStats | undefined` — `undefined` (not `null`) when missing, does not throw.
+- **`ResourceStats` keys are camelCase and all optional:** `contentLength`, `contentType`, `lastModifiedMs` (Unix epoch ms), `etag` (opaque, may be absent; compare to detect changes).
+- **The README is wrong here** (snake_case keys, `| null`). Trust the `.d.ts`.
+
+## Listing and pagination
+
+Same signature on both surfaces:
+
+```
+list(path | address, cursor?: string | null, reverse?: boolean | null,
+     limit?: number | null, shallow?: boolean | null): Promise<string[]>
+```
+
+- **Returns** full `pubky://<z32>/...` URL strings.
+- **The directory must end with `/`.** Otherwise the SDK throws `RequestError` before sending, with no `data.statusCode`.
+- **`cursor`** is exclusive; a suffix (`<z32>/pub/example.com/a.txt`) or a full URL gives identical results. To page forward, pass the **last URL returned**.
+- **`reverse: true`** lists lexicographically last entries first; the cursor then pages backwards.
+- **`shallow: true`** lists first-level entries only; directories come back with a trailing `/`.
+- **Omitting `limit` does not return everything.** `pubky-homeserver` defaults to **100** and caps at **1000**; other implementations may differ. Always paginate with a cursor.
+
+Cursor loop (Verified: 123 files collected over 3 pages, no duplicates):
 
 ```js
-await session.storage.putText("/pub/myapp/data.json", data);
-
-// Invalid paths:
-// - "data.json"
-// - "/myapp/data.json"
+// Paginated listing
+let cursor = null;
+const allFiles = [];
+let batch;
+do {
+  batch = await session.storage.list(dirPath, cursor, false, 50);
+  allFiles.push(...batch);
+  cursor = batch.length > 0 ? batch[batch.length - 1] : null;
+} while (cursor && batch.length === 50);
 ```
 
-0.9.3's `Path` allows **only** `/pub/` — it does **not** include `/priv/`. Private storage is
-**planned, not shipped** (writes outside `/pub/` return 403) — honor
-[`./shipped-vs-planned.md#no-private-encrypted-or-guarded-storage`](./shipped-vs-planned.md#no-private-encrypted-or-guarded-storage).
-The `/pub` layout is not stabilized; for `pubky.app` record schemas, IDs, and path conventions
-see [`./app-specs.md`](./app-specs.md).
-
-## Pagination
-
-`list` returns `Promise<string[]>` of `pubky://…` URLs (same shape on both surfaces):
-
-```ts
-list(path, cursor = null, reverse = false, limit?, shallow = false): Promise<string[]>
-```
-
-- The directory path/address **must end with `/`**.
-- `cursor` — a suffix or full URL to start **after** (exclusive); pass the **last returned URL**
-  to page forward.
-- `reverse` (default `false`) — `true` lists lexicographically-last / newest first.
-- `limit` — `u16` cap on entries.
-- `shallow` (default `false`) — `true` lists only first-level entries.
-
-```js
-const entries = await session.storage.list(
-  "/pub/myapp/posts/",
-  null,
-  false,
-  20,
-);
-
-for (const url of entries) {
-  console.log(url);
-}
-```
-
-## Metadata: exists and stats
-
-`exists(path)` is a lightweight HEAD (`→ boolean`). `stats(path)` returns
-`ResourceStats | undefined` (`undefined` when the resource doesn't exist) without downloading the
-body. Both also work on `publicStorage`.
-
-`ResourceStats` fields are **camelCase**, all optional: `{ contentLength?: number, contentType?:
-string, lastModifiedMs?: number, etag?: string }`. `contentLength` equals `getBytes(...).length`;
-`lastModifiedMs` is Unix epoch **milliseconds**; `etag` is opaque (compare values to detect
-updates).
-
-```js
-// Check if a resource exists (lightweight HEAD request)
-const exists = await session.storage.exists("/pub/myapp/profile");
-
-// Get resource metadata without downloading the body
-const stats = await session.storage.stats("/pub/myapp/profile");
-if (stats) {
-  console.log("Size:", stats.contentLength);
-  console.log("Type:", stats.contentType);
-  console.log("ETag:", stats.etag);
-}
-
-// Also available on public storage
-const publicExists = await pubky.publicStorage.exists(
-  `pubky://${userPk}/pub/myapp/profile`,
-);
-```
+`dirPath` must end with `/`, e.g. `"/pub/example.com/"`.
 
 ## Error handling
 
-Every async method throws a structured `PubkyError extends Error` with `name` (machine-readable),
-`message` (human-readable), and optional `data` (structured context). The `PubkyErrorName` union
-has **six** variants — switch on `error.name`:
+Every SDK error is a real `Error` (`instanceof Error` holds) with `name: PubkyErrorName`, `message: string`, `data?: unknown`.
+
+**Branch on `error.name`, never on message text.** The README lists five names and omits `ClientStateError`; the `.d.ts` union has all six.
+
+| `name` | Typical causes |
+|---|---|
+| `RequestError` | HTTP/server status errors (`data.statusCode`), including signup-token failures; network failures; JSON decoding; SDK-side validation (e.g. missing trailing `/` on `list`) |
+| `InvalidInput` | Malformed URLs or public keys, bad JS values, invalid relay URLs, invalid grant id, capability parse errors (`data.invalidEntries: string[]`) |
+| `AuthenticationError` | Auth failures, AuthToken verification, invalid `clientId` |
+| `PkarrError` | DHT/relay resolution failures, including `getHomeserverOf` and sign-in, grant exchange or event streams that resolve a homeserver internally |
+| `ClientStateError` | Corrupt recovery file or wrong passphrase |
+| `InternalError` | Client build errors (e.g. `relays: []`), unknown JS errors |
+
+For server HTTP errors, `error.data` is `{ statusCode: number }`:
+
+| Status | Meaning |
+|---|---|
+| 400 | Signup without a token on a homeserver that requires one |
+| 401 | No valid session (e.g. write after signout), or invalid / already-used signup token |
+| 403 | Path outside `/pub/` and `/priv/`, another user's data, or no covering capability |
+| 404 | `getJson` / `getText` / `getBytes` on a missing or deleted path |
+| 409 | Signup for an existing user |
+| 429 | Rate limited |
+
+**Detecting a 404** (adapted from the README, whose version omits the `pubky` prefix and never reaches the 404 branch; `pk` is a `PublicKey`, `publicStorage` is `pubky.publicStorage`; Verified):
 
 ```ts
 try {
-  const text = await session.storage.getText("/pub/myapp/data");
-  console.log("Retrieved:", text);
+  await publicStorage.getJson(`pubky${pk.z32()}/pub/example.com/missing.json`);
 } catch (e) {
-  const error = e as import("@synonymdev/pubky").PubkyError;
-  switch (error.name) {
-    case "RequestError":
-      console.error("Network or server error:", error.message);
-      break;
-    case "InvalidInput":
-      console.error("Invalid input:", error.message);
-      break;
-    case "AuthenticationError":
-      console.error("Authentication failed:", error.message);
-      break;
-    case "PkarrError":
-      console.error("PKARR resolution failed:", error.message);
-      break;
-    case "ClientStateError":
-      console.error("Client state error:", error.message);
-      break;
-    case "InternalError":
-      console.error("Internal SDK error:", error.message);
-      break;
+  const error = e as PubkyError;
+  if (
+    error.name === "RequestError" &&
+    typeof error.data === "object" &&
+    error.data !== null &&
+    "statusCode" in error.data &&
+    typeof (error.data as { statusCode?: number }).statusCode === "number" &&
+    (error.data as { statusCode?: number }).statusCode === 404
+  ) {
+    // handle not found
   }
 }
 ```
 
-For server `RequestError`s, `error.data` carries `{ statusCode: number }` (e.g. 404, 429) — read
-it to branch on HTTP status, e.g. backing off on rate limits:
+**Retrying on 429** (KB `troubleshooting.ts`; Verified for the success and rethrow paths — the 429 backoff branch was type-checked only, since the testnet could not be made to rate-limit):
 
-```js
-function statusCodeOf(error) {
-  const data = error.data;
+```ts
+import type { Path, PubkyError, Session } from "@synonymdev/pubky";
+
+function statusCodeOf(error: unknown): number | undefined {
+  const data = (error as PubkyError).data;
   if (typeof data !== "object" || data === null || !("statusCode" in data)) {
     return undefined;
   }
-  return data.statusCode;
+
+  return (data as { statusCode?: number }).statusCode;
 }
 
-async function putWithRetry(session, path, data, retries = 3) {
+async function putWithRetry(
+  session: Session,
+  path: Path,
+  data: string,
+  retries = 3,
+): Promise<void> {
   for (let i = 0; i < retries; i++) {
     try {
       return await session.storage.putText(path, data);
@@ -351,46 +315,70 @@ async function putWithRetry(session, path, data, retries = 3) {
       throw error;
     }
   }
+
   throw new Error("PUT failed after retrying rate limits");
 }
 ```
 
-## Public-key string formats
+`pubky-homeserver` sends `Retry-After` on 429 since v0.12.0, but `PubkyError.data` carries only `statusCode` (no response headers), so storage methods cannot read it. Use a fixed backoff as above.
 
-`publicKey.z32()` → raw z-base-32 (use for **hostnames**, DNS `_pubky.<key>` subdomains, HTTP
-headers, URL params, DB keys). `publicKey.toString()` → `pubky<z32>` **display** form (logs / UI
-only). `PublicKey.from(str)` parses either form. **Don't mix the two** — this distinction is
-canonical, see
-[`./concepts.md#public-key-string-formats`](./concepts.md#public-key-string-formats).
+**Troubleshooting:**
+
+- `PkarrError: No HTTPS endpoints found`: testnet not running or not ready, or the key is not yet published/resolvable.
+- 401 / 403: see the status table.
+
+## Keys and homeserver lookup
+
+- **`Keypair`:** `Keypair.random()`; `Keypair.fromSecret(secret)` needs a **32-byte** `Uint8Array` (throws otherwise); `keypair.secret()`, `keypair.publicKey`. Recovery files: `createRecoveryFile(passphrase)` / `Keypair.fromRecoveryFile(bytes, passphrase)`; wrong passphrase throws `ClientStateError`. See [`./auth.md#recovery-files`](./concepts.md#identity-the-ed25519-keypair).
+- **`PublicKey.from(value)`** accepts raw z32 or `pubky<z32>`; it **rejects `pubky://...`** with `InvalidInput`.
+  - `toString()` → `pubky<z32>` (display).
+  - `z32()` → raw z32 (hostnames, headers, query params, JSON, DB keys).
+  - `toUint8Array()` → 32 raw bytes.
+- **`pubky.getHomeserverOf(user): Promise<PublicKey | undefined>`** resolves `undefined` when the user has no homeserver record and **rejects with `PkarrError`** when resolution fails. On testnet, a fresh unpublished key rejects (message contains "no responses") instead of resolving `undefined`. Handle both.
+
+Homeserver lookup cache (KB `troubleshooting.ts`; Verified). The cache is keyed by the exact input string, so `z32` and `pubky<z32>` forms get separate entries:
+
+```ts
+import { Pubky, PublicKey } from "@synonymdev/pubky";
+
+const homeserverCache = new Map<string, PublicKey>();
+
+async function getCachedHomeserver(
+  pubky: Pubky,
+  userPublicKey: string,
+): Promise<PublicKey | undefined> {
+  const cached = homeserverCache.get(userPublicKey);
+  if (cached) return cached;
+
+  const user = PublicKey.from(userPublicKey);
+  const homeserver = await pubky.getHomeserverOf(user);
+
+  if (homeserver) {
+    homeserverCache.set(userPublicKey, homeserver);
+  }
+
+  return homeserver;
+}
+```
 
 ## Logging
 
-`setLogLevel(level)` bridges Rust `log` output to the browser/Node console. Levels:
-`"error" | "warn" | "info" | "debug" | "trace"`. Use `"debug"`/`"trace"` to see PKARR resolution,
-network requests, and storage ops.
+`setLogLevel(level)` routes Rust log output to the console. Levels: `"error"`, `"warn"`, `"info"`, `"debug"`, `"trace"`. It throws on an invalid level **and on any second call** (logger already initialized); wrap it in try/catch where hot reload may call it twice.
+
+From KB `troubleshooting.ts`; Verified:
 
 ```js
+import { setLogLevel } from "@synonymdev/pubky";
+
 // Call once at application startup, before creating Pubky or Client instances.
 setLogLevel("debug");
 ```
 
-Call it **once**, before constructing `Pubky` / `Client` — calling it again after the logger is
-initialized **throws**.
+## Raw fetch: `resolvePubky`
 
-## Session persistence
+Rarely needed; the typed storage methods cover most cases.
 
-In 0.9.3, `session.export()` returns a restorable string that serializes **only the public
-`SessionInfo`** — it **contains no secrets** and is meant for `localStorage`. Restore with
-`Session.restore(exported, client?)` or `pubky.restoreSession(exported)`; restore reads/writes no
-secrets and re-validates against the **browser-managed HTTP-only session cookie**, so it works
-only while that cookie is live. (Dev HEAD adds `session.exportSecret()`, which **does** return a
-bearer credential for grant sessions — treat *that* like a password — and demotes `export()` to
-legacy cookie sessions; **neither change is in 0.9.3** — see the drift note.) Full session/auth
-semantics live in [`./auth.md`](./auth.md).
+- **`resolvePubky(identifier)`** converts `pubky<pk>/...` or `pubky://<pk>/...` (same result) into the transport URL `https://_pubky.<pk>/storage/<pk>/<abs-path>`. The `/storage/<owner>` segment is **new in 0.12.0**; 0.10.x and 0.11.x return `https://_pubky.<pk>/<abs-path>`.
+- **Only raw `pubky.client.fetch(url, init)` calls need it.** Since 0.12.0, on homeservers without path-addressed storage, `Client.fetch` falls back to the legacy path plus a `pubky-host` header.
 
-## Escape hatch: `resolvePubky` / raw fetch
-
-`resolvePubky(identifier)` converts a `pubky<pk>/…` or `pubky://<pk>/…` addressed resource into an
-HTTPS transport URL of the form `https://_pubky.<z32-key>/<abs-path>` — needed **only** when
-feeding a raw HTTP `client.fetch()`. Both addressed forms resolve to the same endpoint. Most apps
-use `publicStorage` / `session.storage` and never call this.
+Wire addressing: [`./concepts.md#transport-and-wire-addressing`](./concepts.md#transport-and-wire-addressing).

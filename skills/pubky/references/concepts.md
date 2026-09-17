@@ -1,370 +1,592 @@
 # Pubky protocol concepts
 
-> **CANONICAL.** Single source of truth for this material. The `pubky-mobile` and `pubky-infra` skills link here — never copy.
+> **CANONICAL.** This file is the single source of truth for identity, addressing, PKARR, the homeserver model,
+> and the write/read split. `pubky-mobile`, `pubky-infra`, and the other `pubky` references link here. Link to
+> a section; don't restate it.
 
-Pubky is an open protocol for **per-public-key backends** that make censorship-resistant web
-apps possible. It pairs [PKARR](#pkarr-resolution) — a public-key-based, censorship-resistant
-alternative to DNS — with ordinary web tech, so users own their identity and data while
-developers get web-app availability without operating a central database.
-
-Pubky includes the protocol and its implementations:
-
-1. **The open protocol spec** — public-key auth, capability-based authorization, key/value
-   storage semantics, homeserver discovery via PKARR, and a RESTful API.
-2. **The Pubky Homeserver implementation** — hosts one user's data per public key, exposes the RESTful
-   HTTP API, manages auth/sessions, publishes its own PKARR record, and stores files separately
-   from its PostgreSQL-backed metadata.
-3. **The Pubky SDKs** — Rust (native), JavaScript/WASM, and iOS/Android native bindings.
-
-## The one mental model
-
-Everything in Pubky hangs off this chain. Anchor on it:
+Pubky is an open protocol for **per-public-key backends**: PKARR (public-key DNS on the Mainline DHT) plus
+ordinary HTTP. Resolution always starts from the key:
 
 ```
-User identity (public key)
-  -> PKARR record (Mainline DHT)
-    -> points to a homeserver
-      -> stores the user's data (filesystem, under /pub)
-        -> read/written by apps (via an SDK)
+Ed25519 public key (the identity)
+  -> PKARR record on the Mainline DHT (`_pubky.<z32>`)
+    -> points at the user's homeserver (chosen by the user, changeable)
+      -> stores the user's files under /pub
+         (/priv exists but is ALPHA: not for production, not encrypted from the operator)
+        -> read/written by apps through an SDK
 ```
 
-The key never moves; the homeserver can. Resolution always starts from the public key and
-follows its PKARR record to wherever that user's homeserver currently lives.
+SDKs: Rust [`pubky`](https://docs.rs/pubky), JS/WASM [`@synonymdev/pubky`](https://www.npmjs.com/package/@synonymdev/pubky),
+React Native `@synonymdev/react-native-pubky` (see the `pubky-mobile` skill). Current release: **0.12.0** for
+both (2026-09-14). Knowledge-base snippets are CI-checked against **0.10.0**; the snippets below were
+re-verified on **0.12.0**. Check signatures against docs.rs / TypeDoc for the version you pin.
 
 ## Identity: the Ed25519 keypair
 
-A Pubky identity **is** an Ed25519 keypair the user fully controls — there is no account, no
-password, and no server-side recovery path:
+An identity **is** an Ed25519 keypair. No accounts, no passwords, no server-side recovery.
 
-- The **private key** (a 12-word mnemonic / recovery seed) never leaves the user's device.
-- The **public key** is the user's publicly addressable domain.
-- Lose both the device and the mnemonic and that identity is gone for good — self-custody, like
-  Bitcoin. Each pubky has its own mnemonic.
+- **Apps should not hold user keys.** With Pubky Ring (the reference key manager) and the SDK grant auth flows
+  ([`auth.md`](auth.md)), the private key never leaves Ring; apps get **session tokens** from the homeserver.
+  The SDK builds a signer from any raw `Keypair` (the snippets below do), but by this skill's guidance only a
+  key manager or first-party tool should.
+- **Nothing can be recovered.** Lose the device and the 12-word mnemonic and the identity is gone. Each pubky
+  has its own mnemonic.
+- **A leaked mnemonic is permanent compromise.** The only mitigation is a new pubky.
+- **Never ask users to enter a mnemonic in your app.** Mnemonic fallback is a known exfiltration
+  vulnerability; mnemonics go only into Ring or the user's own homeserver.
+- **JS `Keypair`:** `Keypair.random()`, `Keypair.fromSecret(u8[32])`, `keypair.secret()` (raw 32-byte
+  secret: never log, transmit, or store unencrypted), `keypair.publicKey`,
+  `keypair.createRecoveryFile(passphrase)`, `Keypair.fromRecoveryFile(bytes, passphrase)`.
+  `fromSecret` on a wrong length throws a **plain string**, not a `PubkyError`; don't branch on `error.name`.
 
-Mint a fresh identity with `Keypair::random()` (Rust) / `Keypair.random()` (JS).
-`pubky.signer(keypair)` yields a `PubkySigner` (the key holder that signs); signing in or up
-yields a `PubkySession` (the per-identity, stateful API driver). See
-[`sdk-rust.md`](sdk-rust.md) / [`sdk-js.md`](sdk-js.md) for the full surface and
-[docs.rs/pubky](https://docs.rs/pubky) for the authoritative (drift-prone) Rust API.
-
-Keys are backed up as **passphrase-encrypted recovery files**. In `pubky-common` the helpers are
-`create_recovery_file(&keypair, &passphrase)` and `decrypt_recovery_file`; each SDK exposes
-equivalent bindings (React Native: `createRecoveryFile` / `decryptRecoveryFile`, returning
-Base64). The full auth/recovery handshake lives in [`auth.md`](auth.md).
+Generate a key and write a passphrase-encrypted recovery file:
 
 ```rust
+use anyhow::Result;
+use clap::Parser;
 use pubky_common::crypto::Keypair;
 use pubky_common::recovery_file::create_recovery_file;
+use std::path::PathBuf;
 
-// 1) Generate a fresh keypair
-let keypair = Keypair::random();
-println!("Public key: {}", keypair.public_key());
+#[derive(Parser, Debug)]
+#[command(
+    version,
+    about = "Generate a keypair and save a passphrase-encrypted recovery file"
+)]
+struct Cli {
+    /// Path to write the recovery file
+    #[arg(short, long, default_value = "recovery.key")]
+    output: PathBuf,
+}
 
-// 2) Encrypt and save the recovery file
-let recovery_bytes = create_recovery_file(&keypair, &passphrase);
-std::fs::write(&output_path, &recovery_bytes)?;
+fn main() -> Result<()> {
+    let cli = Cli::parse();
+
+    // 1) Generate a fresh keypair
+    let keypair = Keypair::random();
+    println!("Generated new keypair");
+    println!("Public key: {}", keypair.public_key());
+
+    // 2) Encrypt and save the recovery file
+    println!("Enter a passphrase to encrypt the recovery file:");
+    let passphrase = rpassword::read_password()?;
+
+    println!("Confirm passphrase:");
+    let confirm = rpassword::read_password()?;
+
+    if passphrase != confirm {
+        anyhow::bail!("Passphrases do not match");
+    }
+
+    if passphrase.is_empty() {
+        println!("Warning: You entered an empty passphrase. This is not recommended for a production environment.");
+    }
+
+    let recovery_bytes = create_recovery_file(&keypair, &passphrase);
+    std::fs::write(&cli.output, &recovery_bytes)?;
+    println!("Recovery file written to {}", cli.output.display());
+
+    Ok(())
+}
 ```
 
-<sub>Source: [`pubky-homeserver/examples/rust/keygen.rs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/keygen.rs)</sub>
+<sub>Source: [`pubky-homeserver/examples/rust/keygen.rs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/keygen.rs) (deps: `anyhow`, `clap` derive, `rpassword`, `pubky-common`). Executed on 0.12.0: clippy-clean, and the file decrypts back to the same key. `rpassword::read_password` needs a TTY; piped stdin fails.</sub>
+
+> **Recovery-file caveat (observed in code, not an upstream statement).** Format: spec line
+> `pubky.org/recovery` (decrypt also accepts legacy `pkarr.org/recovery`), newline, then the 32-byte secret
+> encrypted with XSalsa20Poly1305 (random nonce). The key is derived with `Argon2::default()` (argon2id) and a
+> **fixed salt `"recovery"`**: no per-file salt, so the passphrase is the only protection. The example above
+> has two flaws to fix in your code:
+> - It accepts an empty passphrase with only a warning. **Reject empty or weak passphrases.**
+> - `std::fs::write` creates the file with default permissions (0644, world-readable), so any local user can
+>   copy it and brute-force the passphrase offline. **Write recovery files owner-only (0600)**, e.g.
+>   `OpenOptions` + `std::os::unix::fs::OpenOptionsExt::mode(0o600)`.
+>
+> Never publish or share recovery files.
+> ([`recovery_file.rs`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-common/src/recovery_file.rs))
+
+**Sign up once, then sign in.** Rust `PubkySigner::signup(&self, homeserver: &PublicKey, signup_token:
+Option<&str>) -> Result<()>` registers with the homeserver and force-publishes the `_pubky` record. It returns
+**no session**. Then call `signin(client_id: ClientId) -> Result<PubkySession>`, which refreshes the PKDNS
+record in the background. `signin_blocking` waits (~3–5 s) for that refresh, which publishes only if the record
+is stale; use it on first setup when others must find the user immediately. `signup_cookie` / `signin_cookie` /
+`signin_cookie_blocking` are deprecated.
+
+```js
+const pubky = Pubky.testnet();
+
+const keypair = Keypair.random();
+const signer = pubky.signer(keypair);
+console.log("Your pubky:", signer.publicKey.z32());
+
+const homeserver = PublicKey.from(
+  "pubky8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo",
+);
+
+await signer.signup(homeserver, null);
+
+const session = await signer.signin("myapp.example");
+```
+
+<sub>Source (CI type-checked, 0.10.0): [`snippets/js/src/getting-started.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/getting-started.ts). Executed on 0.12.0 against a local testnet. The upstream log line prints raw z32 as "Your pubky"; for anything a person reads, use `signer.publicKey.toString()`. Rust: [docs.rs `PubkySigner`](https://docs.rs/pubky/latest/pubky/struct.PubkySigner.html).</sub>
 
 ### Public-key string formats
 
-Two renderings of the same key, used in different places — **do not mix them**:
+A `PublicKey` has two string forms. **Don't mix them up.**
 
-| Method | Returns | Use for |
+| Call (Rust / JS) | Returns | Use for |
 | :-- | :-- | :-- |
-| `publicKey.toString()` | display form `pubky<z32>` | UI, logs, human-facing references |
-| `publicKey.z32()` | raw z-base-32 string | hostnames, `_pubky.<z32>` DNS names, headers, query params, serde/JSON fields, DB keys |
+| `Display` / `.to_string()` · `publicKey.toString()` | `pubky<z32>` | UI, logs, human-facing IDs, addressed paths (`pubky<z32>/pub/...`) |
+| `.z32()` · `publicKey.z32()` | raw z-base-32, **52 chars**, DNS-safe | Hostnames (`_pubky.<z32>`), `/storage/<z32>/...` segments, legacy `pubky-host` header, query params, serde/JSON, DB keys, cache keys |
 
-The raw z-base-32 public key is **52 characters** (DNS-compatible).
+- **Parsing:** Rust `PublicKey` implements `FromStr` and `TryFrom<&str | &String | String>`; JS
+  `PublicKey.from` accepts raw z32 or `pubky<z32>`.
+- **Gotcha:** JS `PublicKey.from("pubky://…")` **throws** `InvalidInput`. Strip the scheme and path first.
+- **Gotcha:** `/storage/{user}` only matches `^[ybndrfg8ejkmcpqxot1uwisza345h769]{52}$`, so a `pubky`-prefixed
+  key there won't route. Likewise a `pubky<z32>` in a hostname, header, or DB key won't resolve or match.
 
 ## Addressing and the /pub tree
 
-A user's public data is addressed by their public key plus a path under `/pub`. Three forms
-appear, all naming the same resource:
+A resource is a public key plus an **absolute path**. SDK storage APIs take two shapes:
 
-| Form | Example | Where |
+| Form | Example | Pass it to |
 | :-- | :-- | :-- |
-| Addressed (bare, no scheme) | `pubky<pk>/pub/app/file.json` | preferred public-storage address in SDK APIs |
-| URL / deeplink | `pubky://<pk>/pub/app/file.json` | accepted by SDK parsers; used by CI-verified KB snippets |
-| Session-relative | `/pub/app/file.json` | the *current* signed-in user's own storage |
+| Absolute path | `/pub/my-app/file.json` | **Session storage** (signed-in user's own data) |
+| Address (preferred) | `pubky<z32>/pub/my-app/file.json` | **Public storage** (anyone's public data) |
+| URL | `pubky://<z32>/pub/my-app/file.json` | **Public storage** (also accepted) |
 
-`<pk>` is the z-base-32 public key (usually displayed with the `pubky` prefix). `/pub` is the
-**only** protocol-required top-level directory; every segment after it is app-chosen.
+JS types: `` Path = `/pub/${string}` | `/priv/${string}` `` (session; `/priv` is **alpha**, see
+[storage roots](#storage-roots-and-access)) and
+`` Address = `pubky${string}/pub/${string}` | `pubky://${string}/pub/${string}` `` (public, **always `/pub`**).
+`"data.json"` and `"/myapp/data.json"` are type errors. `@synonymdev/pubky` 0.9.3 and earlier type `/pub` only.
 
-**Own vs. other:** use the session-relative path with `session.storage` (JS) / `session.storage()`
-(Rust) to read or write the **current** user's own data; use the addressed form with
-`pubky.publicStorage` (JS) / `pubky.public_storage()` (Rust) to read **someone else's** public
-data. This own-write vs. public-read distinction is the heart of the
-[homeserver-write vs Nexus-read split](#homeserver-write-vs-nexus-read).
+### Own data vs. another user's data
 
-**Scopes.** By convention the first segment under `/pub` is a *scope*, and one app may touch
-several. Two flavors: an **app-domain** scope for an app's own data (`pubky.app`, `mapky.app`,
-`bitkit.to`), and a **protocol** scope for a cross-app shared standard (`paykit`). Real apps mix
-them — Mapky writes `/pub/mapky.app/*` and reuses `/pub/pubky.app/*`; Bitkit writes
-`/pub/bitkit.to/*` and uses `/pub/paykit/*`. The `pubky.app` social schema (profile, posts,
-tags, follows…) is defined by **pubky-app-specs** — that on-wire data contract is canonical in
-[`app-specs.md`](app-specs.md), not here.
-
-**Path constraints** on the homeserver tenant API:
-
-- Paths must start with `/pub/`. Anything outside `/pub/*` is not reachable today — a
-  `/private/` prefix appears in the API docs only as a **planned (not shipped)** prefix.
-- `GET`/`HEAD` are public (unauthenticated); `PUT`/`DELETE` require a session with a write
-  capability.
-- Max path length **1024 bytes**; allowed characters `a-z A-Z 0-9 - _ / .`.
-
-> The `/pub` layout itself is **not stabilized** — treat the path conventions above as current
-> practice, not a frozen contract.
-
-```js
-// Read another user's public data — addressed (pubky://) form
-const text = await pubky.publicStorage.getText(
-  `pubky://${userPk}/pub/myapp/profile` as Address,
-);
-```
+| You want to… | Rust | JS | Auth |
+| :-- | :-- | :-- | :-- |
+| Read/write **your own** data | `session.storage()` + path | `session.storage` + path | Session with matching capability |
+| Read **anyone's** public data | `pubky.public_storage()` + address | `pubky.publicStorage` + address | None |
 
 ```rust
-// Read another user's public data — Rust takes a (&PublicKey, path) tuple
-let user = PublicKey::try_from(user_public_key).unwrap();
-let resp = pubky
-    .public_storage()
-    .get((&user, "/pub/myapp/profile"))
+let pubky = Pubky::new()?;
+let session = pubky
+    .signer(keypair)
+    .signin(ClientId::new("my-cool-app").unwrap())
     .await?;
-let text = resp.text().await?;
+
+let storage = session.storage();
+storage.put("/pub/my-cool-app/data.txt", "hi").await?;
+let text = storage.get("/pub/my-cool-app/data.txt").await?.text().await?;
+
+// Public (read-only)
+let public = pubky.public_storage();
+
+let file = public
+    .get(format!("{user_id}/pub/example.com/file.bin"))
+    .await?
+    .bytes()
+    .await?;
+
+let entries = public
+    .list(format!("{user_id}/pub/example.com/"))?
+    .limit(10)
+    .send()
+    .await?;
+for entry in entries {
+    println!("{}", entry.to_pubky_url());
+}
 ```
 
-<sub>Sources: [`pubky-knowledge-base-v2/snippets/js/src/sdk.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/sdk.ts), [`snippets/rust/src/lib.rs`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/rust/src/lib.rs)</sub>
-
-## PKARR resolution
-
-**PKARR** (Public-Key Addressable Resource Records) lets self-issued public keys act as
-publicly addressable domains by bridging DNS and p2p overlay networks:
-
-- **Publish:** create a small signed DNS packet (`<=1000` bytes) and store it on the **Mainline
-  DHT** (directly or via an HTTP relay).
-- **Resolve:** query the DHT (directly or via relay) for the key and verify the Ed25519
-  signature yourself.
-- Apps unaware of PKARR can still reach records via **DNS-over-HTTPS (DoH)** to PKARR/PKDNS
-  servers. Clients and servers cache records heavily to spare the DHT.
-
-**SignedPacket layout** — `public-key(32) + signature(64) + timestamp(8) + dns-packet(<=1000)`,
-max **1104 bytes** total. Every packet is Ed25519-signed (authenticity + integrity), published
-to the DHT as a **BEP44 mutable item**, and queried by the SHA1 hash of the public key.
-Supported record types: A, AAAA, CNAME, TXT, and HTTPS/SVCB (RFC 9460).
-
-> DHT (BEP44) storage is **ephemeral** — records degrade over hours to days and must be
-> **republished** (~hourly). Homeservers and relays run republishers (`pkarr-republisher`) to
-> keep user and server keys alive. The DHT is not a storage platform and is heavily cached, so
-> updates are **not real-time**. Backed by Mainline's ~10M-node DHT (BitTorrent), it provides
-> censorship and Sybil resistance (BEP42).
-
-**Homeserver discovery uses two records.** Resolving a user chains through both:
-
-1. The **user's** record publishes `_pubky` as an HTTPS/SVCB alias pointing at the homeserver's
-   public key (signed by the user key, queried as `_pubky.<user-public-key>`).
-2. The **homeserver's** record (signed by the homeserver key) advertises the real endpoints —
-   typically both a direct PubkyTLS endpoint and an ICANN endpoint.
-
-SDK clients resolve the full `_pubky.<user-public-key>` name so the alias chains to the
-homeserver's endpoint records:
-
-```text
-# User packet, signed by the user key, queried as _pubky.<user-public-key>
-_pubky HTTPS 0 <homeserver-public-key>
-
-# Homeserver packet, signed by the homeserver key
-. HTTPS 1 . port=6287
-. A 203.0.113.10
-. HTTPS 10 homeserver.example.com port=443
-```
-
-**Relays and clouds.** Browsers and any UDP-less / firewalled environment must publish and
-resolve through an **HTTP relay** (the DHT runs over UDP). Relays are also needed in major
-clouds (AWS/GCP/Azure) whose IP ranges DHT nodes commonly block — running pkarr/mainline
-directly there often fails, and the fix is relays hosted in smaller providers. **PKDNS** is the
-DNS-server bridge that resolves 52-char public-key domains from the DHT (with ICANN fallback)
-and supports DoH.
-
-**In practice the SDK resolves transparently** — hand it a Pubky URL/resource and it resolves
-the record, picks a transport, and adds the `pubky-host` header. To resolve a user's homeserver
-key explicitly use `pubky.get_homeserver_of(&user)` (Rust, returns `Option`).
-`signin_blocking()` / `signinBlocking()` waits ~3–5s for PKDNS discoverability, whereas
-`signin()` refreshes PKDNS in the background.
-
-The PKARR spec, the full `SignedPacket` format, and the reference implementation live at
-[github.com/pubky/pkarr](https://github.com/pubky/pkarr); see also
-[pkdns](https://github.com/pubky/pkdns) and the [mainline](https://github.com/pubky/mainline)
-DHT client ([docs.rs/mainline](https://docs.rs/mainline)).
-
-## The homeserver model
-
-A **homeserver** is a user's personal data store: it provides data availability and HTTP
-endpoints, validates auth tokens, and manages exactly one user's data per public key. The
-network deliberately allows **many independent homeservers** — that's what improves censorship
-resistance and prevents walled gardens. A user can relocate at will by updating their PKARR
-record. Anyone can run a homeserver on their own terms; the network is currently bootstrapped by
-Synonym's first homeserver and needs more independent operators to fully decentralize. (Operating
-one is the [`pubky-infra`] skill's domain.)
-
-**The app-facing API is file storage only:** HTTP `PUT`/`GET`/`DELETE` (plus `LIST` with
-pagination, `HEAD`/exists, and stats) against `pubky://<pk>/pub/...` paths. Each entry is an
-**opaque byte blob with a MIME type** — typically JSON (pubky-app-specs records), but equally
-images, audio, video, PDFs, ciphertext, anything; there is no protocol-level content-type
-restriction. The default per-request payload limit is **10 MB** (`413` past that), independent
-of operator-defined per-user quotas (Synonym's public homeserver: 1 GB/user, 10 MB/file).
-`LIST` defaults to **100** entries (max **1000**). Homeservers may rate-limit — treat `429` as
-normal and retry with backoff.
-
-**Internally**, a homeserver uses **PostgreSQL for its own metadata only** — users (Ed25519
-pubkey + quota), sessions (capability-scoped auth), entries (per-file path, Blake3 hash, length,
-MIME, timestamps), events (the `PUT`/`DEL` stream consumed by Nexus, Pubky Backup, and other
-subscribers), and signup codes. **User file content is stored separately in a filesystem under
-`/pub/`.** Applications never connect to PostgreSQL — they only ever see the file API.
-PostgreSQL-backed homeservers are a **shipped** feature.
-
-**Two transports.** A homeserver exposes a **PubkyTLS direct endpoint** (TLS with Raw Public
-Keys, RFC 7250 — the public key *is* the identity, no CA chain; verified directly against the
-public key from PKARR) and an **ICANN endpoint** behind a reverse proxy with standard X.509 TLS.
-Native SDK targets (Rust / native mobile, **not** browser/WASM) prefer the PubkyTLS endpoint and
-auto-fall back to ICANN when the direct one is unreachable (NAT, tunnels); browsers/WASM use the
-ICANN HTTPS path from the start. During ICANN fallback the request goes to the ICANN domain with
-the user public key preserved in the **`pubky-host`** header. (PubkyTLS default port in examples:
-`6287`.)
-
-> **Public data only, today.** Current homeservers support only public, unencrypted data under
-> `/pub`. Encrypted data and guarded (access-controlled) storage are **planned, not shipped** —
-> never present `/priv`, encrypted, or guarded storage as available. A trusted operator can
-> currently read, tamper with, or deny-serve all user data (no data signing yet); this is
-> mitigated by **credible exit**, not by cryptography. See
-> [`shipped-vs-planned.md`](shipped-vs-planned.md).
-
-**Credible exit** is built into the architecture: identity follows the keys, not the server.
-PKARR is the authoritative source of truth for identity resolution — the moment a user repoints
-their PKARR record at a new homeserver, the old one **loses authority immediately** and cannot
-impersonate them. Migration today means: sign up on a new homeserver, re-upload data (manual —
-restore and homeserver mirroring are planned, not shipped), then update the PKARR record. **Pubky
-Backup** keeps local one-way copies/snapshots of public `/pub` data to lower the cost of leaving
-(no automatic restore, no tamper detection yet).
-
-## Homeserver-write vs Nexus-read
-
-This is the core architectural point of Pubky. **Writes and reads do not go to the same place.**
-
-- **Writes** go directly to the **author's own homeserver** — authenticated `PUT`/`DELETE` on
-  `/pub/...` via `session.storage`.
-- **Reads** come in two flavors:
-  - **Direct / canonical** — fetch a *known* user's public resource via
-    `publicStorage` / `public_storage` (unauthenticated `GET` on `pubky://<pk>/pub/...`).
-  - **Aggregated / social** — feeds across many users, followers, tags, notifications, search —
-    via a separate indexer, **Pubky-Nexus**, over its hosted `/v0` REST API.
-
-**Nexus never accepts writes.** You never "write to Nexus"; you write to your homeserver and
-Nexus indexes it. The SDK encodes the split as two storage objects: **`SessionStorage`**
-(authenticated, acts *as* the signed-in user — read + write own data) vs. **`PublicStorage`**
-(reads any user's public data, unauthenticated). Rust: `session.storage()` vs.
-`pubky.public_storage()`. JS: `session.storage` vs. `pubky.publicStorage`.
-
-**Event streams are the glue** between homeservers and indexers/backups. On each `PUT` the
-homeserver emits a `PUT` event carrying a cursor (`u64`) and a base64-encoded Blake3 content
-hash (32 bytes); `DELETE` emits `DEL`. Subscribers (Nexus, Pubky Backup, watchers) consume the
-stream from a persisted cursor — they do **not** poll or recursively list `/pub`. Two endpoints:
-`GET /events-stream` (SSE; per-user + path filters, up to 50 users, `user=<z32>:<cursor>` resume
-and `live=true` — the primary client API) and `GET /events/` (paginated feed of all users,
-1000/batch — for indexers and aggregators).
-
-**Pubky-Nexus** is the production-grade indexing/aggregation service that ingests homeserver
-event streams into a high-performance social-graph API powering Pubky App's social features
-(feeds, search, recommendations, notifications, web-of-trust). Components: `nexus-watcher` (event
-aggregator subscribing to homeserver streams), `nexus-webapi` (REST API server, formerly
-`nexus-service`), `nexus-common` (shared lib), `nexusd` (orchestration daemon); backing stores
-Neo4j (the social graph) + Redis (caching); built in Rust on Axum. Clients may optionally verify
-content authenticity directly with homeservers. The concrete `/v0` endpoint catalog is
-drift-prone and lives in [`nexus-api.md`](nexus-api.md); the Swagger UI is the source of truth:
-<https://nexus.pubky.app/swagger-ui/> (staging: <https://nexus.staging.pubky.app/swagger-ui/>).
-
-> The Nexus `/v0` API is explicitly **unstable and breaking-change-prone** (the `/v0` prefix
-> signals instability). Do not hardcode its shapes — link the Swagger and treat responses
-> defensively.
-
-**End-to-end social flow:**
-
-1. The app validates and builds data with pubky-app-specs.
-2. The app writes it to the user's homeserver via the SDK client.
-3. The homeserver stores the file and emits a `PUT` event (cursor + content hash).
-4. Nexus / Pubky Backup / other subscribers consume the event stream.
-5. Nexus updates Neo4j + Redis.
-6. Other users read feeds via the Nexus API **or** read public resources directly via
-   `publicStorage`.
-
-The write path, end to end (create client → signer from a random keypair → signup → write own
-data):
+<sub>Source: [`pubky-sdk/README.md`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/README.md#storage-api-session--public), two `no_run` doctests merged here, so their imports are dropped. Add `use pubky::{ClientId, Keypair, Pubky, PublicKey};` (`ClientId` is **not** in `pubky::prelude`). `keypair: Keypair` and `user_id: PublicKey` are doctest params; `format!("{user_id}")` uses `Display` (`pubky<z32>`), the accepted addressed form. Executed on 0.12.0 against a local testnet (with `Pubky::testnet()` and a prior `signup`). With the `json` feature, session storage also has `put_json` / `get_json`.</sub>
 
 ```js
-import { Pubky, Keypair } from "@synonymdev/pubky";
-
-// Create client and signer
 const pubky = new Pubky();
-const signer = pubky.signer(Keypair.random());
+const keypair = Keypair.random();
 
-// Sign up (pass a signup token for gated homeservers, null for open/testnet)
-const session = await signer.signup(homeserverPk, null);
+// Sign in (user already has an account on a homeserver)
+const signer = pubky.signer(keypair);
+const session = await signer.signin("myapp.example");
 
-// Store data
+// Write data
 await session.storage.putJson("/pub/myapp/profile", {
   name: "Alice",
-  bio: "Decentralized and loving it!",
+  bio: "Building on Pubky!",
 });
 
-// Retrieve data
+// Read data
 const profile = await session.storage.getJson("/pub/myapp/profile");
 ```
 
-<sub>Source: [`pubky-knowledge-base-v2/snippets/js/src/quick-start-intro.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/quick-start-intro.ts)</sub>
+<sub>Source (CI type-checked, 0.10.0): [`snippets/js/src/sdk.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/sdk.ts). Type-checked on 0.12.0. **As written, `signin` fails at runtime** (`PkarrError`: no DHT record) because a fresh `Keypair.random()` has no account. Load an existing key (e.g. `Keypair.fromRecoveryFile`) or call `signer.signup(homeserver, null)` first; with signup, `putJson`/`getJson` round-trip on a testnet.</sub>
 
-**Clients.** Prefer **one shared `Pubky` facade** per app/process rather than a new client per
-request. Construct mainnet with `new Pubky()` / `Pubky::new()`, testnet with
-`Pubky.testnet(<relay-url>)` / `Pubky::testnet()`. Use testnet for development, mainnet for
-production — see [`testing-and-testnet.md`](testing-and-testnet.md). docs.rs/pubky (v0.9.3)
-confirms the surface: `Pubky::new()`, `testnet()`, `signer()`, `public_storage()`,
-`get_homeserver_of()`, `start_auth_flow()`, `client()`; `PubkySigner::signup()`, `signin()`,
-`approve_auth()`, `pkdns()`; `PubkySession::storage()`, `info()`.
+```js
+import { Pubky } from "@synonymdev/pubky";
+
+const pubky = a.testnet ? Pubky.testnet() : new Pubky();
+
+// PublicStorage reads from addressed `pubky<pk>/<abs-path>` or `pubky://<pk>/<abs-path>` values
+const exists = await pubky.publicStorage.exists(resource);
+const stats = await pubky.publicStorage.stats(resource);
+const bytes = await pubky.publicStorage.getText(resource);
+```
+
+<sub>Source: [`examples/javascript/3-storage.mjs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/javascript/3-storage.mjs). Executed on 0.12.0 against a local testnet with both address forms. `a` is parsed CLI args; `resource` must be typed `Address` for TypeScript. `getText` returns a string despite the variable name `bytes`.</sub>
+
+### Path rules
+
+Validated by [`StoragePath`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-common/src/storage_path.rs):
+
+- **Absolute.** Max **255 bytes** per segment, **972 bytes** total (decoded UTF-8; this leaves room for the
+  52-byte tenant key in a 1024-byte object key).
+- UTF-8 and spaces are allowed (`/pub/My File/über`). `%` is literal: URL-decode **before** constructing a path.
+- **Rejected:** Unicode control characters, backslashes, trailing Unicode whitespace.
+- **HTTP/WebDAV paths are normalized:** empty and `.` segments collapse, `..` resolves
+  (`priv//my-app/./data/` -> `/priv/my-app/data/`); traversal above root (`/../../priv/`) is an error.
+  `StoragePath::new` accepts only already-canonical input.
+- **A path can't be both file and folder:** if `/pub/app/foo` exists, `PUT /pub/app/foo/bar.json` -> **409**;
+  if anything exists under `/pub/app/foo/`, `PUT /pub/app/foo` -> **409**.
+- **`PUT` or `DELETE` on a path ending in `/` -> 400** ("Target path must be a file"). `GET` on a trailing `/`
+  is a LIST.
+
+### Scopes
+
+By convention the first segment under `/pub` is a **scope**. An app may touch several:
+
+- **App-domain scopes:** `pubky.app`, `mapky.app`, `bitkit.to`. **Protocol scopes:** `paykit`.
+- Mapky writes `/pub/mapky.app/*` and reuses `/pub/pubky.app/*` for profiles; Bitkit writes `/pub/bitkit.to/*`
+  and uses `/pub/paykit/*`.
+- For new app data, use a domain-like folder such as `/pub/my-new-app/`. The `pubky.app` schema is in
+  [`app-specs.md`](app-specs.md).
+
+> The `/pub` layout is **not stabilized**. These scope conventions describe current practice only.
+
+### Storage roots and access
+
+| Root | Anonymous read | Read with session | Write (`PUT`/`DELETE`) |
+| :-- | :-- | :-- | :-- |
+| `/pub/` | Allowed | Allowed | Session for **this tenant** with write capability |
+| `/priv/` (**ALPHA**) | **401** | Session for this tenant with read capability (else **403**) | Session for this tenant with write capability |
+| Anything else | — | — | **403** "Writing to directories other than '/pub/' and '/priv/' is forbidden" |
+
+> **`/priv` is alpha: not for production, not encrypted from the operator.** It shipped in `pubky-homeserver`
+> **v0.10.0** (2026-08-05), whose release notes say it "should NOT be used in any production environment" and
+> that its APIs may change or disappear. It is **access control only**: the admin API can read and write all
+> tenant data, including `/priv`. It is a separate namespace; existing `/pub` data is not moved. Never put
+> secrets there unencrypted. Guardrail: [`shipped-vs-planned.md`](shipped-vs-planned.md). Details:
+> [`PRIVATE_STORAGE.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/PRIVATE_STORAGE.md).
+
+## PKARR resolution
+
+PKARR makes a self-issued public key a publicly addressable domain: signed DNS records on the Mainline DHT,
+with no registrar or CA.
+
+- **Publish:** sign a small DNS packet (≤1000 bytes) and put it on the DHT, directly or through an **HTTP relay**.
+- **Resolve:** query the DHT or a relay and **verify the signature yourself**. PKARR-unaware apps can use
+  DNS-over-HTTPS against PKARR servers ([pkdns](https://github.com/pubky/pkdns)).
+- **SignedPacket:** `public-key(32) + signature(64) + timestamp(8) + dns-packet(≤1000)`, max **1104 bytes**;
+  an Ed25519-signed BEP44 mutable item looked up by SHA1 of the public key. Record builders and caches:
+  [`SignedPacketBuilder`](https://docs.rs/pkarr/latest/pkarr/types/struct.SignedPacketBuilder.html).
+
+> **Operational limits that change your code**
+> - **Records are ephemeral.** The DHT drops them after hours (to days), so republish (`pkarr-republisher`;
+>   hourly is recommended). PKARR is **not storage**: never put app data in it.
+> - **Not real-time.** Caching is heavy, an uncached DHT lookup can take seconds, rate limiting is harsh, and
+>   updates may need proof-of-work. **Cache resolved homeservers.**
+> - **No UDP means no DHT.** Browsers and firewalled environments **must use HTTP relays**. DHT nodes often
+>   block AWS/GCP/Azure ranges, so use relays hosted with smaller providers.
+> - **Outages:** if temporary, new resolutions fail but cached locations still work; if prolonged, use relays;
+>   for regional blocking, use relays in multiple regions.
+
+**Finding a homeserver takes two records:**
+
+| Packet | Signed by | Content |
+| :-- | :-- | :-- |
+| User, at `_pubky.<user-z32>` | User key | `_pubky HTTPS 0 <homeserver-public-key>` (HTTPS/SVCB alias to the homeserver key) |
+| Homeserver | Homeserver key | e.g. `. HTTPS 1 . port=6287`, `. A 203.0.113.10` (direct) and `. HTTPS 10 homeserver.example.com port=443` (ICANN) |
+
+SDKs resolve `_pubky.<user-z32>` and follow the alias for you. When you need it directly:
+
+```rust
+use pubky::{Pubky, PublicKey, Keypair};
+
+let pubky = Pubky::new()?;
+
+// read-only homeserver resolver
+let host: Option<PublicKey> = pubky.get_homeserver_of(&other).await?;
+
+// publish with your key
+let signer = pubky.signer(Keypair::random());
+signer.pkdns().publish_homeserver_if_stale(None).await?;
+// or force republish (e.g. homeserver migration)
+signer.pkdns().publish_homeserver_force(Some(&new_homeserver_id)).await?;
+// resolve your own homeserver
+signer.pkdns().get_homeserver().await?;
+```
+
+<sub>Source: [`pubky-sdk/README.md`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/README.md#pkdns-pkarr) (`no_run`; `other` and `new_homeserver_id` are doctest params). Executed on 0.12.0 against a local testnet. API: [docs.rs `Pkdns`](https://docs.rs/pubky/latest/pubky/struct.Pkdns.html).</sub>
+
+- **`publish_homeserver_if_stale(None)` on a key with no record returns `Ok` but publishes nothing.** Pass an
+  explicit homeserver, or run `signup` / `publish_homeserver_force` first.
+- **Rust `get_homeserver_of` -> `Result<Option<PublicKey>>`** (CacheFirst). `Ok(None)` means no record or no
+  `_pubky` target; `Err(Error::Pkarr(..))` means resolution failed or the target isn't a public key. The
+  `Result` return is a **v0.10.0 breaking change**: code expecting `Option` won't compile. Variants:
+  [docs.rs `Pkdns`](https://docs.rs/pubky/latest/pubky/struct.Pkdns.html).
+- **Staleness:** `DEFAULT_STALE_AFTER` = **1 hour**. `set_stale_after` is builder-style (`#[must_use]`), not
+  an in-place setter: `let pkdns = pkdns.set_stale_after(d);`.
+- **JS `pubky.getHomeserverOf(user: PublicKey): Promise<PublicKey | undefined>`**: `undefined` if there is no
+  record; **throws** on resolution failure or a malformed target.
+
+```ts
+const homeserverCache = new Map<string, PublicKey>();
+
+async function getCachedHomeserver(
+  pubky: Pubky,
+  userPublicKey: string,
+): Promise<PublicKey | undefined> {
+  const cached = homeserverCache.get(userPublicKey);
+  if (cached) return cached;
+
+  const user = PublicKey.from(userPublicKey);
+  const homeserver = await pubky.getHomeserverOf(user);
+
+  if (homeserver) {
+    homeserverCache.set(userPublicKey, homeserver);
+  }
+
+  return homeserver;
+}
+```
+
+<sub>Source (CI type-checked, 0.10.0): [`snippets/js/src/troubleshooting.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/troubleshooting.ts). Executed on 0.12.0 against a local testnet. **Harden before use:** it keys by the raw input string, so `<z32>` and `pubky<z32>` for one user become separate entries. Key by `PublicKey.from(x).z32()`. It also never expires, so after a [migration](#trust-model-and-credible-exit) it keeps pointing at the old homeserver. Expire entries (e.g. after the 1 h staleness window) and invalidate on request failure.</sub>
+
+Route PKARR through specific relays (browsers need relays):
+
+```ts
+const client = new Client({
+  pkarr: {
+    relays: ["https://pkarr.pubky.org"],
+  },
+});
+
+const pubky = Pubky.withClient(client);
+```
+
+Republish your own record. **JS `pkdns.publishHomeserverForce` / `publishHomeserverIfStale` consume their
+`PublicKey` argument** (moved into WASM). After the first call the JS object is a null handle: reusing it
+throws `null pointer passed to rust`, and passing it to `IfStale` silently sends `None`, which does nothing if
+no record exists. Keep the z32 string and build a fresh `PublicKey` per call:
+
+```ts
+// publish* consumes its PublicKey argument (moved into WASM), so keep the z32
+// string and build a fresh PublicKey for every call.
+const homeserverZ32 = homeserverPk.z32();
+
+// publish
+await signer.pkdns.publishHomeserverForce(PublicKey.from(homeserverZ32));
+
+// Periodically check whether the record is stale before republishing
+setInterval(
+  async () => {
+    await signer.pkdns.publishHomeserverIfStale(PublicKey.from(homeserverZ32));
+  },
+  2 * 60 * 60 * 1000,
+); // Every 2 hours
+```
+
+<sub>Adapted from [`snippets/js/src/troubleshooting.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/troubleshooting.ts). The upstream version passes `homeserverPk` directly and breaks after the first call. The relay block is type-checked on 0.12.0 but was not run against mainnet. The publish block is fixed and executed on 0.12.0 against a local testnet. `signer` and `homeserverPk` are declared elsewhere; `signer` must come from the `pubky` whose relays you want.</sub>
+
+**Who republishes:** the homeserver republishes its users' keys every 4 h by default
+(`user_keys_republisher_interval = 14400`, via `dht_relay_nodes = ["https://pkarr.pubky.app",
+"https://pkarr.pubky.org"]`). Configured relays are used for republishing since v0.12.0, and migrated users
+are skipped since v0.10.0. That is slower than the 1 h SDK staleness default, so don't assume hourly
+server-side refresh. Operating this: [`pubky-infra`](../../pubky-infra/SKILL.md).
+
+## The homeserver model
+
+A **homeserver** stores and serves user data, one tenant per public key. Users pick it and can leave at any
+time. It provides public-key signup/signin, third-party app authorization, WebDAV-like storage
+(`PUT`/`GET`/`DELETE`/`HEAD`/LIST), PKARR publishing for discovery, and admin and metrics endpoints for
+operators.
+
+Processes: main API server (PubkyTLS + ICANN HTTP), admin server, Prometheus metrics server (off by default),
+and user/server key republishers. Default ports: **6287** pubky (TLS), **6286** ICANN, **6288** admin, **6289**
+metrics. Running one: [`pubky-infra`](../../pubky-infra/SKILL.md).
+
+**What apps see** (authoritative status codes and schemas: [`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/openapi-client.yml)):
+
+- **Entries are opaque byte blobs with a MIME type**: JSON, images, ciphertext, anything.
+- **`PUT`** creates or overwrites (201). Handle **409** (file/folder collision) and **507** (quota exceeded);
+  if `Content-Length` is sent, quota is checked before streaming. **`DELETE`** returns 404 if the entry is
+  missing. File `GET` supports conditional requests (`ETag` / `Last-Modified`).
+- **LIST** is a `GET` on a trailing `/`. It returns `text/plain`, one `pubky://` URL per line, with params
+  `limit`, `cursor` (bare path or `pubky://` URL), `shallow`, `reverse`.
+  - `limit` defaults to **100** and is **clamped to 1000** in code; the OpenAPI max of 65535 is not honored.
+  - `reverse` means reverse **lexicographic path order** (`COLLATE "C"`), **not** time order.
+- **429 is normal.** Retry with backoff. Since v0.12.0, responses carry `Retry-After` (CORS-exposed); prefer
+  it over a fixed delay.
+- **No hard per-request body cap to rely on (observed in code, not an upstream statement or runtime test).**
+  Tenant routes declare 100 MiB, but the streaming `PUT` handler appears to bypass that limit; quotas (507) and
+  operator proxies govern. Claims of a 10 MB / 413 default don't match current code.
+
+```ts
+async function putWithRetry(
+  session: Session,
+  path: Path,
+  data: string,
+  retries = 3,
+): Promise<void> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await session.storage.putText(path, data);
+    } catch (error) {
+      if (statusCodeOf(error) === 429) {
+        await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
+        continue;
+      }
+      throw error;
+    }
+  }
+
+  throw new Error("PUT failed after retrying rate limits");
+}
+```
+
+<sub>Source (CI type-checked, 0.10.0): [`snippets/js/src/troubleshooting.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/troubleshooting.ts). Executed on 0.12.0 against a local testnet (the 429 branch was not triggered). `statusCodeOf` is not an SDK export: it reads `error.data.statusCode` and is defined upstream and in [`sdk-js.md`](sdk-js.md). This snippet uses a linear delay and **ignores `Retry-After`**; honor the header when present.</sub>
+
+**Internals apps never touch:** PostgreSQL holds metadata only: users (pubkey + quota), sessions and grant
+sessions, entries (path, Blake3 hash, length, MIME, timestamps), events (PUT/DEL stream), and signup codes.
+**Apps never connect to PostgreSQL.**
+
+### Transport and wire addressing
+
+**Let the SDK build requests.** Choose endpoints or set `pubky-host` only when you deliberately use raw HTTP.
+
+- **PubkyTLS (direct):** TLS with Raw Public Keys (RFC 7250). The server's Ed25519 key is verified directly,
+  with no CA chain. **ICANN:** reverse proxy with X.509.
+- **Native SDKs** (Rust and native mobile bindings, not WASM) prefer PubkyTLS and fall back to ICANN when the
+  direct endpoint is unreachable (NAT, tunnel) and ICANN is advertised. **Browsers/WASM use ICANN only.**
+- **Path addressing (current):** `GET /storage/{user-z32}/pub/...`. The owner in the path is authoritative and
+  `pubky-host` is ignored. The homeserver has served it since v0.11.0; SDK 0.12.0 uses it by default, including
+  over ICANN fallback, and sends **no** `pubky-host` header.
+- **Legacy addressing (deprecated, still served):** `GET /pub/...`, used by older SDKs or against homeservers
+  without the feature. The owner comes from the `pubky-host` header, then `Host`, then `?pubky-host=`.
+- **Feature detection:** `GET /info` -> `{"features":["path-addressed-storage"]}`; ignore unknown identifiers.
+  High-level Rust storage APIs and JS `Client.fetch` fall back to legacy automatically. **Raw HTTP clients should
+  send `/storage/{owner}/...` only to homeservers advertising the feature**, always with **z32**.
+- **Auth:** `Authorization: Bearer` (grant-based, current) beats cookie auth (deprecated); a resolved bearer
+  session takes precedence.
+- **Deprecation clock:** legacy addressing, `pubky-host`, and cookie auth are removed only ≥1 year after the
+  first stable SDK that uses `/storage` by default, plus explicit review. The
+  [migration doc](https://github.com/pubky/pubky-homeserver/blob/main/docs/STORAGE_ADDRESSING_MIGRATION.md)
+  still marks that milestone "Not released", but 0.12.0 closes it, so the table looks stale. Either way,
+  removal is not scheduled; keep the fallback.
+
+```rust
+use pubky::{PubkyHttpClient, resolve_pubky};
+use reqwest::Method;
+
+let client = PubkyHttpClient::new()?;
+let url = resolve_pubky("pubkyoperrr8wsbpr3ue9d4qj41ge1kcc6r7fdiy6o3ugjrrhi4y77rdo/pub/pubky.app/posts/0033X02JAN0SG")?;
+assert_eq!(
+    url.as_str(),
+    "https://_pubky.operrr8wsbpr3ue9d4qj41ge1kcc6r7fdiy6o3ugjrrhi4y77rdo/storage/operrr8wsbpr3ue9d4qj41ge1kcc6r7fdiy6o3ugjrrhi4y77rdo/pub/pubky.app/posts/0033X02JAN0SG"
+);
+
+let response = client.request_async(Method::GET, url).await?.send().await?;
+```
+
+<sub>Source: [`pubky-sdk/README.md`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/README.md#resolve-identifiers-into-transport-urls) (`no_run`). Executed on 0.12.0: the assert holds, and a GET against a local testnet returns 200. The `pubky<z32>` input becomes raw z32 in both the hostname and the `/storage/` segment. `use reqwest::Method` needs a direct `reqwest` dependency matching pubky's version; `pubky::Method` (re-exported) avoids that. `request_async` resolves the transport and falls back to legacy addressing when needed; it does not exist before 0.12.0.</sub>
+
+### Trust model and credible exit
+
+> **The operator is trusted.** Today an operator can read all user data (public and `/priv`), tamper with it
+> undetected (no data signing), deny service, and log access patterns. Data signing (optional, planned 2026),
+> encrypted data, and homeserver mirroring are **planned, not shipped**; see
+> [`shipped-vs-planned.md`](shipped-vs-planned.md). **For apps:** request minimal capabilities, don't store
+> sensitive data unencrypted, and handle revoked sessions and auth failures gracefully.
+
+- **PKARR is the source of truth for where an identity lives.** Once the user's record points at a new
+  homeserver, the old one loses authority and can't impersonate them. **In practice, authority moves only as
+  clients re-resolve:** DHT, relay, and app caches (including the `homeserverCache` snippet above) keep
+  hitting the old server until they expire.
+- **Migrating today:** sign up on the new homeserver -> re-upload data **manually** -> update the record
+  (`publish_homeserver_force` / `publishHomeserverForce`).
+- **Pubky Backup** (desktop) keeps local snapshots of published `/pub` data. Re-upload is manual; seamless
+  restore and mirroring are planned.
+- Credible exit may not be fully practical while few homeserver providers and migration tools exist. Users can
+  self-host.
+
+## Homeserver-write vs Nexus-read
+
+**Writes and reads go to different places.** Design your data flow around this.
+
+| Operation | Goes to | API |
+| :-- | :-- | :-- |
+| **Write** your own data | Author's **own homeserver** | `session.storage()` / `session.storage` (authenticated) |
+| **Direct read** of a known resource | **That user's homeserver** | `pubky.public_storage()` / `pubky.publicStorage` (no auth) |
+| **Aggregated social read** (feeds, followers, tags, search) | An **indexer**, e.g. Pubky Nexus | Nexus REST `/v0`: [`nexus-api.md`](nexus-api.md) |
+
+**SDK actors** ([README mental model](https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/README.md#mental-model)):
+
+- `Pubky`: facade and starting point; owns transport. **Share one instance** (clone / `OnceCell`); don't
+  build one per request.
+- `PubkySigner`: local key holder for signup, signin, approving QR auth, and publishing PKDNS.
+- `PubkySession`: authenticated handle with session-scoped storage.
+- `PublicStorage`: unauthenticated reads of others' public data.
+- `Pkdns`: resolve/publish `_pubky`.
+- `GrantManager`: list/revoke grants using an authenticated root session.
+- `PubkyHttpClient`: transport. `EventStreamBuilder` via `pubky.event_stream_for_user(...)` /
+  `event_stream_for(&homeserver)`.
+
+**Event streams (what indexers consume):** `GET /events-stream` is SSE of `PUT`/`DEL` events, each with a
+`pubky://<user>/pub/...` URL, a `cursor`, and a blake3 `content_hash` on `PUT`. It filters by user(s) (z32,
+optional cursor) and path prefixes (default `/pub/`), and supports `live` (history then real-time) and
+`reverse`. **Slow live clients are disconnected.** `/priv` filters are **alpha** (see
+[storage roots](#storage-roots-and-access)) and need exactly one user plus a session with read capability.
+`GET /events/` pages public events for all users (limit clamps at 1000). Parameters and message format:
+[`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/openapi-client.yml).
+
+**Nexus** (nexus-watcher, nexus-webapi, nexus-common, nexusd) ingests these streams into **Neo4j + Redis** and
+serves REST, e.g. `https://nexus.pubky.app/v0/feeds/global`.
+
+**Social write flow:** build the object per [`app-specs.md`](app-specs.md) -> `PUT` to your homeserver -> the
+homeserver emits an event -> Nexus indexes it -> others read via Nexus (or directly via public storage).
+
+> **Nexus `/v0` is unstable.** Expect breaking changes and don't hardcode response shapes. Swagger is
+> authoritative: <https://nexus.pubky.app/swagger-ui/>. Running Nexus: [`pubky-infra`](../../pubky-infra/SKILL.md).
+> For read-only Cypher over the graph, use the `nexus-scout` skill.
 
 ## Authentication
 
-Authentication uses **AuthTokens** — signed, time-limited, capability-scoped tokens proving
-public-key ownership, valid for a **~3-minute window** (clock-drift / replay protection). The
-`PUBKY:AUTH` namespace prevents cross-protocol replay. Capability format is `<path>:<rights>`,
-e.g. `/pub/my-app/:rw`, `/pub/file.txt:r`, `/:rw` (avoid root). **Third-party apps should use the
-SDK auth flows** (`start_auth_flow` produces a `pubkyauth://` URL for Pubky Ring) — never ask
-users to paste keys or mnemonics. Mnemonic-fallback auth (entering a 12-word mnemonic directly
-into a 3rd-party app) is a known security risk and should only happen on trusted infrastructure
-(Ring or the user's own homeserver). The full auth flow and token wire layout live in
-[`auth.md`](auth.md).
+Apps authenticate users through the SDK **grant auth flows** (Bearer sessions); cookie auth is deprecated.
+Never collect mnemonics (see [identity](#identity-the-ed25519-keypair)). Capabilities, `pubkyauth` URLs,
+relays, signup tokens, and session lifecycle: [`auth.md`](auth.md).
 
 ## Stability and known limits
 
-- **Shipped vs. planned** is a hard guardrail: public `/pub` storage, capability-scoped sessions,
-  PKARR identity/discovery, pubky-app-specs models, resumable `pubkyauth` flows, event streams,
-  local Pubky Backup, and PostgreSQL-backed homeservers ship today; `/priv`, encrypted/guarded
-  storage, homeserver mirroring, and backup *restore* do not. Never present a planned item as
-  available — full canonical list: [`shipped-vs-planned.md`](shipped-vs-planned.md).
-- **Pre-1.0 churn:** the `/pub` path layout is not stabilized, the Nexus `/v0` API is
-  breaking-change-prone, and app-specs are v0.x. PKARR DHT records are ephemeral (republished)
-  and DHT reads are heavily cached / not real-time.
-- **Single session cookie** ([pubky-homeserver#122](https://github.com/pubky/pubky-homeserver/issues/122)):
-  all sessions currently share one auth cookie, so signing into App B overwrites App A's session;
-  a JWT-based session-management rework is in progress.
+- **Shipped vs. planned is a hard rule:** [`shipped-vs-planned.md`](shipped-vs-planned.md) decides what apps
+  may depend on (`/priv` alpha, encryption, mirroring, backup restore).
+- **Pre-1.0 everywhere:** the `/pub` layout is not stabilized, Nexus `/v0` is unstable, app-specs are v0.x.
+- **Pin SDK versions.** Current: `pubky` / `@synonymdev/pubky` **0.12.0**. KB CI snippets are pinned to
+  **0.10.0**. Minor releases break APIs: `get_homeserver_of` -> `Result` in 0.10.0; `signin(clientId)`,
+  `ClientId`, and `request_async` are absent from 0.9.3; `/storage/` addressing arrived in 0.12.0. Verify
+  against [docs.rs](https://docs.rs/pubky) / [TypeDoc](https://pubky.github.io/pubky-homeserver/js-sdk-typedoc/)
+  for your pinned version.
+- **Storage addressing is migrating** (`pubky-host` -> `/storage/{z32}/...`); let the SDK choose.
+- **JS `pkdns.publish*` consumes its `PublicKey` argument**, so build a fresh one per call
+  ([PKARR resolution](#pkarr-resolution)).
+- **LIST limit clamps at 1000**, and there is **no reliable body-size cap**; see
+  [the homeserver model](#the-homeserver-model).
 
 ## Upstream references
 
-- **Rust SDK API** (authoritative, drift-prone; currently v0.9.3): [docs.rs/pubky](https://docs.rs/pubky)
-- **JS/WASM SDK:** [`@synonymdev/pubky`](https://www.npmjs.com/package/@synonymdev/pubky) ·
-  **React Native binding:** [`@synonymdev/react-native-pubky`](https://www.npmjs.com/package/@synonymdev/react-native-pubky)
-- **Pubky protocol docs** (protocol / homeserver / API): [Developer guide](https://pubky.org/explore/pubky-protocol/getting-started/) ·
-  homeserver implementation + config: [Pubky Homeserver](https://github.com/pubky/pubky-homeserver/tree/main/pubky-homeserver)
-- **PKARR / DHT:** [pkarr](https://github.com/pubky/pkarr) ·
-  [pkdns](https://github.com/pubky/pkdns) · [mainline](https://github.com/pubky/mainline)
-- **Nexus read API** (Swagger, source of truth): <https://nexus.pubky.app/swagger-ui/>
-
-[`pubky-infra`]: ../../pubky-infra/SKILL.md
+- **Rust SDK:** [docs.rs/pubky](https://docs.rs/pubky) · [SDK README](https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/README.md)
+- **JS/WASM SDK:** [TypeDoc](https://pubky.github.io/pubky-homeserver/js-sdk-typedoc/) · [npm](https://www.npmjs.com/package/@synonymdev/pubky)
+- **Homeserver client API:** [`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/openapi-client.yml) ·
+  [`PRIVATE_STORAGE.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/PRIVATE_STORAGE.md) ·
+  [`STORAGE_ADDRESSING_MIGRATION.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/STORAGE_ADDRESSING_MIGRATION.md) ·
+  [releases](https://github.com/pubky/pubky-homeserver/releases)
+- **PKARR:** [pkarr](https://github.com/pubky/pkarr) · [pkdns](https://github.com/pubky/pkdns) ·
+  [`SignedPacketBuilder`](https://docs.rs/pkarr/latest/pkarr/types/struct.SignedPacketBuilder.html)
+- **Security model:** [KB security model](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/pubky-protocol/security-model.md)
+- **Nexus:** [Swagger](https://nexus.pubky.app/swagger-ui/)
