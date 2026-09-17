@@ -18,8 +18,9 @@ Read this overview, then open the one reference file for the task at hand.
   Every API used must exist in the references below or in their linked upstream sources.
 - **Respect Shipped vs Planned.** Public `/pub` storage, capability-scoped sessions, PKARR
   discovery, app-specs, resumable auth flows, and event streams are shipped. Private storage
-  roots (`/priv`), homeserver mirroring, backup restore, and cloud/two-way backup are NOT —
-  never present them as available. See `references/shipped-vs-planned.md`.
+  (`/priv`) is **alpha** (v0.10.0+): not for production, access-controlled but not encrypted
+  from the homeserver operator. Homeserver mirroring, backup restore, and cloud/two-way backup
+  are NOT shipped — never present them as available. See `references/shipped-vs-planned.md`.
 - **Public-key string formats matter.** `publicKey.toString()` → `pubky<z32>` for display;
   `publicKey.z32()` → raw z-base-32 for hostnames, DNS names, headers, params, DB keys.
 - **Auth is SDK-driven.** Use the `pubkyauth` flow; never ask users to paste keys or

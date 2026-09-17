@@ -41,10 +41,12 @@ event streams; local Pubky Backup; PostgreSQL-backed homeservers.
 **Planned / NOT shipped (never present as available):** encrypted/guarded data as a general
 primitive; homeserver mirroring; backup *restore*; cloud backup; two-way backup sync.
 
-**Implemented in `main` but NOT released (don't present as available to release users):** `/priv`
-private storage — auth-scoped and access-controlled, *not* encrypted; enforced in
-`pubky-homeserver` (`PRIVATE_ROOT`, `authorization.rs`, with tests), but the released SDK types
-`/pub` paths only. Document it only with an explicit "unreleased, `main`-only" caveat.
+**ALPHA, released (v0.10.0+), NOT for production:** `/priv` private storage. Shipped in
+`pubky-homeserver` v0.10.0 (2026-08-05, a normal release, not a prerelease); its release notes say
+it "should NOT be used in any production environment" and its APIs may change or disappear.
+Access-controlled, *not* encrypted: a homeserver admin can read and write all tenant data,
+including `/priv`. Document it only with an explicit "alpha, not for production, not encrypted
+from the operator" caveat. `@synonymdev/pubky` 0.9.3 and earlier type `/pub` paths only.
 
 **Stability caveats to keep:** the `/pub` path layout is not stabilized; the Nexus `/v0` REST
 API is unstable and breaking-change-prone; app-specs are v0.x. Any stable-sounding claim about
