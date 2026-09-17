@@ -117,7 +117,7 @@ const pubky = Pubky.testnet();
 
 const keypair = Keypair.random();
 const signer = pubky.signer(keypair);
-console.log("Your pubky:", signer.publicKey.z32());
+console.log("Your pubky:", signer.publicKey.toString());
 
 const homeserver = PublicKey.from(
   "pubky8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo",
@@ -128,7 +128,7 @@ await signer.signup(homeserver, null);
 const session = await signer.signin("myapp.example");
 ```
 
-<sub>Source (CI type-checked, 0.10.0): [`snippets/js/src/getting-started.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/getting-started.ts). Executed on 0.12.0 against a local testnet. The upstream log line prints raw z32 as "Your pubky"; for anything a person reads, use `signer.publicKey.toString()`. Rust: [docs.rs `PubkySigner`](https://docs.rs/pubky/latest/pubky/struct.PubkySigner.html).</sub>
+<sub>Source (CI type-checked, 0.10.0): [`snippets/js/src/getting-started.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/getting-started.ts). Executed on 0.12.0 against a local testnet. Adapted: upstream logs `signer.publicKey.z32()` as "Your pubky"; anything a person reads uses `toString()` (`pubky<z32>`), per [public-key string formats](#public-key-string-formats). Rust: [docs.rs `PubkySigner`](https://docs.rs/pubky/latest/pubky/struct.PubkySigner.html).</sub>
 
 ### Public-key string formats
 

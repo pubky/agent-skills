@@ -73,7 +73,7 @@ Config shape (0.12.0): `{ pkarr?: { relays?: string[]; requestTimeout?: number }
 
 ## Quick start (testnet, end to end)
 
-Creates an identity, signs up, signs in, writes and reads. From KB `getting-started.ts`; Verified. Needs a running local testnet; the homeserver key is the fixed testnet homeserver.
+Creates an identity, signs up, signs in, writes and reads. Adapted from KB `getting-started.ts` (upstream logs `z32()`; human-facing output uses `toString()`, see [key formats](./concepts.md#public-key-string-formats)); Verified. Needs a running local testnet; the homeserver key is the fixed testnet homeserver.
 
 ```js
 import { Keypair, Pubky, PublicKey } from "@synonymdev/pubky";
@@ -82,7 +82,7 @@ const pubky = Pubky.testnet();
 
 const keypair = Keypair.random();
 const signer = pubky.signer(keypair);
-console.log("Your pubky:", signer.publicKey.z32());
+console.log("Your pubky:", signer.publicKey.toString());
 
 const homeserver = PublicKey.from(
   "pubky8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo",

@@ -74,7 +74,7 @@ const pubky = Pubky.testnet();
 
 const keypair = Keypair.random();
 const signer = pubky.signer(keypair);
-console.log("Your pubky:", signer.publicKey.z32());
+console.log("Your pubky:", signer.publicKey.toString());
 
 const homeserver = PublicKey.from(
   "pubky8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo",
@@ -90,7 +90,7 @@ await session.storage.putJson(path, { message: "Hello Pubkyverse!" });
 const data = await session.storage.getJson(path);
 ```
 
-<sub>Source: [`snippets/js/src/getting-started.ts` L14-42](https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/snippets/js/src/getting-started.ts#L14-L42). Run unchanged on 0.12.0 against a local testnet. It type-checks on 0.10+ and fails on 0.6.0. The homeserver key is the fixed static-testnet key; for ports, see [`./testing-and-testnet.md`](./testing-and-testnet.md#standalone-local-testnet).</sub>
+<sub>Source: [`snippets/js/src/getting-started.ts` L14-42](https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/snippets/js/src/getting-started.ts#L14-L42). Run on 0.12.0 against a local testnet. Adapted: upstream logs `signer.publicKey.z32()`; human-facing output uses `toString()` (`pubky<z32>`), see [key formats](./concepts.md#public-key-string-formats). It type-checks on 0.10+ and fails on 0.6.0. The homeserver key is the fixed static-testnet key; for ports, see [`./testing-and-testnet.md`](./testing-and-testnet.md#standalone-local-testnet).</sub>
 
 - **Creating an identity and signing up inside the app are dev-only shortcuts.** In production, keys and homeserver signup stay outside the app: in Pubky Ring, or in a separate onboarding flow such as pubky.app's.
 - On first signup, the console can show a 404 for `http://localhost:15411/<user-public-key>`. The SDK checks for an existing PKARR record before publishing. If signup continues, ignore that 404.
