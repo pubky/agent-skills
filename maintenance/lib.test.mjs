@@ -33,6 +33,7 @@ ok('checkReference: reported-wordcount divergence fails',
 eq('slugifyHeading: code+punct', slugifyHeading('`EventListener` is a placeholder, not a stream'),
   'eventlistener-is-a-placeholder-not-a-stream')
 eq('slugifyHeading: simple', slugifyHeading('Signup tokens'), 'signup-tokens')
+eq('slugifyHeading: stripped punct keeps both spaces (GitHub)', slugifyHeading('pkarr / DNS (blocking)'), 'pkarr--dns-blocking')
 
 // --- auditSnippets ----------------------------------------------------------
 {

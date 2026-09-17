@@ -38,7 +38,8 @@ export function checkReference(md, { role = 'normal', reportedWordCount = null }
 // GitHub-style heading slug, for verifying that #anchor links resolve to a real heading.
 // Lowercase, drop punctuation (keep word chars / spaces / hyphens), spaces -> hyphens.
 export function slugifyHeading(h) {
-  return h.trim().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
+  // one hyphen per space, not per run: GitHub renders `pkarr / DNS` as `pkarr--dns`
+  return h.trim().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s/g, '-')
 }
 
 // ---------------------------------------------------------------------------
