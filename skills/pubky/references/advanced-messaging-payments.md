@@ -11,7 +11,7 @@ This file says when to use two **external, pre-1.0** crates that sit on top of P
 - **Version skew with the core SDK.** paykit rc55 depends on `pubky = "0.11.0"` and `pubky-noise = "0.1.0-rc8"`. pubky-noise rc8 and rc9 also depend on `pubky 0.11.0`. That matches neither the version [`sdk-rust.md`](sdk-rust.md) documents nor the current `pubky` on crates.io (0.12.0). If you use these crates, pin `pubky` to 0.11 and expect API differences from the rest of this skill.
 - **Neither crate adds private or encrypted homeserver storage.** All data sits under ordinary **public `/pub`** paths, and `pubky-noise` never uses `/priv`. Confidentiality comes from **client-side ciphertext**. Paths are unguessable **only when you use `derive_asymmetric_paths` + `new_with_paths`**. With `PubkyNoiseConfig::new(..., "/pub/data")`, the message paths and `{write_path}/backup` are fixed and anyone can list them. Guarded or encrypted storage still hasn't shipped: see [`shipped-vs-planned.md`](shipped-vs-planned.md#no-private-encrypted-or-guarded-storage).
 - **"Backup/restore" here means crate-local state only.** In `pubky-noise` it means restoring a Noise session snapshot. In `paykit-sdk` it means exporting and restoring SDK state over a transport your app owns. **Neither is Pubky Backup restore or homeserver mirroring,** which are still planned ([`shipped-vs-planned.md`](shipped-vs-planned.md#backup-restore-and-mirroring)).
-- **Snippets are not CI-verified.** Each snippet is copied from an upstream README. During this refresh each one was run against a **local Pubky testnet** at the version given in its caption. For maintained runnable code, see pubky-noise [`e2e/`](https://github.com/pubky/pubky-noise/tree/main/e2e) (`cargo nextest run -p e2e`, which needs Docker for Testcontainers PostgreSQL) and paykit-lib `src/tests/*`.
+- **Snippets are not CI-verified.** Each snippet is copied from an upstream README. During this refresh each one was run against a **local Pubky testnet** at the version given in its caption. For maintained runnable code, see pubky-noise [`e2e/`](https://github.com/pubky/pubky-noise/tree/master/e2e) (`cargo nextest run -p e2e`, which needs Docker for Testcontainers PostgreSQL) and paykit-lib `src/tests/*`.
 
 ## When to reach for which
 
@@ -211,7 +211,7 @@ This recovery has limits:
 - If a put succeeds but the server later loses the data, `handle_handshake()` returns `Ok(Pending)` forever. Keep your durable checkpoint at the pre-write state until the peer's progress confirms the write.
 - During the transport phase, `restore()` checks the handshake hash and returns `RestoreBackupHashMismatch` if it differs.
 
-**Errors.** The full `PubkyNoiseError` variant list is in the [README error-handling section](https://github.com/pubky/pubky-noise/blob/main/pubky-noise/README.md#error-handling). These need special handling:
+**Errors.** The full `PubkyNoiseError` variant list is in the [README error-handling section](https://github.com/pubky/pubky-noise/blob/master/pubky-noise/README.md#error-handling). These need special handling:
 
 | Error | What to do |
 | :-- | :-- |
@@ -233,7 +233,7 @@ The `test-utils` feature enables `test_enable_tampering`, `test_enable_write_fai
 - key rotation,
 - recurring scheduling, request lifecycle state and timeouts.
 
-Vocabulary is defined in [`THESAURUS.md`](https://github.com/pubky/paykit-rs/blob/main/THESAURUS.md).
+Vocabulary is defined in [`THESAURUS.md`](https://github.com/pubky/paykit-rs/blob/master/THESAURUS.md).
 
 **Dependency.** paykit isn't on crates.io, and its README shows a placeholder version (`"x.x.x"`). Use a git dependency pinned to a tag:
 
@@ -288,7 +288,7 @@ Every call takes a receiver path. Writes take `&pubky::PubkySession`; reads take
 - **`PaymentEndpointIdentifier::new(s)`** returns an error on invalid input and guards against path injection.
   - It allows 1–64 characters from `[a-zA-Z0-9_-.]`.
   - It rejects `.`, `..`, slashes, null bytes, spaces, and the reserved values `private` and `encrypted-link-recovery` with `PaykitError::Validation`.
-  - The naming convention `{asset}-{rail}-{endpoint_format}` (for example `btc-lightning-bolt11`) is recommended but **not enforced**; see [`specs/payment-endpoint-identifier.md`](https://github.com/pubky/paykit-rs/blob/main/specs/payment-endpoint-identifier.md).
+  - The naming convention `{asset}-{rail}-{endpoint_format}` (for example `btc-lightning-bolt11`) is recommended but **not enforced**; see [`specs/payment-endpoint-identifier.md`](https://github.com/pubky/paykit-rs/blob/master/specs/payment-endpoint-identifier.md).
 - **`PaymentEndpointPayload`** is opaque UTF-8. `PaymentList.payment_endpoints` is a `HashMap<PaymentEndpointIdentifier, PaymentEndpointPayload>`.
 - **`PaykitError`** has four variants: `Transport { context, source: anyhow::Error }`, `NotFound(String)`, `InvalidData { context, source: Option<anyhow::Error> }` and `Validation(String)`. You can downcast `source` when it's present.
 - **Paykit sets no deadlines.** Configure `PubkyHttpClient::builder().request_timeout(..)` yourself.
@@ -398,7 +398,7 @@ async fn poll_with_timeout(mut handshake: EncryptedLinkHandshake) -> paykit_lib:
 
 - **API:** `send_payment_request`, `send_payment_request_acceptance`, `send_payment_request_rejection`, `send_payment_request_cancellation` and `send_payment_proof`.
 - **`PaymentProof::validate_for_request(&request)` is stateless and shallow.** It checks that the request ID and payment reference match, that the billing period is present and well-formed, and that the accepted endpoint identifier matches. It does **not** verify method-specific proofs, and it doesn't execute or schedule anything.
-- **Subscriptions have no separate protocol.** A Subscription is an accepted Recurring Payment Request; see [`specs/payment-requests.md`](https://github.com/pubky/paykit-rs/blob/main/specs/payment-requests.md).
+- **Subscriptions have no separate protocol.** A Subscription is an accepted Recurring Payment Request; see [`specs/payment-requests.md`](https://github.com/pubky/paykit-rs/blob/master/specs/payment-requests.md).
 
 **Receipts** are issued in retryable steps:
 
@@ -422,25 +422,25 @@ async fn poll_with_timeout(mut handshake: EncryptedLinkHandshake) -> paykit_lib:
 - **iOS:** SwiftPM `Package.swift` at tag `v0.1.0-rc55`, with a `Paykit.xcframework.zip` release asset. Requires iOS 15 / macOS 12.
 - **No React Native.** `paykit-react-native` was removed and `@synonymdev/react-native-paykit` returns 404 on npm, so don't suggest either.
 
-Native app work belongs to the **`pubky-mobile`** skill; for details, see the [`paykit-ffi` README](https://github.com/pubky/paykit-rs/blob/main/paykit-ffi/README.md).
+Native app work belongs to the **`pubky-mobile`** skill; for details, see the [`paykit-ffi` README](https://github.com/pubky/paykit-rs/blob/master/paykit-ffi/README.md).
 
 ---
 
 ## Upstream sources of truth
 
 - **pubky-noise** ([github.com/pubky/pubky-noise](https://github.com/pubky/pubky-noise)):
-  - [crate README](https://github.com/pubky/pubky-noise/blob/main/pubky-noise/README.md)
-  - [e2e tests](https://github.com/pubky/pubky-noise/tree/main/e2e)
+  - [crate README](https://github.com/pubky/pubky-noise/blob/master/pubky-noise/README.md)
+  - [e2e tests](https://github.com/pubky/pubky-noise/tree/master/e2e)
   - [crates.io/crates/pubky-noise](https://crates.io/crates/pubky-noise)
 - **paykit** ([github.com/pubky/paykit-rs](https://github.com/pubky/paykit-rs)):
-  - [root README](https://github.com/pubky/paykit-rs/blob/main/README.md)
-  - [`paykit-lib/README.md`](https://github.com/pubky/paykit-rs/blob/main/paykit-lib/README.md)
-  - [`paykit-sdk/README.md`](https://github.com/pubky/paykit-rs/blob/main/paykit-sdk/README.md)
-  - [`paykit-ffi/README.md`](https://github.com/pubky/paykit-rs/blob/main/paykit-ffi/README.md)
-  - [`THESAURUS.md`](https://github.com/pubky/paykit-rs/blob/main/THESAURUS.md)
-  - [`specs/payment-endpoint-identifier.md`](https://github.com/pubky/paykit-rs/blob/main/specs/payment-endpoint-identifier.md)
-  - [`specs/payment-requests.md`](https://github.com/pubky/paykit-rs/blob/main/specs/payment-requests.md)
-  - [`CHANGELOG.md`](https://github.com/pubky/paykit-rs/blob/main/CHANGELOG.md)
+  - [root README](https://github.com/pubky/paykit-rs/blob/master/README.md)
+  - [`paykit-lib/README.md`](https://github.com/pubky/paykit-rs/blob/master/paykit-lib/README.md)
+  - [`paykit-sdk/README.md`](https://github.com/pubky/paykit-rs/blob/master/paykit-sdk/README.md)
+  - [`paykit-ffi/README.md`](https://github.com/pubky/paykit-rs/blob/master/paykit-ffi/README.md)
+  - [`THESAURUS.md`](https://github.com/pubky/paykit-rs/blob/master/THESAURUS.md)
+  - [`specs/payment-endpoint-identifier.md`](https://github.com/pubky/paykit-rs/blob/master/specs/payment-endpoint-identifier.md)
+  - [`specs/payment-requests.md`](https://github.com/pubky/paykit-rs/blob/master/specs/payment-requests.md)
+  - [`CHANGELOG.md`](https://github.com/pubky/paykit-rs/blob/master/CHANGELOG.md)
 - **Guardrails this file relies on:**
   - [`shipped-vs-planned.md`](shipped-vs-planned.md)
   - [`concepts.md`](concepts.md)
