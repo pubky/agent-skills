@@ -252,28 +252,28 @@
       "kind": "registry",
       "url": "https://www.npmjs.com/package/@synonymdev/pubky",
       "tracksRepo": "pubky-homeserver",
-      "pinnedVersion": "0.9.3",
+      "pinnedVersion": "0.12.0",
       "lastSeenSha": "28f4bf389198be7a067bdae6e57df13c4402f480"
     },
     "npm:@synonymdev/react-native-pubky": {
       "kind": "registry",
       "url": "https://www.npmjs.com/package/@synonymdev/react-native-pubky",
       "tracksRepo": "react-native-pubky",
-      "pinnedVersion": "0.13.0",
+      "pinnedVersion": "0.14.0",
       "lastSeenSha": "bf0b7925314031023db3ae47cdba12e23389c25e"
     },
     "npm:pubky-app-specs": {
       "kind": "registry",
       "url": "https://www.npmjs.com/package/pubky-app-specs",
       "tracksRepo": "pubky-app-specs",
-      "pinnedVersion": "0.5.3",
+      "pinnedVersion": "0.7.0",
       "lastSeenSha": "e9b0c9cbdc9676efb82cd00640000b66321dbe4e"
     },
     "crate:pubky": {
       "kind": "registry",
       "url": "https://crates.io/crates/pubky",
       "tracksRepo": "pubky-homeserver",
-      "pinnedVersion": "0.9.3",
+      "pinnedVersion": "0.12.0",
       "lastSeenSha": "28f4bf389198be7a067bdae6e57df13c4402f480"
     },
     "nexus-scout": {

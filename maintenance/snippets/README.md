@@ -19,7 +19,7 @@ Downgrading a snippet below its `expectedTier` is a pipeline failure, not a sile
 ## Pinned versions (what users install)
 
 `js/package.json` and `rust/Cargo.toml` pin the **latest published** packages
-(`@synonymdev/pubky` 0.9.3, `pubky-app-specs` 0.5.3, crate `pubky` =0.9.3), recorded in
+(`@synonymdev/pubky` 0.12.0, `pubky-app-specs` 0.7.0, crate `pubky` =0.12.0), recorded in
 `../sources.lock.json`. A version-drift check flags when npm/crates latest moves past these.
 
 ## Shared testnet
