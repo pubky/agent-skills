@@ -1,8 +1,8 @@
 {
   "path": "skills/pubky/references/sdk-rust.md",
   "role": "normal",
-  "accept": false,
-  "generatedAt": "2026-09-17T12:42:03.138Z",
+  "accept": true,
+  "generatedAt": "2026-09-17T13:09:42.504Z",
   "sourcesUsed": [
     {
       "repo": "pubky-knowledge-base-v2",
@@ -23,271 +23,100 @@
   ],
   "provenance": [
     {
-      "anchor": "Upstream / Version / 0.11 -> 0.12.0",
+      "anchor": "version-banner",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/Cargo.toml",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/Cargo.toml"
-    },
-    {
-      "anchor": "Version (unreleased on main: max_error_body_bytes)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/README.md",
       "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/README.md"
+      "url": "https://crates.io/api/v1/crates/pubky/versions"
     },
     {
-      "anchor": "Coming from <=0.9.3",
+      "anchor": "install-and-runtime",
       "repo": "pubky/pubky-homeserver",
-      "path": "docs/v0.10-migration/README.md",
+      "path": "pubky-sdk/src/prelude.rs",
       "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
-      "url": "https://github.com/pubky/pubky-homeserver/tree/main/docs/v0.10-migration"
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/prelude.rs"
     },
     {
-      "anchor": "0.11 -> 0.12.0 (transport URL change, request_async)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/storage/resource.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/actors/storage/resource.rs"
-    },
-    {
-      "anchor": "Install and runtime",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/Cargo.toml",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/Cargo.toml"
-    },
-    {
-      "anchor": "Install and runtime (KB snippet pin)",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "snippets/rust/Cargo.toml",
-      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/rust/Cargo.toml"
-    },
-    {
-      "anchor": "Client setup",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/pubky.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/pubky.rs"
-    },
-    {
-      "anchor": "Client setup (testnet toggle)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "examples/rust/2-auth_flow/client.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/examples/rust/2-auth_flow/client.rs"
-    },
-    {
-      "anchor": "Type model",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/README.md",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/README.md"
-    },
-    {
-      "anchor": "Sign up and sign in (KB quick example)",
+      "anchor": "quick-start",
       "repo": "pubky/pubky-knowledge-base-v2",
       "path": "snippets/rust/src/lib.rs",
       "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
       "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/rust/src/lib.rs"
     },
     {
-      "anchor": "Sign up and sign in (PubkySigner)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/signer/session.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/actors/signer/session.rs"
-    },
-    {
-      "anchor": "Sign up and sign in (ClientId gotcha)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/errors.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/errors.rs"
-    },
-    {
-      "anchor": "Sign up and sign in (idempotent signup 409)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "examples/rust/testnet.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/examples/rust/testnet.rs"
-    },
-    {
-      "anchor": "Storage (own data example)",
+      "anchor": "client-setup",
       "repo": "pubky/pubky-homeserver",
       "path": "examples/rust/3-storage/main.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/examples/rust/3-storage/main.rs"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://docs.rs/pubky/0.12.0/pubky/struct.Pubky.html#method.with_client"
     },
     {
-      "anchor": "Storage (SessionStorage methods)",
+      "anchor": "sign-up-and-sign-in",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/src/actors/signer/session.rs",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/1-signup/signup.rs"
+    },
+    {
+      "anchor": "session-storage-your-own-data",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/src/actors/storage/verbs.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
       "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/actors/storage/verbs.rs"
     },
     {
-      "anchor": "Storage (ListBuilder)",
+      "anchor": "public-storage-other-users-data",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/storage/list.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/actors/storage/list.rs"
+      "path": "pubky-sdk/README.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://docs.rs/pubky/0.12.0/pubky/struct.PublicStorage.html#method.get"
     },
     {
-      "anchor": "Storage (/priv alpha caveat)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "docs/PRIVATE_STORAGE.md",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/docs/PRIVATE_STORAGE.md"
-    },
-    {
-      "anchor": "Error handling",
+      "anchor": "error-handling",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/src/errors.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://docs.rs/pubky/0.12.0/pubky/errors/enum.Error.html"
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/errors.rs"
     },
     {
-      "anchor": "Error handling (unbounded error body)",
+      "anchor": "sessions-sign-out-and-persist",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/util.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/util.rs"
+      "path": "docs/v0.10-migration/grant-auth.md",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/grant-auth.md"
     },
     {
-      "anchor": "Sessions: info, signout, persistence",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/session/core.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/actors/session/core.rs"
-    },
-    {
-      "anchor": "Sessions (GrantSessionView)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/auth/grant/view.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/actors/auth/grant/view.rs"
-    },
-    {
-      "anchor": "Sessions (one live session per grant)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/client_server/auth/grant/service.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-homeserver/src/client_server/auth/grant/service.rs"
-    },
-    {
-      "anchor": "Sessions (old persistence APIs panic)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/auth/cookie/legacy_api.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/actors/auth/cookie/legacy_api.rs"
-    },
-    {
-      "anchor": "Grant auth flow",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/auth/grant/flow.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/actors/auth/grant/flow.rs"
-    },
-    {
-      "anchor": "Grant auth flow (default public relay gotcha)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/pubky.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/pubky.rs"
-    },
-    {
-      "anchor": "Grant auth flow (custom relay example)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "examples/rust/2-auth_flow/client.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/examples/rust/2-auth_flow/client.rs"
-    },
-    {
-      "anchor": "Grant auth flow (GrantManager)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/auth/grant/manager.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/actors/auth/grant/manager.rs"
-    },
-    {
-      "anchor": "Event streams",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/event_stream.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/actors/event_stream.rs"
-    },
-    {
-      "anchor": "Event streams (many users)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "examples/rust/5-events_stream/main.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/examples/rust/5-events_stream/main.rs"
-    },
-    {
-      "anchor": "Keys, recovery files",
-      "repo": "pubky/pubky-homeserver",
-      "path": "examples/rust/keygen.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/examples/rust/keygen.rs"
-    },
-    {
-      "anchor": "PKDNS",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/pkdns.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/actors/pkdns.rs"
-    },
-    {
-      "anchor": "Escape hatch: raw requests",
+      "anchor": "events-pkdns-and-raw-http",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/src/client/http_targets/native.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
       "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/client/http_targets/native.rs"
     },
     {
-      "anchor": "Examples, tests, crate map",
+      "anchor": "runnable-examples",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/lib.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/lib.rs"
-    },
-    {
-      "anchor": "Examples, tests, crate map (prelude)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/prelude.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/pubky-sdk/src/prelude.rs"
-    },
-    {
-      "anchor": "Examples, tests, crate map (testnet needs Postgres)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "examples/rust/8-testnet/main.rs",
-      "sha": "fdf37869dd34f3d5c48c025b09465ba1c3ce8e6a",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.12.0/examples/rust/8-testnet/main.rs"
+      "path": "examples/rust/Cargo.toml",
+      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/Cargo.toml"
     }
   ],
   "snippet": {
-    "total": 17,
-    "pass": 17,
+    "total": 13,
+    "pass": 13,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 48,
-    "refuted": 0,
-    "caveated": 11,
+    "supported": 46,
+    "refuted": 2,
+    "caveated": 6,
     "unsupported": 0
   },
   "guardrailViolations": [
-    "Event streams section: '`.session(&session)` is required for `/priv/` paths (alpha, single-user only)' presents /priv with only 'alpha'. The guardrail requires 'alpha, not for production, not encrypted from the operator' (or a link to that caveat).",
-    "Mirrored API detail that should be a link (§4): the 'Crate-root exports' inventory, the full prelude inventory and the full per-variant error table copy docs.rs and will drift on the next release. Keep a docs.rs link plus the gotchas (ClientId not in prelude, deprecated cookie types, match on RequestError::Server/PkarrError::is_retryable).",
-    "Canonical-not-copy tension (§2): the draft links auth.md#session-lifecycle, #persisting-a-session and #signup-tokens as canonical, but auth.md in the working tree is still unmodified 0.9.3 content (`signer.signin()` with no ClientId, `signup` returning a session, `export_secret`/`import_secret`, `start_auth_flow`/`resume_auth_flow`). It directly contradicts this page, so the links send readers to APIs that no longer exist.",
-    "Unprovenanced sentence: '(`pubky::StatusCode` re-exports `reqwest::StatusCode`, so you don't need a direct `reqwest` dependency.)'. The re-export is real, but the conclusion contradicts the snippet directly above it, which uses `reqwest::StatusCode::CONFLICT`."
+    "Mirrored, drift-prone API detail (CLAUDE.md §4): the Error handling bullet on `max_error_body_bytes` and the 4096-byte cap copies behavior from pubky-homeserver main that is not in the published 0.12.0 (#608 landed after the tag). The draft itself says main matches 0.12.0, so this detail has already drifted. Replace it with a link to the docs.rs Error / PubkyHttpClientBuilder pages, or drop it."
   ],
-  "wordCount": 2972,
+  "wordCount": 2538,
   "substance": {
     "ok": true,
     "reasons": []

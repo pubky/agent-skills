@@ -459,10 +459,10 @@
       ],
       "linksTo": [],
       "lastGeneratedSha": {
-        "pubky-knowledge-base-v2": "c9981c6501456f9305918820017134af40d278c0",
-        "pubky-homeserver": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
-        "docs.rs/pubky": "ba6d69c117b927e665fa6dd6b79c0deceafceb87",
-        "crate:pubky": "ba6d69c117b927e665fa6dd6b79c0deceafceb87"
+        "pubky-knowledge-base-v2": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
+        "pubky-homeserver": "28f4bf389198be7a067bdae6e57df13c4402f480",
+        "docs.rs/pubky": "28f4bf389198be7a067bdae6e57df13c4402f480",
+        "crate:pubky": "28f4bf389198be7a067bdae6e57df13c4402f480"
       }
     },
     "skills/pubky/references/nexus-api.md": {
