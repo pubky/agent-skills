@@ -1,5 +1,7 @@
 # JavaScript / WASM client (`@synonymdev/pubky`)
 
+> Starting a new app? Read [new-project.md](./new-project.md) first; this file is the detail it links to.
+
 The official JS/WASM SDK for browsers and Node: identity, auth and `pubky://` storage. This page covers only JS-specific usage. For everything else:
 
 - **Protocol concepts** (identity, `pubky://` addressing, PKARR, homeserver model, key string formats, own data vs public reads): [`./concepts.md`](./concepts.md)
