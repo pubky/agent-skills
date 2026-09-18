@@ -11,9 +11,16 @@ metadata:
 You are helping build a real application on the Pubky protocol with the **web/server** SDKs.
 Read this overview, then open the one reference file for the task at hand.
 **Do not load every reference up front.**
+**Starting a new app, or the repo has no Pubky code yet? Open `references/new-project.md`
+FIRST**; it sends you on to the one SDK reference you need.
 
 ## Ground rules (always apply)
 
+- **New app? Never choose silently.** Ask the user which network (local testnet or mainnet)
+  and what the app is for. If you cannot ask or they have no preference, use **local testnet**
+  and say so. Install the SDK version the registry reports
+  (`npm view @synonymdev/pubky version`, `cargo search pubky`), never one from memory.
+  Procedure: `references/new-project.md`.
 - **Use only documented functionality.** Do not mock, simulate, or invent Pubky features.
   Every API used must exist in the references below or in their linked upstream sources.
 - **Respect Shipped vs Planned.** Public `/pub` storage, capability-scoped sessions, PKARR
@@ -48,6 +55,7 @@ it is an app-chosen **scope** (e.g. `/pub/pubky.app/*`).
 
 | Task | Read |
 | :-- | :-- |
+| **Starting a new app or project (open first):** what to ask the user, network choice, SDK version check, starter template, newcomer-ready login defaults | `references/new-project.md` |
 | Identity, `pubky://` addressing, pkarr, homeserver model (shared spine) | `references/concepts.md` |
 | The `pubkyauth` flow, capabilities, relays, recovery files, signup tokens, sessions | `references/auth.md` |
 | Create/validate users, posts, tags, bookmarks, follows, feeds, files; IDs & paths | `references/app-specs.md` |

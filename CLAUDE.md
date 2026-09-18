@@ -92,3 +92,22 @@ Rules for any vendored skill:
   requires one) and its "Neo4j" wording collides with `pubky-infra` trigger vocab.
 - The copy is idempotent — there is no SHA bookkeeping. Run the copier on every sync; git shows
   no diff when upstream hasn't moved.
+
+## 8. Hand-authored references
+
+`skills/pubky/references/new-project.md` is a **procedure** file — what to ask the user before
+building, which network to default to, which SDK version to install — so there is no upstream
+document to generate it from. It is written and edited **by hand**, and the generation workflow
+must never rewrite it.
+
+- It is registered in `sources.lock.json` with `handAuthored: true` and `sources: []`. Registering
+  it rather than omitting it keeps it in the reconcile `layout`, so the workflow doesn't propose a
+  duplicate "getting started" file.
+- `plan-run.mjs` keeps every `handAuthored` entry out of `--initial`, `--repos` and incremental
+  scope. Only an explicit `--only <path>` pulls one in, and it warns loudly when you do — don't.
+- Everything else still applies: `verify.mjs` checks it like any other reference, and
+  canonical-not-copy (§2) means it **links** to `concepts.md`, `auth.md`, `sdk-js.md` and friends
+  rather than restating them.
+- Its `file.md#anchor` links point into files the workflow *does* regenerate, so they can rot under
+  you. Prefer stable headings when writing it, and after a sync fix any anchor findings
+  `verify.mjs` reports against it.

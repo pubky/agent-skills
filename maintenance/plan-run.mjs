@@ -8,6 +8,8 @@
 //   node maintenance/plan-run.mjs --only skills/pubky/references/concepts.md,...  > /tmp/manifest.json
 //
 // Reads current SHAs from clones under cacheDir; clones must already exist (the command clones).
+// References flagged `handAuthored: true` in the lock are maintained by hand (CLAUDE.md §8): they
+// stay out of every automatic scope and only enter the manifest via an explicit --only, which warns.
 
 import { readFileSync, existsSync, writeFileSync, mkdirSync, rmSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
@@ -76,17 +78,22 @@ function refUnhealthyReason(p) {
 
 // --- compute in-scope set ---------------------------------------------------
 const refs = lock.references
+const handAuthored = (p) => Boolean((refs[p] || {}).handAuthored)
 let inScope
 if (onlyFiles) {
   inScope = onlyFiles.filter(p => refs[p])
   const missing = onlyFiles.filter(p => !refs[p])
   if (missing.length) { console.error(`unknown reference(s): ${missing.join(', ')}`); process.exit(1) }
+  for (const p of inScope.filter(handAuthored))
+    console.error(`!! WARNING: ${p} is hand-authored (handAuthored: true) and WILL be LLM-rewritten by this run — see CLAUDE.md §8. Drop it from --only unless you mean it.`)
 } else if (mode === 'initial' && !forceRepos) {
-  inScope = Object.keys(refs)   // --initial regenerates every reference, regardless of recorded SHAs
+  // --initial regenerates every generated reference, regardless of recorded SHAs
+  inScope = Object.keys(refs).filter(p => !handAuthored(p))
 } else {
   const healthNotes = []
   inScope = Object.keys(refs).filter(p => {
     const ref = refs[p]
+    if (handAuthored(p)) return false   // no sources and no provenance sidecar: never auto-scoped
     if (forceRepos) return (ref.sources || []).some(s => forceRepos.includes(s.repo))
     if (refStale(ref)) return true
     const bad = refUnhealthyReason(p)            // self-heal: re-scope corrupt/unaccepted files
@@ -98,7 +105,7 @@ if (onlyFiles) {
   // pull in pointer/linking files whose linksTo target is in scope (light recheck)
   const set = new Set(inScope)
   for (const [p, ref] of Object.entries(refs))
-    if (!set.has(p) && (ref.linksTo || []).some(t => set.has(t))) inScope.push(p)
+    if (!set.has(p) && !handAuthored(p) && (ref.linksTo || []).some(t => set.has(t))) inScope.push(p)
 }
 
 // --- diff hunks for incremental --------------------------------------------
