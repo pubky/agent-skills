@@ -104,7 +104,8 @@ must never rewrite it.
   it rather than omitting it keeps it in the reconcile `layout`, so the workflow doesn't propose a
   duplicate "getting started" file.
 - `plan-run.mjs` keeps every `handAuthored` entry out of `--initial`, `--repos` and incremental
-  scope. Only an explicit `--only <path>` pulls one in, and it warns loudly when you do — don't.
+  scope, and refuses them under `--only` too: naming one exits non-zero instead of planning a run.
+  The only way to regenerate one is to drop its `handAuthored` flag from the lock deliberately.
 - Everything else still applies: `verify.mjs` checks it like any other reference, and
   canonical-not-copy (§2) means it **links** to `concepts.md`, `auth.md`, `sdk-js.md` and friends
   rather than restating them.

@@ -50,7 +50,7 @@ On another web framework, port the template's `config.ts` and `pubky.ts` rather 
 
 ## 5. Get the network running and the user an account
 
-**Local testnet.** Start one per [standalone local testnet](./testing-and-testnet.md#standalone-local-testnet); it needs a Rust toolchain, a `pubky-homeserver` checkout and [PostgreSQL](./testing-and-testnet.md#postgresql-is-required). Check `cargo --version`, `pg_isready` and `docker --version` before promising any of it. Never install a toolchain or switch network silently: name what is missing, then offer to install it or to use mainnet with an existing account. Heavier Docker alternative: [the full local stack](../../pubky-infra/references/local-stack.md#quick-start-public-images).
+**Local testnet.** Start one per [standalone local testnet](./testing-and-testnet.md#standalone-local-testnet); it needs a Rust toolchain, a `pubky-homeserver` checkout and [PostgreSQL](./testing-and-testnet.md#postgresql-is-required). Check `cargo --version` and `pg_isready` before promising any of it; add `docker --version` only if Postgres or the full local stack will run in containers. Never install a toolchain or switch network silently: name what is missing, then offer to install it or to use mainnet with an existing account. Heavier Docker alternative: [the full local stack](../../pubky-infra/references/local-stack.md#quick-start-public-images).
 
 Then an account: the dev-only **New identity** button (only under `vite dev`, on testnet, against an open-signup homeserver → [dev-only identity shortcut](./reference-apps.md#dev-only-identity-shortcut)), or the [Ring Simulator](https://simulator.pubkyring.app) — Copy link, paste into *Auth link*, approve in **Shortcut** mode.
 

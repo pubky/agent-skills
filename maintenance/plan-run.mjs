@@ -9,7 +9,8 @@
 //
 // Reads current SHAs from clones under cacheDir; clones must already exist (the command clones).
 // References flagged `handAuthored: true` in the lock are maintained by hand (CLAUDE.md §8): they
-// stay out of every automatic scope and only enter the manifest via an explicit --only, which warns.
+// stay out of every automatic scope, and --only refuses them too — the generation workflow must
+// never rewrite one.
 
 import { readFileSync, existsSync, writeFileSync, mkdirSync, rmSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
@@ -84,8 +85,11 @@ if (onlyFiles) {
   inScope = onlyFiles.filter(p => refs[p])
   const missing = onlyFiles.filter(p => !refs[p])
   if (missing.length) { console.error(`unknown reference(s): ${missing.join(', ')}`); process.exit(1) }
-  for (const p of inScope.filter(handAuthored))
-    console.error(`!! WARNING: ${p} is hand-authored (handAuthored: true) and WILL be LLM-rewritten by this run — see CLAUDE.md §8. Drop it from --only unless you mean it.`)
+  const hand = inScope.filter(handAuthored)
+  if (hand.length) {
+    console.error(`hand-authored reference(s) cannot be regenerated (handAuthored: true, see CLAUDE.md §8): ${hand.join(', ')} — remove them from --only, or clear the flag in sources.lock.json if you really mean to rewrite them`)
+    process.exit(1)
+  }
 } else if (mode === 'initial' && !forceRepos) {
   // --initial regenerates every generated reference, regardless of recorded SHAs
   inScope = Object.keys(refs).filter(p => !handAuthored(p))
