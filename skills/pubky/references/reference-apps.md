@@ -1,5 +1,7 @@
 # Reference apps & starter templates
 
+> Starting a new app? Read [new-project.md](./new-project.md) first; this file is the detail it links to.
+
 Four open-source codebases show how real Pubky code is built. **Start new apps from `basic-pubky-app`.** It is the only one on the current SDK and the only one using grant auth. Before copying a pattern from the others, check the SDK version they pin (next section).
 
 | Codebase | What it is | Architecture | SDK pin |

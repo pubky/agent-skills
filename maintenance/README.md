@@ -11,7 +11,7 @@ Run it with **`/sync-references`** (see `../.claude/commands/sync-references.md`
 
 | File | Role |
 | --- | --- |
-| `sources.lock.json` | Source of truth. Tracks each upstream repo + its last-seen commit, maps every reference file to the sources that feed it, and declares `vendoredSkills` (byte-copied upstream `SKILL.md` files + their local frontmatter). A reference regenerates **iff** one of its sources' SHA changed — or its on-disk artifact is corrupt / its last run wasn't accepted (self-heal). |
+| `sources.lock.json` | Source of truth. Tracks each upstream repo + its last-seen commit, maps every reference file to the sources that feed it, and declares `vendoredSkills` (byte-copied upstream `SKILL.md` files + their local frontmatter). A reference regenerates **iff** one of its sources' SHA changed — or its on-disk artifact is corrupt / its last run wasn't accepted (self-heal). The one exception is `skills/pubky/references/new-project.md`, flagged `handAuthored: true` with no sources: `plan-run` keeps it out of every automatic scope, so it is edited by hand and never regenerated (see `../CLAUDE.md` §8). |
 | `sync-references.workflow.js` | The Workflow script — the research/synthesis/verify **brain**. Runs a 6-stage per-file pipeline (research → draft → snippet-test → adversarial fact-check → revise/concision → gate), then a cross-file **Consistency** phase, plus structure reconciliation and an in-JS canonical-copy check. Writes nothing. |
 | `lib.mjs` | Shared **deterministic** checks imported by `plan-run`/`apply-run`/`verify` (and mirrored inline in the sandboxed workflow): `checkReference` (substance), `slugifyHeading` (anchors), `auditSnippets` (tier corroboration), `selectComparisonSet`/`dedupeContradictions`/`consistencyGate` (cross-file). |
 | `lib.test.mjs` | Offline unit tests for `lib.mjs` (`node maintenance/lib.test.mjs`). |
@@ -40,7 +40,7 @@ workflow returns) and **reviewable** (one signed draft PR).
 
 ## Modes
 
-- `--initial` — populate all 21 references (heavy, one-time). Reconciliation is a no-op.
+- `--initial` — populate all 21 generated references (heavy, one-time). Reconciliation is a no-op.
 - *(default, incremental)* — fetch, diff, regenerate only references whose sources moved.
 - `--repos a,b,c` — force-scope to references fed by those repos.
 

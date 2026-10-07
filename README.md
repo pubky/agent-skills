@@ -142,8 +142,10 @@ server source stays out of this repo.
 
 ## Updating the skill content from upstream
 
-The reference files are **generated from upstream Pubky repos, not hand-edited**. To refresh
-them after upstream changes, run this in Claude Code from the repo root:
+The reference files are **generated from upstream Pubky repos, not hand-edited** — with one
+exception: `skills/pubky/references/new-project.md` is a hand-authored procedure file (flagged
+`handAuthored: true` in the lock) that the pipeline deliberately skips. To refresh the generated
+ones after upstream changes, run this in Claude Code from the repo root:
 
 ```sh
 /sync-references
@@ -151,7 +153,7 @@ them after upstream changes, run this in Claude Code from the repo root:
 
 It fetches the tracked source repos, regenerates only the references whose sources changed
 (executing/verifying every code snippet against a local testnet), refreshes the vendored
-skills, and opens a signed **draft PR**. For a full rebuild of all 21 references, run
+skills, and opens a signed **draft PR**. For a full rebuild of all 21 generated references, run
 `/sync-references --initial`.
 
 **`skills/nexus-scout/SKILL.md` is different: it is a byte copy**, not generated. It is authored

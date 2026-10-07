@@ -71,6 +71,12 @@ row to the owning `SKILL.md` (keep it thin) and re-run verify.
 
 ## 6. Verify invariants
 `node maintenance/verify.mjs --links`. Treat `blocking` findings as PR-blocking; capture the list.
+- Hand-authored references (`handAuthored: true` in the lock — today
+  `skills/pubky/references/new-project.md`) are never regenerated, so this run left them untouched:
+  re-read `new-project.md` by hand whenever `pubky-app-templates` moved in step 1, and fix any
+  `#anchor` findings verify reports against it (its links point into files this run may have
+  rewritten).
+  See `CLAUDE.md` §8.
 
 ## 7. Stop the testnet
 `maintenance/snippets/testnet.sh stop`.
