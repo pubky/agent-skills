@@ -55,10 +55,11 @@ opened as a PR.
 
 ## 4. Run the workflow
 Invoke the **Workflow** tool with `scriptPath: "maintenance/sync-references.workflow.js"` and
-`args: { "wfDir": "/tmp/sync-wf" }`. `plan-run` writes a *split* manifest there — a slim
-`header.json` plus per-corpus `corpus-*.json` side files — because a single agent cannot echo a
-300k+ char manifest verbatim (it exceeds the per-response token cap); the workflow loads the header
-in one read and fans out small concurrent corpus reads. Do **not** inline the manifest. For
+`args: { "wfDir": "/tmp/sync-wf" }`. `plan-run` writes a *split* manifest there — a ~2 KB
+`header.json` plus small side files (`file-*.json` per job, `field-*.json` per bulky field,
+`corpus-*.json` per comparison entry) — because one agent cannot reliably echo a large blob
+verbatim; the workflow loads the header, then fans out concurrent side-file reads, retrying each.
+The stderr summary reports the largest slice; keep it under ~30 KB. Do **not** inline the manifest. For
 `--resume <runId>` pass `resumeFromRunId`. Save the returned report object to `/tmp/sync-report.json`.
 
 ## 5. Apply results

@@ -42,26 +42,54 @@ let A = args || {}
 if (typeof A === 'string') { try { A = JSON.parse(A) } catch { A = {} } }  // tool may deliver args JSON-encoded
 log(`args: type=${typeof args} keys=${A && typeof A === 'object' ? Object.keys(A).join(',') : 'none'}`)
 const catSchema = { type: 'object', additionalProperties: false, required: ['contents'], properties: { contents: { type: 'string' } } }
-const catJson = (p, label) => agent(
-  `Run \`cat ${p}\` and return its exact stdout verbatim as the string field 'contents'. It is a JSON document; do not alter, summarize, or re-indent it.`,
-  { schema: catSchema, label, phase: 'Reconcile' }
-).then(r => JSON.parse(r.contents))
+// A failed agent resolves to null (e.g. a refused response), so retry under a distinct label — the
+// label is part of the resume cache key, so a retry is a fresh call, not the cached failure — and
+// throw a named error rather than crash later on `null.contents`.
+const CAT_ATTEMPTS = 3
+const catJson = async (p, label) => {
+  for (let attempt = 1; attempt <= CAT_ATTEMPTS; attempt++) {
+    const r = await agent(
+      `Run \`cat ${p}\` and return its exact stdout verbatim as the string field 'contents'. It is a JSON document; do not alter, summarize, or re-indent it.`,
+      { schema: catSchema, label: attempt === 1 ? label : `${label}#${attempt}`, phase: 'Reconcile' }
+    )
+    if (r && typeof r.contents === 'string') {
+      try { return JSON.parse(r.contents) } catch { log(`${label}: attempt ${attempt} returned invalid JSON`) }
+    } else {
+      log(`${label}: attempt ${attempt} returned no result`)
+    }
+  }
+  throw new Error(`${label}: could not load ${p} after ${CAT_ATTEMPTS} attempts`)
+}
 
-// Ingest the manifest WITHOUT exceeding any single agent's output budget. One agent cannot echo a
-// 300k+ char manifest verbatim (it blows past the per-response token cap), so plan-run splits it:
-// a slim header (files carry no prior* blobs — research regenerates from sources, never the old
-// file) loaded in one read, plus per-corpus side files loaded concurrently. Falls back to a single
-// whole-manifest load (small manifests) or inline args.
+// Ingest the manifest WITHOUT exceeding any single agent's output budget. One agent cannot reliably
+// echo a large blob verbatim, so plan-run splits it: a header of scalars and file names, plus small
+// side files — one per job (`fileSlices`), one per bulky field (`fieldSlices`), one per corpus
+// entry — loaded concurrently. Job and field slices are required; a missing one aborts the run
+// rather than silently dropping a reference. Falls back to a single whole-manifest load (small
+// manifests) or inline args.
 const wfDir = A.files ? null : (A.wfDir || (A.manifestPath ? null : '/tmp/sync-wf'))
 if (wfDir) {
   A = await catJson(`${wfDir}/header.json`, 'load-header')
-  const slices = A.corpusSlices || {}
-  const loaded = await parallel(Object.entries(slices).map(([p, fn]) => () =>
-    catJson(`${wfDir}/${fn}`, `load-corpus:${fn}`).then(o => ({ p, o }))))
+  const loadAll = async (entries, kind) => {
+    const loaded = await parallel(entries.map(([key, fn]) => () =>
+      catJson(`${wfDir}/${fn}`, `load-${kind}:${fn}`).then(o => ({ key, o }))))
+    return entries.map((e, i) => loaded[i] && loaded[i].o ? loaded[i] : { key: e[0], o: null, fn: e[1] })
+  }
+  const [fileEntries, fieldEntries, corpusEntries] = await Promise.all([
+    loadAll((A.fileSlices || []).map((fn, i) => [i, fn]), 'file'),
+    loadAll(Object.entries(A.fieldSlices || {}), 'field'),
+    loadAll(Object.entries(A.corpusSlices || {}), 'corpus'),
+  ])
+  const missing = [...fileEntries, ...fieldEntries].filter(e => !e.o).map(e => e.fn)
+  if (missing.length) throw new Error(`manifest incomplete, failed to load: ${missing.join(', ')}`)
+  if (A.fileSlices) A.files = fileEntries.map(e => e.o)
+  for (const e of fieldEntries) A[e.key] = e.o.value
   const corpus = {}
-  for (const e of loaded) if (e && e.o) corpus[e.p] = { markdown: e.o.markdown, role: e.o.role }
+  for (const e of corpusEntries) if (e.o) corpus[e.key] = { markdown: e.o.markdown, role: e.o.role }
+  const corpusMissing = corpusEntries.filter(e => !e.o).map(e => e.key)
+  if (corpusMissing.length) log(`comparison corpus missing (consistency checks degrade): ${corpusMissing.join(', ')}`)
   A.comparisonCorpus = corpus
-  log(`manifest loaded (split): files=${(A.files || []).length} corpus=${Object.keys(corpus).length}`)
+  log(`manifest loaded (split): files=${(A.files || []).length} fields=${fieldEntries.length} corpus=${Object.keys(corpus).length}`)
 } else if (A.manifestPath) {
   A = await catJson(A.manifestPath, 'load-manifest')
   log(`manifest loaded: mode=${A.mode} files=${(A.files || []).length}`)
