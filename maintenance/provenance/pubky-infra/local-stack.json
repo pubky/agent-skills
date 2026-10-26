@@ -2,131 +2,169 @@
   "path": "skills/pubky-infra/references/local-stack.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-09-17T11:46:08.619Z",
+  "generatedAt": "2026-10-26T14:07:49.115Z",
   "sourcesUsed": [
     {
       "repo": "pubky-docker",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800"
+      "sha": "bb01419b3c1443ac32b85cc42d78bd801e04e63b"
     }
   ],
   "provenance": [
     {
+      "anchor": "intro",
+      "repo": "pubky/pubky-docker",
+      "path": "Readme.md",
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/Readme.md#L3-L5"
+    },
+    {
       "anchor": "local-development-only",
       "repo": "pubky/pubky-docker",
       "path": "Readme.md",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
-      "url": "https://github.com/pubky/pubky-docker/blob/main/Readme.md"
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/Readme.md#L7-L23"
     },
     {
       "anchor": "local-development-only",
       "repo": "pubky/pubky-docker",
       "path": "docker-compose.yml",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
-      "url": "https://docs.docker.com/engine/network/port-publishing/"
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/docker-compose.yml"
     },
     {
       "anchor": "quick-start-public-images",
       "repo": "pubky/pubky-docker",
       "path": "Readme.md",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
-      "url": "https://hub.docker.com/v2/repositories/synonymsoft/pubky-nexus/tags/"
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/Readme.md#L39-L57"
+    },
+    {
+      "anchor": "quick-start-public-images",
+      "repo": "pubky/pubky-nexus",
+      "path": "Docker Hub synonymsoft/pubky-nexus tags",
+      "sha": "716b64fc561a06dc3394a12eabe8c57ec6d6b074",
+      "url": "https://hub.docker.com/v2/repositories/synonymsoft/pubky-nexus/tags?page_size=100"
     },
     {
       "anchor": "compose-profiles",
       "repo": "pubky/pubky-docker",
       "path": ".env-sample",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
-      "url": "https://docs.docker.com/compose/how-tos/profiles/"
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/.env-sample#L5-L9"
+    },
+    {
+      "anchor": "image-tags-registry-and-network",
+      "repo": "pubky/pubky-docker",
+      "path": "docker-compose.yml",
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/docker-compose.yml#L27-L32"
     },
     {
       "anchor": "image-tags-registry-and-network",
       "repo": "pubky/pubky-docker",
       "path": "homeserver.entrypoint.sh",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
-      "url": "https://github.com/pubky/pubky-docker/blob/main/homeserver.entrypoint.sh"
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/homeserver.entrypoint.sh"
     },
     {
       "anchor": "pubky-app-runtime-config",
-      "repo": "pubky/pubky-docker",
-      "path": ".env-sample",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
-      "url": "https://github.com/pubky/pubky-docker/blob/main/.env-sample"
+      "repo": "pubky/pubky-app",
+      "path": "src/libs/runtime-config/runtime-config.schema.ts",
+      "sha": "142f65de419a914e9f0edea926159c4b1c89653a",
+      "url": "https://github.com/pubky/pubky-app/blob/142f65de419a914e9f0edea926159c4b1c89653a/src/libs/runtime-config/runtime-config.schema.ts#L538-L539"
+    },
+    {
+      "anchor": "pubky-app-runtime-config",
+      "repo": "pubky/pubky-app",
+      "path": "docs/adr/0017-runtime-config-injection.md",
+      "sha": "142f65de419a914e9f0edea926159c4b1c89653a",
+      "url": "https://github.com/pubky/pubky-app/blob/142f65de419a914e9f0edea926159c4b1c89653a/docs/adr/0017-runtime-config-injection.md"
     },
     {
       "anchor": "build-from-source",
       "repo": "pubky/pubky-homeserver",
-      "path": "Dockerfile",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/Dockerfile"
+      "path": ".github/workflows/docker-build.yml",
+      "sha": "fd24bf0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0/.github/workflows/docker-build.yml#L33-L38"
+    },
+    {
+      "anchor": "build-from-source",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-testnet/src/main.rs",
+      "sha": "fd24bf0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0/pubky-testnet/src/main.rs#L7-L27"
     },
     {
       "anchor": "pubky-docker-clish",
       "repo": "pubky/pubky-docker",
       "path": "pubky-docker-cli.sh",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
-      "url": "https://github.com/pubky/pubky-docker/blob/main/pubky-docker-cli.sh"
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/pubky-docker-cli.sh#L16-L357"
+    },
+    {
+      "anchor": "manual-build-siblings-already-checked-out",
+      "repo": "pubky/pubky-docker",
+      "path": "Readme.md",
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/Readme.md#L59-L85"
     },
     {
       "anchor": "ports-and-topology",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-testnet/src/static_testnet.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/src/static_testnet.rs"
+      "repo": "pubky/pubky-docker",
+      "path": "pubky-nexus-config-testnet.toml",
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/pubky-nexus-config-testnet.toml"
     },
     {
       "anchor": "ports-and-topology",
       "repo": "pubky/pubky-docker",
       "path": "list-component-versions.sh",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
-      "url": "https://github.com/pubky/pubky-docker/blob/main/list-component-versions.sh"
-    },
-    {
-      "anchor": "credentials-and-signups",
-      "repo": "pubky/pubky-docker",
-      "path": "homeserver.config.toml",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
-      "url": "https://github.com/pubky/pubky-docker/blob/main/homeserver.config.toml"
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/list-component-versions.sh#L126-L143"
     },
     {
       "anchor": "credentials-and-signups",
       "repo": "pubky/pubky-docker",
       "path": "homegate.config.toml",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
-      "url": "https://github.com/pubky/pubky-docker/blob/main/homegate.config.toml"
+      "sha": "bb01419",
+      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/homegate.config.toml#L10-L30"
+    },
+    {
+      "anchor": "credentials-and-signups",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/data_directory/config.default.toml",
+      "sha": "fd24bf0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0/pubky-homeserver/src/data_directory/config.default.toml#L2"
     },
     {
       "anchor": "data-persistence-and-reset",
-      "repo": "pubky/pubky-docker",
-      "path": ".gitignore",
-      "sha": "75b1121f3e90b9b44d9416ca4f5ba87a4984e800",
-      "url": "https://docs.docker.com/reference/cli/docker/compose/down/"
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-testnet/src/static_testnet.rs",
+      "sha": "f60e502fb4fc6fc74ebf7dd14c95cfd86b10aea3",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/f60e502fb4fc6fc74ebf7dd14c95cfd86b10aea3/pubky-testnet/src/static_testnet.rs#L396-L408"
     },
     {
       "anchor": "where-to-go-next",
       "repo": "pubky/agent-skills",
       "path": "skills/pubky/references/concepts.md",
-      "sha": "68f67fd23e2715007860395e0ed80d6cbd2caf5e",
-      "url": "https://github.com/pubky/agent-skills"
+      "sha": "a4f0094e40ef6239231b87774c07fc91ca6c1b51"
     }
   ],
   "snippet": {
-    "total": 5,
-    "pass": 5,
+    "total": 7,
+    "pass": 7,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 27,
+    "supported": 25,
     "refuted": 0,
-    "caveated": 5,
+    "caveated": 7,
     "unsupported": 0
   },
-  "guardrailViolations": [
-    "Provenance: 'We checked this with a minimal compose file on Docker Compose 5.3.1, not the pubky-docker stack itself.' is a first-person test note with no upstream citation, and it is also wrong: the snippet run confirmed the override on pubky-docker@75b1121. Cite the Docker Compose profiles docs and drop the first person.",
-    "Nexus /v0: the list-component-versions bullet names nexusd `/v0/info` with no instability note. It only describes what the script probes, so this is low risk, but a short 'Nexus /v0 is unstable' tag or a link to nexus-operations.md would keep it consistent with the guardrail."
-  ],
-  "wordCount": 2100,
+  "guardrailViolations": [],
+  "wordCount": 2379,
   "substance": {
     "ok": true,
     "reasons": []

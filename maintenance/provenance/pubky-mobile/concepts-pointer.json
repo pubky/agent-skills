@@ -1,152 +1,176 @@
 {
   "path": "skills/pubky-mobile/references/concepts-pointer.md",
   "role": "pointer",
-  "accept": true,
-  "generatedAt": "2026-09-17T12:42:03.138Z",
+  "accept": false,
+  "generatedAt": "2026-10-26T14:07:49.115Z",
   "sourcesUsed": [],
   "provenance": [
     {
-      "anchor": "SDKs and conventions",
+      "anchor": "SDKs and conventions: RN pin 0.15.0, bundled bindings match FFI cecd67c",
       "repo": "pubky/react-native-pubky",
-      "path": "package.json",
-      "sha": "bf0b7925314031023db3ae47cdba12e23389c25e",
-      "url": "https://registry.npmjs.org/@synonymdev/react-native-pubky"
+      "path": "setup-rust.js",
+      "sha": "e85e34453a1c7ecb4e2a2b4016914d252aa63c51",
+      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c7ecb4e2a2b4016914d252aa63c51/setup-rust.js#L8"
     },
     {
-      "anchor": "SDKs and conventions",
+      "anchor": "SDKs and conventions: pubkycore 0.4.0 wraps pubky 0.16.1",
       "repo": "pubky/pubky-core-ffi",
       "path": "Cargo.toml",
-      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/Cargo.toml"
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/Cargo.toml"
     },
     {
-      "anchor": "SDKs and conventions",
-      "repo": "pubky/react-native-pubky",
-      "path": "ios/pubkycore.swift",
-      "sha": "bf0b7925314031023db3ae47cdba12e23389c25e",
-      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b7925314031023db3ae47cdba12e23389c25e/ios/pubkycore.swift"
-    },
-    {
-      "anchor": "SDKs and conventions",
-      "repo": "pubky/react-native-pubky",
-      "path": "src/index.tsx",
-      "sha": "bf0b7925314031023db3ae47cdba12e23389c25e",
-      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b7925314031023db3ae47cdba12e23389c25e/src/index.tsx#L33-L42"
-    },
-    {
-      "anchor": "SDKs and conventions",
+      "anchor": "SDKs and conventions: two error models",
       "repo": "pubky/pubky-core-ffi",
-      "path": "src/utils.rs",
-      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/src/utils.rs#L206-L208"
+      "path": "src/binding_error.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/binding_error.rs#L8-L36"
     },
     {
-      "anchor": "SDKs and conventions",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "README.md",
-      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/README.md#string-contracts"
-    },
-    {
-      "anchor": "SDKs and conventions",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/rustls_init.rs",
-      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/src/rustls_init.rs"
-    },
-    {
-      "anchor": "Concept-to-method map",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/lib.rs",
-      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/src/lib.rs"
-    },
-    {
-      "anchor": "Concept-to-method map",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/lib.rs",
-      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/src/lib.rs#L87-L90"
-    },
-    {
-      "anchor": "Concept-to-method map",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/lib.rs",
-      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/src/lib.rs#L386-L424"
-    },
-    {
-      "anchor": "Concept-to-method map",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/lib.rs",
-      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/src/lib.rs#L826-L874"
-    },
-    {
-      "anchor": "Concept-to-method map",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/lib.rs",
-      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/src/lib.rs#L151-L173"
-    },
-    {
-      "anchor": "Concept-to-method map",
+      "anchor": "SDKs and conventions: RN typed encodings",
       "repo": "pubky/react-native-pubky",
       "path": "src/index.tsx",
-      "sha": "bf0b7925314031023db3ae47cdba12e23389c25e",
-      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b7925314031023db3ae47cdba12e23389c25e/src/index.tsx#L248-L338"
+      "sha": "e85e34453a1c7ecb4e2a2b4016914d252aa63c51",
+      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c7ecb4e2a2b4016914d252aa63c51/src/index.tsx#L927-L929"
     },
     {
-      "anchor": "Concept-to-method map",
-      "repo": "pubky/pubky-core",
+      "anchor": "SDKs and conventions: network-touching FFI calls block (block_on)",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/auth_flow.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/auth_flow.rs#L39-L182"
+    },
+    {
+      "anchor": "SDKs and conventions: key formats, rejection of pubky://pubky<z32>",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/src/actors/storage/resource.rs",
-      "sha": "pubky-0.10.0",
-      "url": "https://docs.rs/pubky/0.10.0/src/pubky/actors/storage/resource.rs.html"
+      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8/pubky-sdk/src/actors/storage/resource.rs#L214-L322"
     },
     {
-      "anchor": "Concept-to-method map",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-homeserver/src/admin_server/app.rs",
-      "sha": "v0.10.0"
-    },
-    {
-      "anchor": "Not on the mobile surface",
+      "anchor": "SDKs and conventions: Android rustls init",
       "repo": "pubky/react-native-pubky",
-      "path": "package.json",
-      "sha": "bf0b7925314031023db3ae47cdba12e23389c25e",
-      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b7925314031023db3ae47cdba12e23389c25e/package.json"
+      "path": "android/src/main/java/com/pubky/PubkyModule.kt",
+      "sha": "e85e34453a1c7ecb4e2a2b4016914d252aa63c51",
+      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c7ecb4e2a2b4016914d252aa63c51/android/src/main/java/com/pubky/PubkyModule.kt#L27-L31"
     },
     {
-      "anchor": "Ground truth",
-      "repo": "pubky/react-native-pubky",
-      "path": "README.md",
-      "sha": "bf0b7925314031023db3ae47cdba12e23389c25e",
-      "url": "https://github.com/pubky/react-native-pubky/blob/bf0b7925314031023db3ae47cdba12e23389c25e/README.md"
+      "anchor": "Concept map: identity, recovery and session methods",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/lib.rs#L290-L1260"
     },
     {
-      "anchor": "Ground truth",
+      "anchor": "Concept map: requesting-app grant flow, single slot, resumable flows",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/lib.rs#L1262-L1337"
+    },
+    {
+      "anchor": "Concept map: authenticator parseAuthUrl kinds incl. signin_grant/signup_grant",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/auth.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/auth.rs#L19-L40"
+    },
+    {
+      "anchor": "Concept map: signup/signin homeserver as public key (pubky:// accepted by FromStr)",
+      "repo": "pubky/pkarr",
+      "path": "pkarr/src/types/keys.rs",
+      "sha": "c39419b5ca1cb3a99f4baa72297aa680599d9d2a",
+      "url": "https://github.com/pubky/pkarr/blob/c39419b5ca1cb3a99f4baa72297aa680599d9d2a/pkarr/src/types/keys.rs#L199-L270"
+    },
+    {
+      "anchor": "Concept map: cookie auth deprecated, signInCookieBlocking typed",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/auth_flow.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/auth_flow.rs#L202-L216"
+    },
+    {
+      "anchor": "Concept map: getSignupToken wrong route, no status check",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/lib.rs#L464-L502"
+    },
+    {
+      "anchor": "Concept map: typed session storage and legacy /pub-only writes",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/storage.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/storage.rs#L12-L24"
+    },
+    {
+      "anchor": "Concept map: /priv alpha caveats",
       "repo": "pubky/pubky-core-ffi",
       "path": "README.md",
-      "sha": "74fea50702cd331c3c0a1e60fc02978d0588c396",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/74fea50702cd331c3c0a1e60fc02978d0588c396/README.md"
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/README.md#L51-L72"
     },
     {
-      "anchor": "Canonical links",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/concepts.md",
-      "sha": "68f67fd23e2715007860395e0ed80d6cbd2caf5e"
+      "anchor": "Concept map: public reads",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/lib.rs#L872-L906"
     },
     {
-      "anchor": "Canonical links",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/auth.md",
-      "sha": "68f67fd23e2715007860395e0ed80d6cbd2caf5e"
+      "anchor": "Concept map: event streams (camelCase fields), placeholder EventListener",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/events.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/events.rs#L35-L151"
     },
     {
-      "anchor": "Canonical links",
+      "anchor": "Concept map: WebDAV locks (FFI unlock retryable, RN drops handle)",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/locks.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/locks.rs#L64-L73"
+    },
+    {
+      "anchor": "Concept map: PKARR publish replaces whole packet",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/lib.rs#L962-L1010"
+    },
+    {
+      "anchor": "Concept map: switchNetwork/configureClient process-wide, configureClient resets to mainnet",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/src/lib.rs#L62-L160"
+    },
+    {
+      "anchor": "Concept map: scoped encryption keys warning",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/scoped-encryption-keys.md",
+      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8/docs/scoped-encryption-keys.md#L13-L19"
+    },
+    {
+      "anchor": "Not on the mobile surface: no Nexus / app-specs binding",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "BINDING_PARITY.md",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/BINDING_PARITY.md#L35-L48"
+    },
+    {
+      "anchor": "Ground truth: README drift (delete vs deleteFile, signUp without clientId)",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "README.md",
+      "sha": "cecd67c161ba9d2a9ada1a131a2df9279fde882a",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c161ba9d2a9ada1a131a2df9279fde882a/README.md#L203"
+    },
+    {
+      "anchor": "Relative links to sibling and canonical references (anchors checked)",
       "repo": "pubky/agent-skills",
-      "path": "skills/pubky-mobile/references/native-ffi.md",
-      "sha": "68f67fd23e2715007860395e0ed80d6cbd2caf5e"
+      "path": "skills/pubky-mobile/references/concepts-pointer.md",
+      "sha": "a4f0094e40ef6239231b87774c07fc91ca6c1b51"
     }
   ],
   "snippet": {
@@ -157,16 +181,17 @@
     "failing": []
   },
   "factCheck": {
-    "supported": 30,
-    "refuted": 1,
-    "caveated": 5,
+    "supported": 34,
+    "refuted": 2,
+    "caveated": 4,
     "unsupported": 0
   },
   "guardrailViolations": [
-    "Mirrored-detail relapse (low severity): the draft again carries the RN JSON.stringify behaviour ('RN `put` stringifies objects but `putWithSession` does not'), which the previous generation was rejected for. The wording is also inaccurate, because every value is stringified, strings included. Reduce it to a link to react-native.md#put-vs-putwithsession-content.",
-    "Misleading operational guidance with no working provenance: the getSignupToken row says 'Pass a bare z32 key', which implies the call works. Upstream, the URL `https://{z32}/admin/generate_signup_token` cannot resolve through plain reqwest, and the route does not exist on pubky-homeserver v0.10.0+. The sibling native-ffi.md says 'Don't rely on it.'"
+    "'Write own data' row: 'Typed calls take /pub/… or /priv/… paths' presents /priv as usable with no inline alpha caveat. Add '(/priv is alpha, see below)' or link shipped-vs-planned.md#priv-private-storage-alpha.",
+    "'Homeserver event streams' row: '/priv paths need session_secret' mentions /priv streaming with no alpha / not-for-production / not-encrypted-from-operator caveat or link.",
+    "'/priv private storage' row: 'It wasn't tested against a homeserver from mobile' reads as an upstream statement but is unsourced. Restate it as this reference's own provenance (not verified against a homeserver)."
   ],
-  "wordCount": 894,
+  "wordCount": 1667,
   "substance": {
     "ok": true,
     "reasons": []

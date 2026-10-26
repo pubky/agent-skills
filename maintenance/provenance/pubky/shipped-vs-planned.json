@@ -2,7 +2,7 @@
   "path": "skills/pubky/references/shipped-vs-planned.md",
   "role": "canonical",
   "accept": true,
-  "generatedAt": "2026-09-17T12:42:03.138Z",
+  "generatedAt": "2026-10-26T14:07:49.115Z",
   "sourcesUsed": [
     {
       "repo": "pubky-ai-kit",
@@ -10,153 +10,181 @@
     },
     {
       "repo": "pubky-homeserver",
-      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480"
+      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8"
     },
     {
       "repo": "pubky-app-specs",
-      "sha": "e9b0c9cbdc9676efb82cd00640000b66321dbe4e"
+      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e"
     }
   ],
   "provenance": [
     {
       "anchor": "the-split",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/client_server/auth/authorization.rs",
-      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/src/client_server/auth/authorization.rs"
+      "path": "docs/PRIVATE_STORAGE.md",
+      "sha": "fda69128c23c903cb489eee8d452591436547dac",
+      "url": "https://github.com/pubky/pubky-homeserver/releases"
     },
     {
-      "anchor": "the-split",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-protocol/security-model.md",
-      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/pubky-protocol/security-model.md"
-    },
-    {
-      "anchor": "everything-is-v0",
+      "anchor": "sdk-and-homeserver-0162",
       "repo": "pubky/pubky-homeserver",
-      "path": "RELEASING.md",
-      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/RELEASING.md"
+      "path": "Cargo.toml",
+      "sha": "c467f478828fa404ae3f05d0546798ad976fd1fb",
+      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.16.2"
     },
     {
-      "anchor": "everything-is-v0",
+      "anchor": "sdk-and-homeserver-0162 (v0.16.0 breaking)",
       "repo": "pubky/pubky-homeserver",
-      "path": "docs/v0.10-migration/README.md",
-      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/README.md"
+      "path": "releases/tag/v0.16.0",
+      "sha": "af53da6c9fe5f295a0672103c6e1dc440c1f28e8",
+      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.16.0"
     },
     {
-      "anchor": "everything-is-v0",
+      "anchor": "sdk-and-homeserver-0162 (operator-only v0.14.0)",
       "repo": "pubky/pubky-homeserver",
-      "path": "releases/tag/v0.12.0",
-      "sha": "v0.12.0",
-      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.12.0"
+      "path": "releases/tag/v0.14.0",
+      "sha": "be60a3f3d18b04597456ab13311e20239642a5da",
+      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.14.0"
     },
     {
-      "anchor": "everything-is-v0",
+      "anchor": "sdk-and-homeserver-0162 (operator-only v0.15.0)",
+      "repo": "pubky/pubky-homeserver",
+      "path": "releases/tag/v0.15.0",
+      "sha": "33255f8d210c47c9b29b089c74b8d1626e5219bf",
+      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.15.0"
+    },
+    {
+      "anchor": "sdk-and-homeserver-0162 (unreleased / feature detection)",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-common/src/constants.rs",
+      "sha": "fda69128c23c903cb489eee8d452591436547dac",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-common/src/constants.rs"
+    },
+    {
+      "anchor": "storage-transport-addressing-is-migrating",
       "repo": "pubky/pubky-homeserver",
       "path": "docs/STORAGE_ADDRESSING_MIGRATION.md",
-      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "sha": "fda69128c23c903cb489eee8d452591436547dac",
       "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/STORAGE_ADDRESSING_MIGRATION.md"
     },
     {
-      "anchor": "everything-is-v0",
+      "anchor": "pubky-app-specs-is-a-v0-draft",
       "repo": "pubky/pubky-app-specs",
       "path": "README.md",
-      "sha": "e9b0c9cbdc9676efb82cd00640000b66321dbe4e",
-      "url": "https://github.com/pubky/pubky-app-specs/blob/main/README.md"
+      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
+      "url": "https://github.com/pubky/pubky-app-specs#readme"
     },
     {
-      "anchor": "everything-is-v0",
+      "anchor": "the-nexus-v0-rest-api-is-unstable",
       "repo": "pubky/pubky-nexus",
       "path": "README.md",
-      "sha": "794a6e103b464c6227fc89f4307508d9119be103",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/README.md"
+      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
+      "url": "https://github.com/pubky/pubky-nexus#readme"
     },
     {
-      "anchor": "everything-is-v0",
+      "anchor": "the-nexus-v0-rest-api-is-unstable (snippet)",
       "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "snippets/js/src/quick-start-getting-started.ts",
-      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/quick-start-getting-started.ts"
+      "path": "snippets/js/src/developer-guide.ts",
+      "sha": "44fcaed5b122464fef97ce8e0f7909d13d0ee350",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/developer-guide.ts"
     },
     {
-      "anchor": "no-private-encrypted-or-guarded-storage",
+      "anchor": "the-path-layout-below-the-roots-is-not-stabilized",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/client_server/auth/authorization.rs",
+      "sha": "fda69128c23c903cb489eee8d452591436547dac",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/src/client_server/auth/authorization.rs"
+    },
+    {
+      "anchor": "priv-private-storage-alpha",
       "repo": "pubky/pubky-homeserver",
       "path": "releases/tag/v0.10.0",
-      "sha": "v0.10.0",
+      "sha": "cda859eb40b5cf82187edb6e0b7580218afb0e0c",
       "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.10.0"
     },
     {
-      "anchor": "priv-private-storage-alpha",
+      "anchor": "priv-private-storage-alpha (details, events, snippets)",
       "repo": "pubky/pubky-homeserver",
       "path": "docs/PRIVATE_STORAGE.md",
-      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
+      "sha": "fda69128c23c903cb489eee8d452591436547dac",
       "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/PRIVATE_STORAGE.md"
     },
     {
-      "anchor": "priv-private-storage-alpha",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/src/actors/storage/session.rs",
-      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/bindings/js/src/actors/storage/session.rs"
-    },
-    {
-      "anchor": "priv-private-storage-alpha",
+      "anchor": "priv-private-storage-alpha (KB status)",
       "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-protocol/homeserver.md",
-      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/pubky-protocol/homeserver.md"
+      "path": "src/content/docs/private-storage.md",
+      "sha": "44fcaed5b122464fef97ce8e0f7909d13d0ee350",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/private-storage.md"
     },
     {
       "anchor": "still-planned",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-protocol/security-model.md",
-      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/pubky-protocol/security-model.md"
-    },
-    {
-      "anchor": "app-side-ciphertext-is-your-own-crypto",
       "repo": "pubky/pubky-ai-kit",
       "path": "pubky-dev-context.md",
       "sha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
-      "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d272189aee00cd8e11c1ecb45dcc09a04a/pubky-dev-context.md#L1300"
+    },
+    {
+      "anchor": "still-planned (current state)",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "src/content/docs/security-model.md",
+      "sha": "44fcaed5b122464fef97ce8e0f7909d13d0ee350",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/security-model.md"
+    },
+    {
+      "anchor": "scoped-encryption-keys-shipped-key-delivery-only",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/scoped-encryption-keys.md",
+      "sha": "fda69128c23c903cb489eee8d452591436547dac",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/scoped-encryption-keys.md"
+    },
+    {
+      "anchor": "scoped-encryption-keys-shipped-key-delivery-only (JS README)",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/bindings/js/pkg/README.md",
+      "sha": "fda69128c23c903cb489eee8d452591436547dac",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/bindings/js/pkg/README.md#request-encryption-keys"
+    },
+    {
+      "anchor": "app-side-ciphertext-is-your-own-crypto",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/scoped-encryption-keys.md",
+      "sha": "fda69128c23c903cb489eee8d452591436547dac",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/scoped-encryption-keys.md"
     },
     {
       "anchor": "backup-restore-and-mirroring",
       "repo": "pubky/pubky-backup",
-      "path": "README.md",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-backup"
+      "path": "src-tauri/pubky-backup-core/README.md",
+      "sha": "0161977d6b3c224bc965cb5c2b7c30c9b8675b04",
+      "url": "https://github.com/pubky/pubky-backup/releases"
     },
     {
-      "anchor": "backup-restore-and-mirroring",
+      "anchor": "backup-restore-and-mirroring (unreleased #66/#69)",
+      "repo": "pubky/pubky-backup",
+      "path": "pull/69",
+      "sha": "8e2cc5481e9654ecb6a328c82d490e9db8fe4268",
+      "url": "https://github.com/pubky/pubky-backup/pull/69"
+    },
+    {
+      "anchor": "backup-restore-and-mirroring (KB credible exit)",
       "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/technologies/pubky-backup.md",
-      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/explore/technologies/pubky-backup.md"
-    },
-    {
-      "anchor": "backup-restore-and-mirroring",
-      "repo": "pubky/pubky-homeserver",
-      "path": "docs/v0.10-migration/grant-auth.md",
-      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/grant-auth.md"
+      "path": "src/content/docs/credible-exit.md",
+      "sha": "44fcaed5b122464fef97ce8e0f7909d13d0ee350",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/credible-exit.md"
     },
     {
       "anchor": "shipped-with-rough-edges",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/persistence/sql/migrations",
-      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480",
-      "url": "https://github.com/pubky/pubky-homeserver/tree/main/pubky-homeserver/src/persistence/sql/migrations"
-    },
-    {
-      "anchor": "shipped-with-rough-edges",
-      "repo": "pubky/pubky-homeserver",
-      "path": "issues/520",
-      "sha": "main",
+      "path": "docs/STORAGE_ADDRESSING_MIGRATION.md",
+      "sha": "fda69128c23c903cb489eee8d452591436547dac",
       "url": "https://github.com/pubky/pubky-homeserver/issues/520"
+    },
+    {
+      "anchor": "upstream-sources-of-truth",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/",
+      "sha": "fda69128c23c903cb489eee8d452591436547dac",
+      "url": "https://github.com/pubky/pubky-homeserver/tree/main/docs"
     }
   ],
   "snippet": {
@@ -167,19 +195,16 @@
     "failing": []
   },
   "factCheck": {
-    "supported": 21,
+    "supported": 29,
     "refuted": 0,
-    "caveated": 6,
+    "caveated": 1,
     "unsupported": 0
   },
   "guardrailViolations": [
-    "No planned feature is presented as available. /priv always appears with the alpha, not-for-production and not-encrypted caveats. Mirroring, restore, cloud backup and two-way sync are all marked as not shipped.",
-    "Copied API detail that should be a link (CLAUDE.md §2/§4): the 'What broke in v0.10.0' bullets list the SDK renames PubkyAuthFlow→PubkyCookieAuthFlow and startAuthFlow→startCookieAuthFlow, the get_homeserver_of return type, DeepLink params() and the capability trailing-slash rule. These are drift-prone and already belong in sdk-js.md, sdk-rust.md and auth.md.",
-    "No source: 'An app can store its own ciphertext as opaque bytes. That is the app's own crypto, not a Pubky feature.' No claim backs it (ai-kit L32 could), and it has no warning about security.",
-    "No source, and an overclaim: 'That is everything it does.' (Pubky Backup). ai-kit also lists force sync and key removal/deletion.",
-    "A stable-sounding claim from a stale source: '/pub is the only top-level directory the protocol requires' comes from the pre-v0.10 ai-kit. The homeserver now accepts /pub/ and /priv/ and returns 403 elsewhere."
+    "Path-layout section: 'Only two storage roots exist: /pub/ and, as an alpha, /priv/' mentions /priv with only the alpha caveat. The draft's own rule says every /priv mention must carry all three caveats (alpha, not for production, not encrypted from the operator). This does not present a planned feature as available, but link the bullet to #priv-private-storage-alpha or add the other two caveats.",
+    "'Still planned' list (encrypted, guarded and signed data as general primitives) has no upstream provenance for its 'planned' status. The cited KB security-model quotes describe app-side encryption and /priv access control, not a roadmap. The only source is pubky-ai-kit pubky-dev-context.md L1300 (@5654d0d)."
   ],
-  "wordCount": 1632,
+  "wordCount": 2487,
   "substance": {
     "ok": true,
     "reasons": []
