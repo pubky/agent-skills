@@ -12,7 +12,7 @@
 // stay out of every automatic scope, and --only refuses them too — the generation workflow must
 // never rewrite one.
 
-import { readFileSync, existsSync, writeFileSync, mkdirSync, rmSync } from 'node:fs'
+import { readFileSync, existsSync, writeFileSync, mkdirSync, rmSync, readdirSync, statSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
@@ -202,31 +202,39 @@ const manifest = {
 }
 
 // --- write split workflow inputs --------------------------------------------
-// The workflow ingests its manifest through agents, and a single agent cannot echo a blob larger
-// than its per-response token budget (~25k tokens). The full manifest (comparisonCorpus alone is
-// 100k+ chars) blows past that, so hand the workflow a slim header plus per-corpus side files it
-// loads concurrently. priorMarkdown/priorProvenance are dropped here: the research stage regenerates
+// The workflow ingests its manifest through agents that echo each file back verbatim, and one long
+// echo is fragile: past ~30 KB it can exceed the per-response budget or be refused outright (the
+// 2026-09-17 and 2026-10-26 runs both died at load-header on a 44–146 KB header). So every bulky
+// field gets its own small side file the workflow loads concurrently, and the header keeps only
+// scalars and file names. priorMarkdown/priorProvenance are dropped: the research stage regenerates
 // from sources and never reads the prior file, so they are dead weight for the workflow.
 const wfDir = (val('--wf-dir') || '/tmp/sync-wf')
 rmSync(wfDir, { recursive: true, force: true })
 mkdirSync(wfDir, { recursive: true })
+const writeSlice = (fn, value) => { writeFileSync(join(wfDir, fn), JSON.stringify(value)); return fn }
 const corpusSlices = {}
 let corpusIdx = 0
 for (const [p, v] of Object.entries(comparisonCorpus)) {
-  const fn = `corpus-${corpusIdx++}.json`
-  writeFileSync(join(wfDir, fn), JSON.stringify({ path: p, markdown: v.markdown, role: v.role }))
-  corpusSlices[p] = fn
+  corpusSlices[p] = writeSlice(`corpus-${corpusIdx++}.json`, { path: p, markdown: v.markdown, role: v.role })
+}
+// One file per job keeps every slice a few KB no matter how many references are in scope.
+const fileSlices = files.map(({ priorMarkdown, priorProvenance, ...rest }, i) => writeSlice(`file-${i}.json`, rest))
+// Each named field is restored onto the manifest as A[field] = slice.value.
+const fieldSlices = {
+  rulesText: writeSlice('field-rulesText.json', { value: rulesText }),
+  shippedVsPlannedText: writeSlice('field-shippedVsPlannedText.json', { value: shippedVsPlannedText }),
+  comparisonSets: writeSlice('field-comparisonSets.json', { value: comparisonSets }),
 }
 const wfHeader = {
   mode, repoRoot: ROOT, cacheDir,
   snippetHarnessDir: join(ROOT, 'maintenance/snippets'),
-  rulesText, shippedVsPlannedText, testnet,
+  testnet,
   layout: Object.keys(refs),
-  comparisonSets, canonicalPaths, corpusSlices,
-  files: files.map(({ priorMarkdown, priorProvenance, ...rest }) => rest),
+  canonicalPaths, corpusSlices, fileSlices, fieldSlices,
 }
-writeFileSync(join(wfDir, 'header.json'), JSON.stringify(wfHeader, null, 2))
-console.error(`wf split: header ${(JSON.stringify(wfHeader).length / 1024).toFixed(1)}KB + ${corpusIdx} corpus slice(s) -> ${wfDir}`)
+writeSlice('header.json', wfHeader)
+const largest = readdirSync(wfDir).map(fn => statSync(join(wfDir, fn)).size).reduce((a, b) => Math.max(a, b), 0)
+console.error(`wf split: header ${(JSON.stringify(wfHeader).length / 1024).toFixed(1)}KB + ${fileSlices.length} file + ${Object.keys(fieldSlices).length} field + ${corpusIdx} corpus slice(s), largest ${(largest / 1024).toFixed(1)}KB -> ${wfDir}`)
 
 // summary to stderr (stdout is pure JSON for piping)
 console.error(`mode=${mode}  in-scope=${files.length}/${Object.keys(refs).length}  testnet=${testnet.up ? 'up' : 'down'}`)

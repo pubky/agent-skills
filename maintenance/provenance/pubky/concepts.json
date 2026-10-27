@@ -2,7 +2,7 @@
   "path": "skills/pubky/references/concepts.md",
   "role": "canonical",
   "accept": true,
-  "generatedAt": "2026-09-17T12:42:03.138Z",
+  "generatedAt": "2026-10-26T14:07:49.115Z",
   "sourcesUsed": [
     {
       "repo": "pubky-ai-kit",
@@ -10,325 +10,252 @@
     },
     {
       "repo": "pubky-knowledge-base-v2",
-      "sha": "2bcd30cc8fe5fbbebd3ecefb881d3a35241f3517"
+      "sha": "44fcaed5b122464fef97ce8e0f7909d13d0ee350"
     },
     {
       "repo": "pubky-homeserver",
-      "sha": "28f4bf389198be7a067bdae6e57df13c4402f480"
+      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8"
     }
   ],
   "provenance": [
     {
-      "anchor": "#pubky-protocol-concepts",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-protocol/introduction.md",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/src/content/docs/explore/pubky-protocol/introduction.md"
-    },
-    {
-      "anchor": "#pubky-protocol-concepts",
+      "anchor": "Versions and sources",
       "repo": "pubky/pubky-homeserver",
-      "path": "README.md",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/README.md"
+      "path": "Cargo.toml",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.16.2"
     },
     {
-      "anchor": "#identity-the-ed25519-keypair",
+      "anchor": "Versions and sources",
       "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-protocol/security-model.md",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/src/content/docs/explore/pubky-protocol/security-model.md"
+      "path": "snippets/js/src",
+      "sha": "bb7232d5e8ebebc61c55945bedc87d83d2d6bc26",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/tree/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/js/src"
     },
     {
-      "anchor": "#identity-the-ed25519-keypair",
+      "anchor": "Identity: the Ed25519 keypair",
       "repo": "pubky/pubky-homeserver",
       "path": "examples/rust/keygen.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/examples/rust/keygen.rs"
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/examples/rust/keygen.rs"
     },
     {
-      "anchor": "#identity-the-ed25519-keypair",
+      "anchor": "Identity: the Ed25519 keypair (recovery-file caveat)",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-common/src/recovery_file.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-common/src/recovery_file.rs"
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-common/src/recovery_file.rs"
     },
     {
-      "anchor": "#identity-the-ed25519-keypair",
+      "anchor": "Identity: the Ed25519 keypair (JS Keypair gotcha)",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/bindings/js/src/wrappers/keys.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-sdk/bindings/js/src/wrappers/keys.rs"
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/src/wrappers/keys.rs"
     },
     {
-      "anchor": "#identity-the-ed25519-keypair",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/signer/session.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-sdk/src/actors/signer/session.rs"
-    },
-    {
-      "anchor": "#identity-the-ed25519-keypair",
+      "anchor": "Identity: signup/signin snippet",
       "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "snippets/js/src/getting-started.ts",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/snippets/js/src/getting-started.ts"
+      "path": "snippets/js/src/developer-guide.ts",
+      "sha": "44fcaed5b122464fef97ce8e0f7909d13d0ee350",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/44fcaed5b122464fef97ce8e0f7909d13d0ee350/snippets/js/src/developer-guide.ts"
     },
     {
-      "anchor": "#public-key-string-formats",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-common/src/keys.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-common/src/keys.rs"
-    },
-    {
-      "anchor": "#public-key-string-formats",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/openapi-client.yml",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-homeserver/openapi-client.yml"
-    },
-    {
-      "anchor": "#addressing-and-the-pub-tree",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/src/actors/storage/session.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-sdk/bindings/js/src/actors/storage/session.rs"
-    },
-    {
-      "anchor": "#own-data-vs-another-users-data",
+      "anchor": "Public-key string formats",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/README.md",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-sdk/README.md#storage-api-session--public"
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#key-formats-display-vs-transport"
     },
     {
-      "anchor": "#own-data-vs-another-users-data",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "snippets/js/src/sdk.ts",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/snippets/js/src/sdk.ts"
+      "anchor": "Addressing and the /pub tree",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/README.md",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#storage-api-session--public"
     },
     {
-      "anchor": "#own-data-vs-another-users-data",
+      "anchor": "Addressing and the /pub tree (JS public storage)",
       "repo": "pubky/pubky-homeserver",
       "path": "examples/javascript/3-storage.mjs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/examples/javascript/3-storage.mjs"
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/examples/javascript/3-storage.mjs"
     },
     {
-      "anchor": "#path-rules",
+      "anchor": "Addressing and the /pub tree (stats shape)",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/bindings/js/src/actors/storage/stats.rs",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/src/actors/storage/stats.rs"
+    },
+    {
+      "anchor": "Path rules",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-common/src/storage_path.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-common/src/storage_path.rs"
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-common/src/storage_path.rs"
     },
     {
-      "anchor": "#path-rules",
+      "anchor": "Storage roots and access",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/PRIVATE_STORAGE.md",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/docs/PRIVATE_STORAGE.md"
+    },
+    {
+      "anchor": "PKARR resolution",
+      "repo": "pubky/pkarr",
+      "path": "design/base.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pkarr/blob/main/design/base.md"
+    },
+    {
+      "anchor": "Finding a homeserver",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/republishers/key_republisher.rs",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-homeserver/src/republishers/key_republisher.rs"
+    },
+    {
+      "anchor": "Finding a homeserver (Pkdns API)",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/src/actors/pkdns.rs",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/actors/pkdns.rs"
+    },
+    {
+      "anchor": "Finding a homeserver (homeserver cache)",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/js/src/troubleshooting.ts",
+      "sha": "bb7232d5e8ebebc61c55945bedc87d83d2d6bc26",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/js/src/troubleshooting.ts#L112-L131"
+    },
+    {
+      "anchor": "Finding a homeserver (relay config)",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/bindings/js/src/client/constructor.rs",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/src/client/constructor.rs"
+    },
+    {
+      "anchor": "Republishing",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/bindings/js/src/actors/pkdns.rs",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/src/actors/pkdns.rs"
+    },
+    {
+      "anchor": "Republishing (server-side)",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/REPUBLISHING.md",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/docs/REPUBLISHING.md"
+    },
+    {
+      "anchor": "The homeserver model",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/openapi-client.yml",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-homeserver/openapi-client.yml"
+    },
+    {
+      "anchor": "The homeserver model (storage backends)",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/data_directory/storage_config/storage_config_toml.rs",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-homeserver/src/data_directory/storage_config/storage_config_toml.rs"
+    },
+    {
+      "anchor": "The homeserver model (429 Retry-After)",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/shared/http_error.rs",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-homeserver/src/shared/http_error.rs"
+    },
+    {
+      "anchor": "The homeserver model (body cap)",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-homeserver/src/client_server/routes/tenants/write.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-homeserver/src/client_server/routes/tenants/write.rs"
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-homeserver/src/client_server/routes/tenants/write.rs"
     },
     {
-      "anchor": "#scopes",
+      "anchor": "Storage locks",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/README.md",
+      "sha": "f60e502",
+      "url": "https://docs.rs/pubky/0.16.2/pubky/struct.StorageLock.html#example"
+    },
+    {
+      "anchor": "Transport and wire addressing",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/src/client/http_targets/native.rs",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/client/http_targets/native.rs"
+    },
+    {
+      "anchor": "Transport and wire addressing (resolve_pubky)",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/README.md",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#resolve-identifiers-into-transport-urls"
+    },
+    {
+      "anchor": "Trust model and credible exit",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "security-model",
+      "sha": "main",
+      "url": "https://pubky.org/security-model/"
+    },
+    {
+      "anchor": "Homeserver-write vs Nexus-read",
+      "repo": "pubky/pubky-nexus",
+      "path": "README.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-nexus"
+    },
+    {
+      "anchor": "Homeserver-write vs Nexus-read (Nexus fetch snippet)",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/js/src/developer-guide.ts",
+      "sha": "44fcaed5b122464fef97ce8e0f7909d13d0ee350",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/44fcaed5b122464fef97ce8e0f7909d13d0ee350/snippets/js/src/developer-guide.ts"
+    },
+    {
+      "anchor": "Authentication",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/scoped-encryption-keys.md",
+      "sha": "f60e502",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/docs/scoped-encryption-keys.md"
+    },
+    {
+      "anchor": "Stability and known limits",
       "repo": "pubky/pubky-ai-kit",
       "path": "pubky-dev-context.md",
       "sha": "5654d0d27218",
       "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md"
-    },
-    {
-      "anchor": "#storage-roots-and-access",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/client_server/auth/authorization.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-homeserver/src/client_server/auth/authorization.rs"
-    },
-    {
-      "anchor": "#storage-roots-and-access",
-      "repo": "pubky/pubky-homeserver",
-      "path": "docs/PRIVATE_STORAGE.md",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/docs/PRIVATE_STORAGE.md"
-    },
-    {
-      "anchor": "#storage-roots-and-access",
-      "repo": "pubky/pubky-homeserver",
-      "path": "releases/tag/v0.10.0",
-      "sha": "v0.10.0",
-      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.10.0"
-    },
-    {
-      "anchor": "#pkarr-resolution",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-protocol/pkarr/expectations.md",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/src/content/docs/explore/pubky-protocol/pkarr/expectations.md"
-    },
-    {
-      "anchor": "#pkarr-resolution",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-protocol/pkarr/architecture.md",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/src/content/docs/explore/pubky-protocol/pkarr/architecture.md"
-    },
-    {
-      "anchor": "#pkarr-resolution",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/pkdns.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-sdk/src/actors/pkdns.rs"
-    },
-    {
-      "anchor": "#pkarr-resolution",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/src/actors/pkdns.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-sdk/bindings/js/src/actors/pkdns.rs"
-    },
-    {
-      "anchor": "#pkarr-resolution",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/src/pubky.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-sdk/bindings/js/src/pubky.rs"
-    },
-    {
-      "anchor": "#pkarr-resolution",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "snippets/js/src/troubleshooting.ts",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/snippets/js/src/troubleshooting.ts"
-    },
-    {
-      "anchor": "#pkarr-resolution",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/data_directory/config.default.toml",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-homeserver/src/data_directory/config.default.toml"
-    },
-    {
-      "anchor": "#the-homeserver-model",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/openapi-client.yml",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-homeserver/openapi-client.yml"
-    },
-    {
-      "anchor": "#the-homeserver-model",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/shared/utils.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-homeserver/src/shared/utils.rs"
-    },
-    {
-      "anchor": "#the-homeserver-model",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/client_server/routes/tenants/mod.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-homeserver/src/client_server/routes/tenants/mod.rs"
-    },
-    {
-      "anchor": "#the-homeserver-model",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/constants.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-homeserver/src/constants.rs"
-    },
-    {
-      "anchor": "#transport-and-wire-addressing",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/client/http_targets/native.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-sdk/src/client/http_targets/native.rs"
-    },
-    {
-      "anchor": "#transport-and-wire-addressing",
-      "repo": "pubky/pubky-homeserver",
-      "path": "docs/STORAGE_ADDRESSING_MIGRATION.md",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/docs/STORAGE_ADDRESSING_MIGRATION.md"
-    },
-    {
-      "anchor": "#transport-and-wire-addressing",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/README.md",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-sdk/README.md#resolve-identifiers-into-transport-urls"
-    },
-    {
-      "anchor": "#trust-model-and-credible-exit",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-protocol/security-model.md",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/src/content/docs/explore/pubky-protocol/security-model.md"
-    },
-    {
-      "anchor": "#trust-model-and-credible-exit",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/concepts/censorship.md",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/src/content/docs/explore/concepts/censorship.md"
-    },
-    {
-      "anchor": "#homeserver-write-vs-nexus-read",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/README.md",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-sdk/README.md#mental-model"
-    },
-    {
-      "anchor": "#homeserver-write-vs-nexus-read",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/persistence/files/events/events_repository.rs",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/28f4bf389198/pubky-homeserver/src/persistence/files/events/events_repository.rs"
-    },
-    {
-      "anchor": "#homeserver-write-vs-nexus-read",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-apps/indexing-and-aggregation/pubky-nexus.md",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/src/content/docs/explore/pubky-apps/indexing-and-aggregation/pubky-nexus.md"
-    },
-    {
-      "anchor": "#authentication",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/explore/pubky-protocol/security-model.md",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/src/content/docs/explore/pubky-protocol/security-model.md"
-    },
-    {
-      "anchor": "#stability-and-known-limits",
-      "repo": "pubky/pubky-homeserver",
-      "path": "releases/tag/v0.12.0",
-      "sha": "28f4bf389198",
-      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.12.0"
     }
   ],
   "snippet": {
-    "total": 10,
-    "pass": 9,
-    "fail": 1,
+    "total": 13,
+    "pass": 13,
+    "fail": 0,
     "unverifiable": 0,
-    "failing": [
-      "pkarr-10"
-    ]
+    "failing": []
   },
   "factCheck": {
-    "supported": 46,
-    "refuted": 1,
-    "caveated": 12,
+    "supported": 60,
+    "refuted": 2,
+    "caveated": 6,
     "unsupported": 0
   },
   "guardrailViolations": [
-    "Resolution diagram line 'stores the user's files under /pub (and alpha /priv)' mentions /priv with only 'alpha'. The guardrail requires the explicit 'alpha, not for production, not encrypted from the operator' caveat, or at least a link to #storage-roots-and-access at that point.",
-    "JS types line '`Path = /pub/${string} | /priv/${string}` (session)' presents /priv as a normal session path with no alpha caveat nearby. Add '(/priv is alpha; see storage roots)'.",
-    "Mirrored drift-prone API detail that CLAUDE.md §4 says should be a link plus a short summary: the full /events-stream parameter and message spec (user 1–50, limit, live/reverse, path union, SSE data lines), per-verb status-code lists for PUT/DELETE, and the exhaustive get_homeserver_of error-variant matrix. Consider trimming these to one-line summaries that link openapi-client.yml and docs.rs Pkdns.",
-    "Unsourced normative sentence: 'The SDK will build a signer from any raw Keypair (snippets below do) — only a key manager or first-party tool should.' It is reasonable guidance but has no provenance. Mark it as authoring guidance or tie it to the KB 'Cold Key Philosophy'.",
-    "Homeserver-packet table cell 'Queried as <homeserver-z32>' has no upstream source (KB architecture.md shows only the record contents)."
+    "No provenance: 'For apps: request minimal capabilities, don't store sensitive data unencrypted, and handle revoked sessions and auth failures gracefully.' (Trust model callout). It was carried over from the old concepts.md. No matching statement exists in the KB (security-model.md, authentication.md, developer-guide.md), the ai-kit, or the SDK README. Cite a source (authentication.md L19-L21 supports 'review requested scopes' and 'grants can be revoked') or drop it.",
+    "Weak provenance: 'Minor releases have broken APIs before.' has no citation. It is supportable, for example by d8bf732 'feat(sdk)!: add scoped encryption keys' in v0.16.0 and the breaking `!` commits in the release notes. Link the releases page or a specific breaking release.",
+    "Mirrored, drift-prone API detail (CLAUDE.md §4): the JS storage bullet copies the README's `stats` return shape, and that comment has already drifted (the real type is camelCase with optional fields, returning undefined). Keep a one-line summary and link the ResourceStats typedef or the README instead of restating field names.",
+    "Mirrored API detail: the `/events-stream` parameter list (1–50 users, reverse/live exclusivity, path union semantics, SSE message format) restates openapi-client.yml almost line for line. It is acceptable because the OpenAPI is linked as authoritative, but consider trimming it to the indexer-relevant summary (what Nexus consumes) to limit drift."
   ],
-  "wordCount": 4070,
+  "wordCount": 5955,
   "substance": {
     "ok": true,
     "reasons": []

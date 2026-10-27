@@ -1,34 +1,38 @@
 # Full local stack (pubky-docker)
 
-[`pubky-docker`](https://github.com/pubky/pubky-docker) is a Docker Compose setup for a **local** Pubky Social stack. It runs **Homeserver** ([pubky-homeserver](https://github.com/pubky/pubky-homeserver)), **Nexus** ([pubky-nexus](https://github.com/pubky/pubky-nexus)), **Homegate** ([homegate](https://github.com/pubky/homegate)) and **Pubky App** ([pubky-app](https://github.com/pubky/pubky-app)). Postgres, Neo4j, Redis, Redis Insight and WireMock are pulled from their public registries.
+[`pubky-docker`](https://github.com/pubky/pubky-docker) is a Docker Compose setup for a **local** Pubky Social stack: **Homeserver** ([pubky-homeserver](https://github.com/pubky/pubky-homeserver)), **Nexus** ([pubky-nexus](https://github.com/pubky/pubky-nexus)), **Homegate** ([homegate](https://github.com/pubky/homegate)) and **Pubky App** (`pubky-app` service, [pubky-app](https://github.com/pubky/pubky-app)). Postgres, Neo4j, Redis, Redis Insight and WireMock come from public registries.
 
-The [README](https://github.com/pubky/pubky-docker/blob/main/Readme.md) is the maintained source for commands, profiles and tags. This file covers only the compose and ops side. For the protocol model the stack runs, link to [`concepts.md`](../../pubky/references/concepts.md): the [homeserver model](../../pubky/references/concepts.md#the-homeserver-model), [PKARR resolution](../../pubky/references/concepts.md#pkarr-resolution) and the [homeserver-write vs Nexus-read split](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read).
+The [README](https://github.com/pubky/pubky-docker/blob/main/Readme.md) is the maintained source for commands, profiles and tags. This file covers only compose/ops gotchas, checked against pubky-docker `main` at `bb01419` (2026-10-13). For the protocol model, see [`concepts.md`](../../pubky/references/concepts.md): [homeserver model](../../pubky/references/concepts.md#the-homeserver-model), [PKARR resolution](../../pubky/references/concepts.md#pkarr-resolution), [homeserver-write vs Nexus-read](../../pubky/references/concepts.md#homeserver-write-vs-nexus-read).
 
 ## Local development only
 
-> **Not production hosting.** The README says: *"This project is intended for local development and experimentation only. It is not production hosting infrastructure. Do not use it to run public, production, or mission-critical Pubky services; production deployments require infrastructure that is hardened, monitored, maintained, and operated for that purpose."* The guardrails in [`shipped-vs-planned.md`](../../pubky/references/shipped-vs-planned.md) also apply.
+> **Not production hosting.** README: *"This project is intended for local development and experimentation only. It is not production hosting infrastructure. Do not use it to run public, production, or mission-critical Pubky services; production deployments require infrastructure that is hardened, monitored, maintained, and operated for that purpose."* The guardrails in [`shipped-vs-planned.md`](../../pubky/references/shipped-vs-planned.md) also apply.
 
-- **Don't run this just to build an app.** Use the client libraries instead: JS [`@synonymdev/pubky`](https://www.npmjs.com/package/@synonymdev/pubky) or Rust [`pubky`](https://crates.io/crates/pubky), through the **`pubky`** skill (web/server) or the **`pubky-mobile`** skill (native). For a lighter testnet, see [`testing-and-testnet.md`](../../pubky/references/testing-and-testnet.md#standalone-local-testnet).
-- Run the full stack only when you need all of it, especially the Nexus indexer and the social frontend.
-- **Every port is exposed to the network by default.** Each `ports:` entry uses short syntax (`5432:5432`), which [publishes on all host interfaces](https://docs.docker.com/engine/network/port-publishing/). On Linux, Docker's iptables rules also bypass ufw and firewalld. As a result, the homeserver admin API (password `admin`), Postgres, Neo4j, Redis (no `requirepass`) and Redis Insight (no auth) can be reached by anyone who can reach the host. All credentials are hardcoded (see [Credentials](#credentials-and-signups)). Run the stack on a firewalled workstation, or bind the ports to loopback with an override.
+- **Don't run this just to build an app.** The README calls it overkill for app development. Use JS [`@synonymdev/pubky`](https://www.npmjs.com/package/@synonymdev/pubky) or Rust [`pubky`](https://crates.io/crates/pubky) via the **`pubky`** skill (web/server) or **`pubky-mobile`** skill (native), and the lighter [standalone testnet](../../pubky/references/testing-and-testnet.md#standalone-local-testnet). Run the full stack only to exercise the Nexus indexer and social frontend together.
+- **Every port is published on all host interfaces.** Each `ports:` entry uses short syntax (`5432:5432`), which [binds to all interfaces](https://docs.docker.com/engine/network/port-publishing/). The homeserver admin API (password `admin`), Postgres, Neo4j, Redis (no `requirepass`) and Redis Insight (no auth) are reachable by anyone who can reach the host, and all credentials are hardcoded (see [Credentials](#credentials-and-signups)). Use a firewalled workstation, or bind to loopback with an override.
+- **`container_name` is hardcoded.** A second checkout (or another project) collides with an existing stack's containers.
 
-Bind a service to loopback. `docker-compose.override.yml` is loaded automatically when you run `docker compose` without `-f`. You need `!override`, because a plain `ports:` list is **merged** with the base list and the `0.0.0.0` bindings stay. Repeat this for every service in [Ports](#ports-and-topology):
+To bind to loopback, create `docker-compose.override.yml` (auto-loaded when `docker compose` runs without `-f`). Use `!override`: a plain `ports:` list is **merged** with the base list, so the all-interfaces binding stays and a `127.0.0.1` one is added. Repeat for every service in [Ports](#ports-and-topology).
 
-```yaml
-# docker-compose.override.yml — checked with `docker compose config` (Compose 5.3.1), not a full stack run
+```bash
+# Checked with `docker compose config` (Compose 5.3.1) in an isolated copy; not a full stack run
+cat > docker-compose.override.yml <<'EOF'
 services:
   nexus-redis:
     ports: !override
       - "127.0.0.1:6379:6379"
+EOF
+docker compose config nexus-redis   # ports should show only 127.0.0.1
 ```
 
-`pubky-docker-cli.sh` passes `--file docker-compose.yml` explicitly, so it **does not** load this override.
+`pubky-docker-cli.sh` and `list-component-versions.sh` pass `--file <dir>/docker-compose.yml` explicitly, so **neither loads the override**. A CLI-started stack is still published on all interfaces.
 
 ## Quick start (public images)
 
-You don't need a clone or a build, only the compose files and a `.env`.
+No clone or build needed, only the compose files and a configured `.env`.
 
 ```bash
+# Flags and service plan checked with `docker compose --dry-run`; not a real `up`
 cp .env-sample .env
 
 # Full stack
@@ -40,18 +44,18 @@ docker compose --profile backend up -d --no-build
 
 Images come from [Docker Hub `synonymsoft`](https://hub.docker.com/u/synonymsoft), tag `latest` by default.
 
-> **`latest` can lag the compose config.** On Hub, `synonymsoft/pubky-nexus:latest` currently has the same digest as a 2026-05-15 build (`716b64fc561a`). That build is older than pubky-nexus moving network settings to `[stack.net]`, and pubky-docker's testnet config already uses `[stack.net]`. nexusd may therefore fail to parse `/config/config.toml` (`missing field testnet`). This was inferred from the source and not seen at runtime. If nexusd exits on startup, pin a newer `PUBKY_NEXUS_TAG` or build from source.
+> **`synonymsoft/pubky-nexus:latest` probably can't parse the bundled config (inferred from source, not run).** On 2026-10-26, `latest` (digest `sha256:720dceb2e9a5…`) equals tag `716b64fc561a06dc3394a12eabe8c57ec6d6b074`, a pubky-nexus commit from 2026-05-15, before network settings moved to `[stack.net]` (`a795745`). At that commit `[watcher]` requires `testnet` and `testnet_host` with no serde default, but pubky-docker's testnet config puts them under `[stack.net]`, so nexusd will very likely exit with a `missing field testnet` parse error. **No newer image exists to pin**: Hub has only `latest`, `716b64fc…` and the older `ca5ea639…` (2025-11-27). If it fails, build nexusd from source with `../pubky-nexus` at or after `a795745` (see [Build from source](#build-from-source)).
 
 ## Compose profiles
 
-There are two profiles, and every service belongs to one of them:
+Each service has exactly one profile:
 
 | Profile | Services |
 | :-- | :-- |
-| `backend` | postgres, homeserver, nexusd, nexus-neo4j, nexus-redis, nexus-redisinsight, homegate-db-init, homegate-prelude, homegate |
+| `backend` | postgres, homeserver, nexusd, nexus-neo4j, nexus-redis, nexus-redisinsight, homegate-db-init, homegate-prelude, homegate (9 services) |
 | `pubky-app` | pubky-app (frontend only) |
 
-`.env-sample` sets:
+`.env-sample` (lines 5–9):
 
 ```bash
 # Full stack on `docker compose up`; use `docker compose --profile backend up` for backend only
@@ -61,13 +65,21 @@ COMPOSE_PROFILES=backend,pubky-app
 NETWORK=testnet # mainnet
 ```
 
-- **With no active profile, `docker compose up` starts nothing.** A bare `up` gives you the full stack only because `.env` sets `COMPOSE_PROFILES`. If `.env` is missing or leaves that variable out, no containers start.
-- **The `--profile` flag replaces `COMPOSE_PROFILES`. The two are not merged** ([Compose profiles docs](https://docs.docker.com/compose/how-tos/profiles/)). Even with the `.env` above, `docker compose --profile backend config --services` in pubky-docker lists the 9 backend services and leaves out pubky-app.
-- To run your own frontend, start with `--profile backend` and point the frontend at the [host ports](#ports-and-topology).
+Rules (checked with Compose 5.3.1):
+
+- **With no active profile, `docker compose up` starts nothing.** A bare `up` gets the full stack only because `.env` sets `COMPOSE_PROFILES`. If it is blank or missing, `docker compose config --services` prints nothing.
+- **`--profile` replaces `COMPOSE_PROFILES`; they are not merged.** Even with the `.env` above, `--profile backend` selects only the 9 backend services, and `--profile pubky-app` only pubky-app.
+- To run your own frontend, use `--profile backend` and point it at the [host ports](#ports-and-topology).
+
+```bash
+# Run as written (Compose 5.3.1)
+docker compose --profile backend config --services   # 9 backend services, no pubky-app
+docker compose --profile '*' config --services       # every service
+```
 
 ## Image tags, registry and NETWORK
 
-| `.env` variable | Default | Image |
+| `.env` variable | Default | Image reference in compose |
 | :-- | :-- | :-- |
 | `REGISTRY` | `synonymsoft` | all Pubky images |
 | `HOMESERVER_TAG` | `latest` | `${REGISTRY}/homeserver-${HOMESERVER_ENV:-testnet}` |
@@ -75,127 +87,156 @@ NETWORK=testnet # mainnet
 | `PUBKY_APP_TAG` | `latest` | `${REGISTRY}/pubky-app` |
 | `HOMEGATE_TAG` | `latest` | `${REGISTRY}/homegate` |
 
-- Only the homeserver image name has a suffix, set by `HOMESERVER_ENV` (default `testnet`). Neither `.env-sample` nor the README mentions it.
-- **Use `pubky-app`, not `pubky-app-testnet`.** The suffixed image on Hub stopped updating on 2026-05-29.
-- To pin a known-good build, set a tag in place of `latest`. The [registry](https://hub.docker.com/u/synonymsoft) lists the available tags.
+- **`HOMESERVER_ENV` (default `testnet`) is undocumented** (not in the README or `.env-sample`). It sets both the homeserver image suffix and the build `BUILD_TARGET`.
+- **Leave `HOMESERVER_ENV=testnet`.** `HOMESERVER_ENV=homeserver` resolves to `synonymsoft/homeserver-homeserver:latest`, which doesn't exist (the plain image is `synonymsoft/homeserver`). The plain binary also has no `--homeserver-config` flag, so it fails under the entrypoint unless `NETWORK=mainnet`.
+- **Use `pubky-app`, not `pubky-app-testnet`.** `pubky-app-testnet:latest` is `v1.4.0`, last updated 2026-05-29.
+- **Pin tags instead of `latest`.** Every image has full-commit-SHA tags. `homeserver`, `homeserver-testnet`, `pubky-app` and `homegate` also have version tags; **`pubky-nexus` has SHA tags only.** On 2026-10-26, `latest` was: `homeserver-testnet` and `homeserver` `v0.16.2`, `pubky-app` `v1.12.0`, `homegate` `v0.2.0`. Re-check the [registry](https://hub.docker.com/u/synonymsoft).
 
-`NETWORK` (`testnet` by default, or `mainnet`) does two things:
+`NETWORK` (`testnet` default, or `mainnet`) does two things:
 
-1. It selects the Nexus config mount `./pubky-nexus-config-${NETWORK:-testnet}.toml`.
-2. It controls `homeserver.entrypoint.sh`. With `mainnet`, the entrypoint runs `exec homeserver` with no config. Otherwise it runs `exec homeserver --homeserver-config=/config.toml`.
+1. Selects the Nexus config mount `./pubky-nexus-config-${NETWORK:-testnet}.toml` → `/config/config.toml` (run as `nexusd --config-dir=/config`).
+2. Drives `homeserver.entrypoint.sh`: `mainnet` → `exec homeserver` with no config; otherwise `exec homeserver --homeserver-config=/config.toml`.
 
-> **Treat `NETWORK=mainnet` as unsupported locally.** Only `pubky-nexus-config-testnet.toml` exists, and no mainnet version has ever been in git history, so nexusd would mount a file that doesn't exist. `NETWORK` also leaves `HOMESERVER_ENV` (still `testnet`) and the testnet `PUBKY_RUNTIME_*` values unchanged.
+> **Treat `NETWORK=mainnet` as unsupported locally.** Only `pubky-nexus-config-testnet.toml` exists. With `mainnet`, Docker's short-syntax bind of the missing `./pubky-nexus-config-mainnet.toml` creates an **empty host directory** of that name and mounts it at `/config/config.toml`, so nexusd can't load a config. The homeserver image is still the testnet binary (`HOMESERVER_ENV` is unchanged), now running on its built-in default test config, not a mainnet homeserver. The testnet `PUBKY_RUNTIME_*` values also stay.
 
 ### pubky-app runtime config
 
-The frontend reads runtime `PUBKY_RUNTIME_*` variables. The old `NEXT_PUBLIC_*` variables are gone, except `NEXT_PUBLIC_DB_VERSION`, `NEXT_PUBLIC_DB_NAME` and `NEXT_PUBLIC_DEBUG_MODE`, which are still build args. The testnet block in `.env-sample` includes:
+The frontend reads runtime `PUBKY_RUNTIME_*` variables; `NEXT_PUBLIC_DB_VERSION=2`, `NEXT_PUBLIC_DB_NAME=franky` and `NEXT_PUBLIC_DEBUG_MODE=false` are build args. The `.env-sample` testnet block sets:
 
-- `PUBKY_RUNTIME_HOMESERVER=8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo` (the local homeserver key)
+- `PUBKY_RUNTIME_HOMESERVER=8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo` (local homeserver key, hardcoded in the testnet binary)
 - `PUBKY_RUNTIME_HOMESERVER_URL=http://localhost:6286`, `PUBKY_RUNTIME_NEXUS_URL=http://localhost:8080`, `PUBKY_RUNTIME_HOMEGATE_URL=http://localhost:6300`
 - `PUBKY_RUNTIME_TESTNET=true`, `PUBKY_RUNTIME_DEFAULT_HTTP_RELAY=http://localhost:15412/link/`
-- `PUBKY_RUNTIME_PKARR_RELAYS`, which is ignored on testnet
-- `PUBKY_RUNTIME_PLAUSIBLE=false`, which probably does nothing, because compose reads `PUBKY_RUNTIME_ENABLE_PLAUSIBLE`
+- `PUBKY_RUNTIME_PKARR_RELAYS` (the sample's comment says it is ignored on testnet)
+- `PUBKY_RUNTIME_PLAUSIBLE=false`: **a no-op.** pubky-app v1.12.0 reads neither `PUBKY_RUNTIME_PLAUSIBLE` nor compose's `PUBKY_RUNTIME_ENABLE_PLAUSIBLE`. Plausible is configured by `PUBKY_RUNTIME_PLAUSIBLE_DOMAIN` / `PUBKY_RUNTIME_PLAUSIBLE_SCRIPT_URL` and stays off while they are unset.
 
-`.env-sample` also has commented-out Mainnet and mainnet-Staging blocks. Staging uses homeserver `ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy` and `https://nexus.staging.pubky.app`. Compose supplies defaults for any variable left unset, for example `PUBKY_RUNTIME_ENV=staging`, `PUBKY_RUNTIME_CDN_URL=http://localhost:8080/static`, and an HTTP relay of `.../inbox/` that `.env-sample` overrides to `/link/`. The full list of about 30 variables changes often, so read it from [`docker-compose.yml`](https://github.com/pubky/pubky-docker/blob/main/docker-compose.yml).
+`.env-sample` also has commented-out Mainnet and Staging blocks (Staging: homeserver `ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy`, `https://nexus.staging.pubky.app`).
+
+Compose defaults for unset variables include:
+
+- `PUBKY_RUNTIME_ENV=staging`
+- `PUBKY_RUNTIME_CDN_URL=http://localhost:8080/static`
+- `PUBKY_RUNTIME_DEFAULT_HTTP_RELAY=http://localhost:15412/inbox/` (`.env-sample` overrides it to `/link/`)
+- `PUBKY_RUNTIME_MODERATION_ID` empty, `PUBKY_RUNTIME_MODERATED_TAGS=["nudity"]`, `PUBKY_RUNTIME_MAX_STREAM_TAGS=5`
+- `PUBKY_RUNTIME_SHOP_URL=https://staging.pubky.app/shop-embed/marketplace` (pubky-docker #43): **a no-op for pubky-app ≥ v1.12.0**, which no longer reads it (pubky-app ADR 0025, #2821). Don't bother setting it.
+
+The full list changes often, so read it from [`docker-compose.yml`](https://github.com/pubky/pubky-docker/blob/main/docker-compose.yml).
 
 ## Build from source
 
-> **Caveat for both source-build paths (inferred from source, not run).** The compose `homeserver` `build:` passes no build args. The pubky-homeserver Dockerfile defaults to `ARG BUILD_TARGET=homeserver`, which builds the plain binary. Only the published `homeserver-testnet` image is built with `BUILD_TARGET=testnet`. The plain binary has no `--homeserver-config` flag, no static `8pinxx…` testnet key and no relays on 15411/15412. A locally built `homeserver-testnet` image will therefore probably fail under `homeserver.entrypoint.sh`, or start with a different key. One likely workaround, also unverified, is `docker compose build --build-arg BUILD_TARGET=testnet homeserver`. The CLI can't pass this arg. If you only change Nexus, Homegate or pubky-app, keep the Hub homeserver image.
+The compose `homeserver` build passes `BUILD_TARGET: ${HOMESERVER_ENV:-testnet}` (pubky-docker #42, `f0b49c7`), so `docker compose build` and `pubky-docker-cli.sh` both build the **testnet** target by default. You don't need `--build-arg BUILD_TARGET=testnet`.
+
+- The pubky-homeserver [Dockerfile](https://github.com/pubky/pubky-homeserver/blob/main/Dockerfile) defaults to `ARG BUILD_TARGET=homeserver` (`homeserver` | `testnet`), builds `--bin pubky-$BUILD_TARGET` and installs it as `/usr/local/bin/homeserver`. CI publishes `homeserver-testnet` (`testnet`) and `homeserver` (`homeserver`).
+- The testnet binary accepts `--homeserver-config <path>` and runs `StaticTestnet` with the fixed key `8pinxx…` and fixed ports (see [Ports](#ports-and-topology)). That is why it matches `homeserver.entrypoint.sh`, `.env-sample` and the Nexus config.
+- `ARG BUILD_PROFILE=release` (`debug` | `release`) exists; compose doesn't pass it.
 
 ### pubky-docker-cli.sh
 
-Use it when you need specific commits or are changing service code.
+Use it to pin specific commits or when changing service code.
 
 ```bash
+# Only --help/-h run as written; the other forms were checked via the script's parse_args
+# (they clone four repos, build from source and run a foreground `up`)
 ./pubky-docker-cli.sh                 # clone refs, build from source, start full stack
 ./pubky-docker-cli.sh --backend-only  # skip the pubky-app frontend service
 ./pubky-docker-cli.sh --help          # also -h
 ```
 
-It has no other options. Anything else fails with `Unknown option`.
+No other options; anything else fails with `Unknown option: <arg>`.
 
 Flow:
 
-1. It checks for `git`, `docker` and `docker compose version` (Compose v2 required).
-2. It copies `.env-sample` to `.env` **only if `.env` is missing**.
-3. If `.build-state` shows a completed build for the selected services, it prints their commits and asks `[s] Start stack now  [c] Choose refs`. Any answer other than `c` or `choose`, including Enter, starts the stack.
-4. Otherwise it checks GitHub access (`git ls-remote https://github.com/pubky/pubky-homeserver.git HEAD`), then prompts for each repo in this order: nexus, homeserver, homegate, app. The prompt is `Commit, tag, or branch for <name> [<default-branch>]`. Enter uses the remote default branch, or `main`. It clones or updates `../<name>`, runs `fetch --tags`, then `checkout --detach` to `origin/<ref>` for a remote branch, or to `<ref>` otherwise.
-5. It rebuilds only services whose HEAD differs from `.build-state`: pubky-homeserver→`homeserver`, pubky-nexus→`nexusd`, homegate→`homegate`, pubky-app→`pubky-app`.
-6. It runs `docker compose --project-directory <dir> --file <dir>/docker-compose.yml --profile backend [--profile pubky-app] up` **in the foreground, with no `-d`**.
+1. Checks `git`, `docker` and `docker compose version` (Compose v2 required).
+2. Copies `.env-sample` to `.env` **only if `.env` is missing**.
+3. If `.build-state` has a commit for every selected service, prints them and asks `[s] Start stack now  [c] Choose refs`. Any answer except `c`/`choose` (case-insensitive), including Enter, starts the stack.
+4. Otherwise checks GitHub access (`git ls-remote https://github.com/pubky/pubky-homeserver.git HEAD`) and prompts `Commit, tag, or branch for <name> [<default-branch>]` for pubky-nexus, pubky-homeserver, homegate, then pubky-app (skipped with `--backend-only`). The default branch comes from `git ls-remote --symref`, falling back to `main`.
+5. Clones or updates `../<name>`, runs `fetch --tags origin`, then `checkout --detach origin/<ref>` if that remote branch exists, else `checkout --detach <ref>`.
+6. Rebuilds only the services (`nexusd`, `homeserver`, `homegate`, `pubky-app`) whose HEAD differs from `.build-state`. If at least one was built and the build succeeded, it records the commits of **all** selected services.
+7. Runs `docker compose --project-directory <dir> --file <dir>/docker-compose.yml --profile backend [--profile pubky-app] up` **in the foreground, no `-d`**.
 
-The sibling clones `../pubky-homeserver`, `../pubky-nexus`, `../homegate` and `../pubky-app` match the compose `build:` contexts. The project directory can have any name.
+The sibling clones `../pubky-homeserver`, `../pubky-nexus`, `../homegate` and `../pubky-app` match the compose `build:` contexts.
 
 CLI gotchas:
 
-- **A dirty clone aborts the run:** `<dir> has local changes. Commit, stash, or clean them before changing refs.` It also aborts if a target directory exists but is not a git repo.
-- **`.build-state` tracks commits only.** Each line is `<service> <full-commit>`, written after a successful build. Changing `.env` or build args does not trigger a rebuild, so run `docker compose build <service>` yourself. `.build-state` is not gitignored.
-- **CLI-built images use the Hub names** (`synonymsoft/...:latest`). A later `docker compose pull` silently replaces them, `.build-state` doesn't notice, and the CLI skips the rebuild.
+- **A dirty clone aborts the run** (`<dir> has local changes. Commit, stash, or clean them before changing refs.`), as does a target directory that isn't a git repo.
+- **`.build-state` tracks commits only** (`<service> <full-commit>` per line). Changing `.env` or build args, including `HOMESERVER_ENV`/`BUILD_TARGET`, doesn't trigger a rebuild. Run `docker compose build <service>` yourself. `.build-state` isn't in `.gitignore`.
+- **CLI-built images reuse the Hub image names.** A later `docker compose pull` silently replaces them, and the CLI won't notice or rebuild.
 
 ### Manual build (siblings already checked out)
 
-Leave out `--no-build` so Compose builds from the `build:` contexts. The source-build caveat above applies.
+Requires `../pubky-homeserver`, `../pubky-nexus`, `../homegate` and `../pubky-app`. Omit `--no-build` so Compose uses the `build:` contexts.
 
 ```bash
+# Build stanzas checked with `docker compose config`; no real build was run
 cp .env-sample .env
 docker compose build
 
 # Full stack
 docker compose up -d
 
-# Backend only
+# Backend only (run your own frontend separately)
 docker compose --profile backend up -d
 ```
 
 ## Ports and topology
 
-All services share the bridge network `pubky` (`172.18.0.0/16`, IPv6 disabled), each with a fixed IPv4 address. Every host port below is published on all interfaces (see [Local development only](#local-development-only)).
+All services share the bridge network `pubky` (`172.18.0.0/16`, `enable_ipv6: false`) with fixed IPv4 addresses. Every host port below is published on all interfaces (see [Local development only](#local-development-only)).
 
 | Service | Host ports |
 | :-- | :-- |
 | postgres | 5432 |
-| homeserver | 6286 (ICANN HTTP, `PUBKY_RUNTIME_HOMESERVER_URL`), 6287 (Pubky HTTPS), 6288 (admin), 15411 (pkarr relay), 15412 (HTTP relay, `/link/`) |
-| nexusd | 8080 (API), 8081 (pubky listen socket) |
+| homeserver | 6286 (ICANN HTTP, `PUBKY_RUNTIME_HOMESERVER_URL`), 6287 (Pubky HTTPS), 6288 (admin), 15411 (pkarr relay), 15412 (HTTP relay) |
+| nexusd | 8080 (API, `public_addr`), 8081 (`pubky_listen_socket`) |
 | nexus-neo4j | 7474, 7687 |
 | nexus-redis | 6379 |
 | nexus-redisinsight | 5540 |
 | pubky-app | 3000 |
 | homegate | 6300 |
 
-The homeserver port roles come from [`pubky-testnet/src/static_testnet.rs`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/src/static_testnet.rs). pubky-docker itself does not label them. `homegate-prelude` (WireMock) and `homegate-db-init` publish no host ports. For operations, see [`homeserver.md`](homeserver.md), [`dns-and-relays.md`](dns-and-relays.md) and [`http-relay.md`](http-relay.md).
+Homeserver port roles come from [`pubky-testnet/src/static_testnet.rs`](https://github.com/pubky/pubky-homeserver/blob/main/pubky-testnet/src/static_testnet.rs), not pubky-docker. For operations, see [`homeserver.md`](homeserver.md), [`dns-and-relays.md`](dns-and-relays.md) and [`http-relay.md`](http-relay.md).
 
-- **One `postgres:17-alpine` serves both the homeserver and Homegate.** The homeserver DSN is `postgres://test_user:test_pass@172.18.0.9:5432/pubky_homeserver?pubky_test=true`. The one-shot `homegate-db-init` waits for `pg_isready`, then creates `pubky_homegate` if it is missing. `homegate` starts after `homeserver` has started, `homegate-db-init` has completed successfully and `homegate-prelude` has started.
-- **Nexus testnet config** (`pubky-nexus-config-testnet.toml`): it watches homeserver `8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo` with `monitored_homeservers_limit = 0`, `moderation_id = xw4fdy5kpc9aoowabmhqmd7wnuz3pqg7z1usse877tawtu8x7zdy`, `[stack.net] testnet = true`, `testnet_host = "homeserver"`, `redis://nexus-redis:6379` and `bolt://nexus-neo4j:7687`. See [`nexus-operations.md`](nexus-operations.md) for what these mean.
+- **Homeserver config** (`homeserver.config.toml`): DSN `postgres://test_user:test_pass@172.18.0.9:5432/pubky_homeserver?pubky_test=true`, `[pkdns] icann_domain = localhost`, `public_ip = 172.18.0.4`, `[derive] testnet_host = homeserver`, `[admin]` enabled.
+- **Homegate startup order:** after `homeserver` has started, `homegate-db-init` has completed successfully, and `homegate-prelude` has started.
+- **Nexus testnet config** (`pubky-nexus-config-testnet.toml`): `[watcher]` homeserver `8pinxx…`, `monitored_homeservers_limit = 0`, `moderation_id = xw4fdy5kpc9aoowabmhqmd7wnuz3pqg7z1usse877tawtu8x7zdy`. `[stack.net]` sets `testnet = true`, `testnet_host = "homeserver"`. Connects to `redis://nexus-redis:6379` and `bolt://nexus-neo4j:7687`. See [`nexus-operations.md`](nexus-operations.md).
 
 Check component versions on a running stack:
 
 ```bash
+# Run with `docker exec` blocked by a shim, so in-container probes were not exercised
 ./list-component-versions.sh
 ```
 
-The script covers every service in every profile except `homegate-db-init`. For each running container it reads the version (homeserver admin `/info` with `X-Admin-Password`, nexusd `/v0/info` (Nexus `/v0` is unstable), redisinsight `/api/info`) and the image build date. It then lists containers that aren't running. Its only option is `--help`. **Gotcha:** if Compose can't find a service's container, the script falls back to matching by label or bare name (`name=^/postgres$`), so it can report versions from another project's same-named container.
+- Lists services via `docker compose --profile '*' config --services`, skipping `homegate-db-init`. Reads versions from inside each container: homeserver admin `/info` (with `X-Admin-Password` from `/config.toml`), nexusd `/v0/info` (Nexus `/v0` is unstable), redisinsight `/api/info`. Also prints each image's build date.
+- Only option: `--help` (or `-h`). Any other argument fails.
+- **Gotcha:** if Compose can't find a service's container, it falls back to the label `com.docker.compose.service=<svc>`, then the name `^/<svc>$`. Either can match another project's container and report the wrong version (observed in testing).
 
 ## Credentials and signups
 
-These are hardcoded dev values. Never reuse them.
+Hardcoded dev values. Never reuse them.
 
 | Where | Credential |
 | :-- | :-- |
 | postgres | `test_user` / `test_pass` (`.env-sample`) |
-| homeserver admin API | `admin_password = "admin"`, listening in the container on `0.0.0.0:6288` |
-| Neo4j | `NEO4J_AUTH=neo4j/12345678` (the Nexus config uses the same password) |
+| homeserver admin API | `admin_password = "admin"`, on `0.0.0.0:6288` |
+| Neo4j | `NEO4J_AUTH=neo4j/12345678` (`neo4j.env`; the Nexus config uses the same password) |
 | Redis / Redis Insight | none (no `requirepass`; Redis Insight has no auth) |
-| Homegate → homeserver admin | `admin_password = "admin"` in `homegate.config.toml [homeserver]`, used to call `http://homeserver:6288` |
+| Homegate → homeserver admin | `admin_password = "admin"` in `homegate.config.toml`, calling `http://homeserver:6288` |
 
-- **Signup is open.** `homeserver.config.toml` sets `signup_mode = "open"`. Its comment `Default: "token_required"` describes the homeserver's own default, not this stack's setting. For token-gated signup, see [`signup-gating.md`](signup-gating.md) and [`operator-cli.md`](operator-cli.md).
-- **Homegate SMS is faked by WireMock** (`homegate-prelude`). Only **`+12345678912`** creates a verification (other numbers get `blocked` / `in_block_list`), and only code **`123456`** passes the check.
-- **Lightning verification is not configured locally.** When it is configured, Homegate opens a PhoenixD websocket on startup, so a fake URL would make it exit.
+- **Signup is open:** `homeserver.config.toml` sets `signup_mode = "open"`. Its comment `Default: "token_required"` describes the homeserver's own default, not this stack. For token-gated signup, see [`signup-gating.md`](signup-gating.md) and [`operator-cli.md`](operator-cli.md).
+- **WireMock fakes Homegate's SMS provider.** `homegate-prelude` (`wiremock/wiremock:latest`, `--global-response-templating`) stands in for Prelude. `limit_whitelist = ["+12345678912"]`; the config comment says to use the fixed code **`123456`**.
+- **Lightning verification is disabled.** Homegate opens a PhoenixD websocket at startup, so a fake PhoenixD URL would make it exit.
 
 ## Data, persistence and reset
 
-- Data lives in **bind mounts under `./.storage/`**: `postgres/data`, `neo4j/{conf,data,logs}`, `redis/data`, `homegate` and `static` (nexusd `/static`). `.gitignore` excludes `.env`, `storage` and `.storage`.
-- nexus-neo4j also bind-mounts `./pubky-nexus/docker/db-graph`. That path is inside the pubky-docker directory, not the sibling `../pubky-nexus`. Docker creates it as an empty directory, and it is not gitignored.
-- The declared `backend_storage` named volume is not used by any service.
-- **`docker compose down -v` does not wipe data.** It [removes named and anonymous volumes, not bind mounts](https://docs.docker.com/reference/cli/docker/compose/down/). `neo4j.env` says to run `down -v` after changing Neo4j auth, but the old config stays in `./.storage/neo4j`. To reset, stop the stack and delete `./.storage`. This destroys all local homeserver, Nexus and Homegate data. On Linux the files are often root-owned, so deleting them may need `sudo`.
+- Bind mounts under **`./.storage/`**: `postgres/data`, `neo4j/{conf,data,logs}`, `redis/data`, `homegate`, `static`. `.gitignore` has only `.env`, `storage` and `.storage`.
+- nexus-neo4j also mounts `./pubky-nexus/docker/db-graph`, a path inside pubky-docker, not the sibling `../pubky-nexus`.
+- The `backend_storage` named volume is declared but unused.
+
+> **Homeserver state does not survive a restart (inferred from pubky-homeserver source at v0.16.2 `f60e502` and `fd24bf0`, not run).** The entrypoint runs the testnet binary without `persist`, so `StaticTestnet` runs an in-memory homeserver (`MockDataDir`). Its database mode is always `EphemeralTest`: a fresh `pubky_test_<uuid>` Postgres database on every start (the `?pubky_test=true` DSN parameter doesn't decide this), with files in a temp dir. Every restart starts with **no users or data**.
+> - The ephemeral DB is dropped only on SIGINT. `docker compose stop`/`down` sends SIGTERM, so old `pubky_test_*` databases very likely pile up in `./.storage/postgres`.
+> - Nexus (Neo4j/Redis) and Homegate (`pubky_homegate` DB) **do** persist. After a restart they keep users the homeserver no longer has. Reset them too for a consistent stack.
+
+- **`docker compose down -v` does not wipe data.** It [removes named and anonymous volumes, not bind mounts](https://docs.docker.com/reference/cli/docker/compose/down/). `neo4j.env` says to run `down -v` after changing Neo4j auth, but the old state stays in `./.storage/neo4j`.
+- **To reset:** stop the stack and delete `./.storage`. This destroys all Nexus, Homegate and Postgres data, including leaked `pubky_test_*` databases. Homeserver state is already lost on every restart.
 
 ## Where to go next
 
@@ -209,4 +250,4 @@ These are hardcoded dev values. Never reuse them.
 | Signup/invite tokens via pubky-cli | [`operator-cli.md`](operator-cli.md) |
 | Other self-hosting paths | [`testing-and-testnet.md`](../../pubky/references/testing-and-testnet.md#full-self-hosted-stack) |
 
-Upstream: [pubky-docker README](https://github.com/pubky/pubky-docker/blob/main/Readme.md) · [docker-compose.yml](https://github.com/pubky/pubky-docker/blob/main/docker-compose.yml) · [.env-sample](https://github.com/pubky/pubky-docker/blob/main/.env-sample) · [pubky-docker-cli.sh](https://github.com/pubky/pubky-docker/blob/main/pubky-docker-cli.sh) · [synonymsoft registry](https://hub.docker.com/u/synonymsoft)
+Upstream: [pubky-docker README](https://github.com/pubky/pubky-docker/blob/main/Readme.md) · [docker-compose.yml](https://github.com/pubky/pubky-docker/blob/main/docker-compose.yml) · [.env-sample](https://github.com/pubky/pubky-docker/blob/main/.env-sample) · [pubky-docker-cli.sh](https://github.com/pubky/pubky-docker/blob/main/pubky-docker-cli.sh) · [pubky-homeserver Dockerfile](https://github.com/pubky/pubky-homeserver/blob/main/Dockerfile) · [synonymsoft registry](https://hub.docker.com/u/synonymsoft)

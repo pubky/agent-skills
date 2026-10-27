@@ -2,15 +2,15 @@
   "path": "skills/pubky/references/nexus-api.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-09-17T11:46:08.619Z",
+  "generatedAt": "2026-10-26T14:07:49.115Z",
   "sourcesUsed": [
     {
       "repo": "nexus-swagger",
-      "sha": "794a6e103b464c6227fc89f4307508d9119be103"
+      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d"
     },
     {
       "repo": "pubky-nexus",
-      "sha": "794a6e103b464c6227fc89f4307508d9119be103"
+      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d"
     },
     {
       "repo": "pubky-ai-kit",
@@ -19,149 +19,191 @@
   ],
   "provenance": [
     {
-      "anchor": "intro-and-instability",
+      "anchor": "intro / unstable-v0 guardrail",
       "repo": "pubky/pubky-nexus",
       "path": "README.md",
-      "sha": "794a6e103b46",
-      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/README.md#L20"
+      "sha": "bf809b07f766",
+      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/README.md"
     },
     {
-      "anchor": "nexus-scout-routing",
+      "anchor": "which tool to use (nexus-scout)",
       "repo": "pubky/nexus-scout",
-      "path": "SKILL.md",
-      "sha": "0636e0127380",
-      "url": "https://github.com/pubky/nexus-scout/blob/0636e0127380/SKILL.md#L8-L49"
+      "path": "llms.txt",
+      "sha": "live-2026-10-26",
+      "url": "https://nexus-scout.pubky.app/llms.txt"
     },
     {
-      "anchor": "base-urls-local-dev",
-      "repo": "pubky/pubky-nexus",
-      "path": "README.md",
-      "sha": "794a6e103b46",
-      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/README.md#L87"
+      "anchor": "base-urls-and-source-of-truth",
+      "repo": "nexus.pubky.app (live)",
+      "path": "/v0/info",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://nexus.pubky.app/v0/info"
     },
     {
-      "anchor": "base-urls-cors-limits",
-      "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/mod.rs",
-      "sha": "794a6e103b46",
-      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/routes/mod.rs#L150-L158"
-    },
-    {
-      "anchor": "base-url-snippet",
+      "anchor": "base-urls-and-source-of-truth (ai-kit base URL pattern)",
       "repo": "pubky/pubky-ai-kit",
       "path": "pubky-dev-context.md",
       "sha": "5654d0d27218",
-      "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md#L872-L878"
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md"
     },
     {
-      "anchor": "endpoint-map",
+      "anchor": "base-urls-and-source-of-truth (local Nexus)",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky-infra/references/local-stack.md",
+      "sha": "a4f0094e40ef6239231b87774c07fc91ca6c1b51"
+    },
+    {
+      "anchor": "indexing coverage",
       "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/v0/endpoints.rs",
-      "sha": "794a6e103b46",
-      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/routes/v0/endpoints.rs#L24-L46"
+      "path": "docs/decentralization.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-nexus/blob/main/docs/decentralization.md"
     },
     {
-      "anchor": "nonexistent-routes-feeds-global",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "snippets/js/src/quick-start-getting-started.ts",
-      "sha": "2bcd30cc8fe5",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/2bcd30cc8fe5/snippets/js/src/quick-start-getting-started.ts#L1-L6"
-    },
-    {
-      "anchor": "ai-kit-param-drift",
-      "repo": "pubky/pubky-ai-kit",
-      "path": "pubky-dev-context.md",
-      "sha": "5654d0d27218",
-      "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md#L863-L1004"
-    },
-    {
-      "anchor": "id-formats-and-post-user-streams-search",
-      "repo": "pubky/pubky-nexus",
-      "path": "live OpenAPI /api-docs/v0/openapi.json (deployed commit 9e20cbff)",
-      "sha": "9e20cbff",
+      "anchor": "id-formats",
+      "repo": "nexus.pubky.app (live)",
+      "path": "/api-docs/v0/openapi.json",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
       "url": "https://nexus.pubky.app/api-docs/v0/openapi.json"
     },
     {
-      "anchor": "pagination-bounded-limit",
-      "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/models/bounded_limit.rs",
-      "sha": "794a6e103b46",
-      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/models/bounded_limit.rs#L11-L45"
+      "anchor": "endpoint-map",
+      "repo": "nexus.pubky.app (live)",
+      "path": "/api-docs/v0/openapi.json",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://nexus.pubky.app/api-docs/v0/openapi.json"
     },
     {
-      "anchor": "status-codes-503-unreleased",
+      "anchor": "endpoint-map (ai-kit wrong params)",
+      "repo": "pubky/pubky-ai-kit",
+      "path": "pubky-dev-context.md",
+      "sha": "5654d0d27218",
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md"
+    },
+    {
+      "anchor": "post-streams-get-v0streamposts (global feed snippet)",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/js/src/developer-guide.ts",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/developer-guide.ts"
+    },
+    {
+      "anchor": "post-streams-get-v0streamposts (sources and params)",
+      "repo": "pubky/pubky-nexus",
+      "path": "nexus-webapi/src/routes/v0/stream/posts.rs",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://github.com/pubky/pubky-nexus/blob/adc9811d9625014dfb1c51289f712f68e32522b9/nexus-webapi/src/routes/v0/stream/posts.rs"
+    },
+    {
+      "anchor": "user-streams-get-v0streamusers",
+      "repo": "nexus.pubky.app (live)",
+      "path": "/api-docs/v0/openapi.json",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://nexus.pubky.app/api-docs/v0/openapi.json"
+    },
+    {
+      "anchor": "search",
+      "repo": "nexus.pubky.app (live)",
+      "path": "/api-docs/v0/openapi.json",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://nexus.pubky.app/api-docs/v0/openapi.json"
+    },
+    {
+      "anchor": "users-posts-tags-notifications",
+      "repo": "nexus.pubky.app (live)",
+      "path": "/api-docs/v0/openapi.json",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://nexus.pubky.app/api-docs/v0/openapi.json"
+    },
+    {
+      "anchor": "response-shapes-summaries-check-the-swagger-schemas",
+      "repo": "nexus.pubky.app (live)",
+      "path": "/api-docs/v0/openapi.json",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://nexus.pubky.app/api-docs/v0/openapi.json"
+    },
+    {
+      "anchor": "deleted-posts-and-users-check-deleted-not-a-string",
+      "repo": "pubky/pubky-nexus",
+      "path": "nexus-watcher/src/events/handlers/post.rs",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://github.com/pubky/pubky-nexus/blob/adc9811d9625014dfb1c51289f712f68e32522b9/nexus-watcher/src/events/handlers/post.rs"
+    },
+    {
+      "anchor": "pagination-and-errors (503 body)",
       "repo": "pubky/pubky-nexus",
       "path": "nexus-webapi/src/error.rs",
-      "sha": "794a6e103b46",
-      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/error.rs#L134-L185"
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://github.com/pubky/pubky-nexus/blob/adc9811d9625014dfb1c51289f712f68e32522b9/nexus-webapi/src/error.rs"
     },
     {
-      "anchor": "rate-limits-buckets",
+      "anchor": "pagination-and-errors (rate limits)",
       "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/mod.rs",
-      "sha": "794a6e103b46",
-      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/routes/mod.rs#L189-L208"
+      "path": "nexusd/default.config.toml",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://github.com/pubky/pubky-nexus/blob/adc9811d9625014dfb1c51289f712f68e32522b9/nexusd/default.config.toml"
     },
     {
-      "anchor": "rate-limits-static-expensive",
-      "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/static/mod.rs",
-      "sha": "794a6e103b46",
-      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/routes/static/mod.rs#L19-L28"
-    },
-    {
-      "anchor": "files-details-urls-string",
+      "anchor": "files-and-media",
       "repo": "pubky/pubky-nexus",
       "path": "nexus-common/src/models/file/details.rs",
-      "sha": "794a6e103b46",
-      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-common/src/models/file/details.rs#L48-L83"
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://github.com/pubky/pubky-nexus/blob/adc9811d9625014dfb1c51289f712f68e32522b9/nexus-common/src/models/file/details.rs"
     },
     {
-      "anchor": "files-urls-parse-snippet",
+      "anchor": "files-and-media (variants)",
+      "repo": "pubky/pubky-nexus",
+      "path": "nexus-common/src/media/mod.rs",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://github.com/pubky/pubky-nexus/blob/adc9811d9625014dfb1c51289f712f68e32522b9/nexus-common/src/media/mod.rs"
+    },
+    {
+      "anchor": "files-and-media (urls snippet)",
       "repo": "pubky/pubky-app",
       "path": "src/core/application/file/file.ts",
-      "sha": "8de93300ae3c",
-      "url": "https://github.com/pubky/pubky-app/blob/8de93300ae3c/src/core/application/file/file.ts#L269-L275"
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-app/blob/main/src/core/application/file/file.ts"
     },
     {
-      "anchor": "static-legacy-redirect",
+      "anchor": "events-feed-plain-text",
+      "repo": "nexus.pubky.app (live)",
+      "path": "/v0/events",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://nexus.pubky.app/v0/events?limit=2"
+    },
+    {
+      "anchor": "not-live-yet-upstream-main-only",
       "repo": "pubky/pubky-nexus",
-      "path": "live OpenAPI /api-docs/static/openapi.json",
-      "sha": "9e20cbff",
-      "url": "https://nexus.pubky.app/api-docs/static/openapi.json"
+      "path": "nexusd/default.config.toml",
+      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
+      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766b883474aa9735ed97d3a9bc9316d/nexusd/default.config.toml"
     },
     {
-      "anchor": "events-feed",
+      "anchor": "not-live-yet-upstream-main-only (diff)",
       "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/routes/v0/events.rs",
-      "sha": "794a6e103b46",
-      "url": "https://github.com/pubky/pubky-nexus/blob/794a6e103b46/nexus-webapi/src/routes/v0/events.rs#L18-L66"
-    },
-    {
-      "anchor": "canonical-links",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/concepts.md",
-      "sha": "68f67fd23e2715007860395e0ed80d6cbd2caf5e",
-      "url": "https://github.com/pubky/agent-skills/blob/main/skills/pubky/references/concepts.md"
+      "path": "compare/9e20cbff...adc9811d",
+      "sha": "adc9811d9625014dfb1c51289f712f68e32522b9",
+      "url": "https://github.com/pubky/pubky-nexus/compare/9e20cbff...adc9811d9625014dfb1c51289f712f68e32522b9"
     }
   ],
   "snippet": {
-    "total": 6,
-    "pass": 6,
+    "total": 7,
+    "pass": 7,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 37,
+    "supported": 39,
     "refuted": 1,
-    "caveated": 3,
+    "caveated": 2,
     "unsupported": 0
   },
   "guardrailViolations": [
-    "Status table row '503 | JSON | media load shedding' presents a behavior that exists only in the pubky-nexus main branch (added after deployed commit 9e20cbff that prod/staging /v0/info report) as available on the hosted API. It needs an 'unreleased, main-only' caveat or should be removed."
+    "No provenance: 'The shared testnet has no Nexus.' No claim backs it, and 'shared testnet' is ambiguous. testing-and-testnet.md describes only the local pubky-testnet harness, and pubky-infra/references/local-stack.md says pubky-docker's local stack DOES run Nexus. Either source it (pubky-testnet README) and scope it to `pubky-testnet`, or drop it.",
+    "Mirrored drift-prone API detail (CLAUDE.md §4): the per-route limit/default table, the full notification body.type enum and the exhaustive field lists in 'Response shapes' copy OpenAPI content verbatim. Every value checks out live, and the table is caveated with 'These bounds change, so check the OpenAPI'. Still, it is the kind of detail §4 says to link instead. Consider trimming it to the gotchas (the bounds 400 instead of clamping) plus a link to the OpenAPI components."
   ],
-  "wordCount": 2817,
+  "wordCount": 3913,
   "substance": {
     "ok": true,
     "reasons": []
