@@ -1,6 +1,6 @@
 ---
 name: nexus-scout
-description: "Use when you need facts from the Pubky social graph - who follows whom, trending tags, thread/reply history, author reputation, trust distance between users. Query the graph with read-only Cypher over HTTP. NOT for building or debugging a Pubky app (use pubky), NOT for native iOS/Android or React Native apps (use pubky-mobile), and NOT for running or self-hosting Pubky services (use pubky-infra)."
+description: "Use when you need facts from the Pubky social graph - who follows whom, trending tags, thread/reply history, author reputation, trust distance between users. Query the graph with read-only Cypher over HTTP. NOT for building or debugging a Pubky app (use pubky), NOT for native iOS/Android or React Native apps (use pubky-mobile), and NOT for running or self-hosting Pubky services (use pubky-infra), and NOT for importing a WooCommerce / WordPress store catalog into Pubky Shop (use pubky-shop-import)."
 metadata:
   author: pubky
   version: "0.1.0"

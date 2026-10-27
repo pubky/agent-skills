@@ -15,7 +15,7 @@ plugin marketplace.
 
 ## Skills
 
-One plugin (`pubky`), four skills split by **audience / task** — not by SDK language (every
+One plugin (`pubky`), five skills split by **audience / task** — not by SDK language (every
 SDK re-expresses the same protocol spine, so language is a reference-file dimension, not a
 skill boundary). Each skill auto-activates on its own triggers.
 
@@ -25,6 +25,7 @@ skill boundary). Each skill auto-activates on its own triggers.
 | **`pubky-mobile`** | Building native iOS / Android / React Native apps | `@synonymdev/react-native-pubky`, `pubky-core-ffi`, Pubky Ring deeplink auth, mobile-only safety gotchas |
 | **`pubky-infra`** | Operating / self-hosting | homeserver, Nexus indexer, `pubky-docker` stack, `homegate`, `pkdns`, relays |
 | **`nexus-scout`** | Asking questions *of* the social graph | read-only Cypher over the public [nexus-scout](https://nexus-scout.pubky.app) gateway: followers, tags, threads, reputation, follow distance. Vendored verbatim from upstream |
+| **`pubky-shop-import`** | Sellers importing a store into Pubky Shop | WooCommerce / WordPress catalog → [shop.pubky.app](https://shop.pubky.app) listings on the seller's homeserver: bundled Node scripts for export, USD/BTC pricing, taxonomy mapping, BLAKE3-hashed photos, Pubky Ring sign-in, publishing and checkout registration |
 
 ## Install
 
@@ -43,7 +44,7 @@ GitHub CLI (`gh skill`) installs straight into that tool's skills directory.
 
 Turn on auto-update so new commits flow in: `/plugin` → **Marketplaces** → `pubky-agent-skills`
 → **Enable auto-update** (off by default for third-party marketplaces). Claude Code then fetches
-updates at startup; run `/reload-plugins` to activate them. The four skills auto-activate on
+updates at startup; run `/reload-plugins` to activate them. The five skills auto-activate on
 their triggers; to invoke one manually it's namespaced, e.g. `/pubky:pubky-infra`.
 
 ### Codex CLI
@@ -101,6 +102,7 @@ hermes skills install pubky/agent-skills/pubky
 hermes skills install pubky/agent-skills/pubky-mobile
 hermes skills install pubky/agent-skills/pubky-infra
 hermes skills install pubky/agent-skills/nexus-scout
+hermes skills install pubky/agent-skills/pubky-shop-import
 ```
 
 Update with `hermes skills update`.
@@ -131,6 +133,7 @@ gemini-extension.json             # Gemini CLI
 skills/<name>/SKILL.md            # thin, always-loaded: trigger + overview + routing table
 skills/<name>/references/*.md     # progressive-disclosure detail, loaded on demand
 skills/nexus-scout/SKILL.md       # EXCEPTION: byte copy of upstream's file — never hand-edit
+skills/pubky-shop-import/scripts/ # bundled Node scripts the skill runs (npm install once)
 ```
 
 ## Future: MCP server

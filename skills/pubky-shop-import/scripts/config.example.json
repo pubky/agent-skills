@@ -1,0 +1,78 @@
+{
+  "workDir": ".",
+  "source": {
+    "storeUrl": "https://shop.example.com",
+    "weightUnit": "g",
+    "dimensionUnit": "cm",
+    "ssh": { "host": "my-wp-host", "wpPath": "/var/www/shop.example.com" },
+    "shipping": { "country": "CH", "postcode": "", "city": "" },
+    "translation": { "lang": "en" },
+    "languageAttribute": null
+  },
+  "selection": {
+    "productIds": []
+  },
+  "pricing": {
+    "currency": "USD",
+    "rounding": "cent",
+    "markupPercent": 0
+  },
+  "shipping": {
+    "pricing": "flat",
+    "price": "woocommerce",
+    "label": "Tracked post, domestic only",
+    "minDays": 1,
+    "maxDays": 3
+  },
+  "returnPolicy": {
+    "acceptsReturns": true,
+    "returnWindowDays": 14,
+    "buyerPaysReturnShipping": true
+  },
+  "language": {
+    "prefer": "en",
+    "listingLanguageName": "English",
+    "names": { "Deutsch": "German", "Englisch": "English", "Français": "French", "Italiano": "Italian" },
+    "valueNames": { "Schwarz": "Black", "Weiss": "White", "Gelb": "Yellow", "Grün": "Green" },
+    "descriptionLine": "Language: {language}",
+    "titleSuffix": " ({language})"
+  },
+  "defaults": {
+    "countryCode": "CH",
+    "condition": "new",
+    "stockShare": 0.5,
+    "quantityWhenUnknown": 1,
+    "maxQuantity": 50,
+    "acceptsOffers": false,
+    "package": { "weightGrams": 500, "lengthMillimeters": 250, "widthMillimeters": 180, "heightMillimeters": 60 }
+  },
+  "conditionRules": [
+    { "match": "refurbished|used|gebraucht", "condition": "good" }
+  ],
+  "categories": {
+    "titleRules": [
+      { "match": "T-Shirt", "category": "fashion-men-tops-tshirts" },
+      { "match": "\\bpin\\b", "category": "collectibles-pins-patches" }
+    ],
+    "byWooCategory": [
+      { "woo": "books", "category": "books-media-books" },
+      { "woo": "magazines", "category": "books-media-magazines" },
+      { "woo": "stickers", "category": "art-stickers" }
+    ],
+    "default": "other"
+  },
+  "tags": {
+    "always": [],
+    "max": 8,
+    "stopwords": ["the", "and", "for", "with", "edition"]
+  },
+  "description": {
+    "footer": "Sold by Example Shop: {url}",
+    "dropLines": ["^→", "\\s(with|to)\\s*\\.$"]
+  },
+  "media": {
+    "maxPhotos": 8,
+    "maxEdge": 2000,
+    "maxBytes": 3000000
+  }
+}

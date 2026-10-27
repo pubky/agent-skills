@@ -1,0 +1,13 @@
+{
+  "name": "pubky-shop-import-scripts",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "dependencies": {
+    "@bitcoinerrorlog/pubky-shop": "0.1.6",
+    "@noble/hashes": "2.4.0",
+    "@synonymdev/pubky": "0.11.0",
+    "qrcode": "1.5.4",
+    "zod": "4.6.7"
+  }
+}
