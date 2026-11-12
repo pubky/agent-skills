@@ -75,18 +75,27 @@ if (wfDir) {
       catJson(`${wfDir}/${fn}`, `load-${kind}:${fn}`).then(o => ({ key, o }))))
     return entries.map((e, i) => loaded[i] && loaded[i].o ? loaded[i] : { key: e[0], o: null, fn: e[1] })
   }
+  // A corpus entry is an ordered list of part slices (a bare string from an older plan-run is one part).
+  const corpusParts = Object.entries(A.corpusSlices || {})
+    .flatMap(([p, fns]) => (Array.isArray(fns) ? fns : [fns]).map(fn => [p, fn]))
   const [fileEntries, fieldEntries, corpusEntries] = await Promise.all([
     loadAll((A.fileSlices || []).map((fn, i) => [i, fn]), 'file'),
     loadAll(Object.entries(A.fieldSlices || {}), 'field'),
-    loadAll(Object.entries(A.corpusSlices || {}), 'corpus'),
+    loadAll(corpusParts, 'corpus'),
   ])
   const missing = [...fileEntries, ...fieldEntries].filter(e => !e.o).map(e => e.fn)
   if (missing.length) throw new Error(`manifest incomplete, failed to load: ${missing.join(', ')}`)
   if (A.fileSlices) A.files = fileEntries.map(e => e.o)
   for (const e of fieldEntries) A[e.key] = e.o.value
+  // Rejoin parts in slice order; an entry with any part missing is dropped whole, never half-compared.
+  const byKey = {}
+  for (const e of corpusEntries) (byKey[e.key] = byKey[e.key] || []).push(e)
   const corpus = {}
-  for (const e of corpusEntries) if (e.o) corpus[e.key] = { markdown: e.o.markdown, role: e.o.role }
-  const corpusMissing = corpusEntries.filter(e => !e.o).map(e => e.key)
+  const corpusMissing = []
+  for (const [p, es] of Object.entries(byKey)) {
+    if (es.some(e => !e.o)) { corpusMissing.push(p); continue }
+    corpus[p] = { markdown: es.map(e => e.o.markdown).join(''), role: es[0].o.role }
+  }
   if (corpusMissing.length) log(`comparison corpus missing (consistency checks degrade): ${corpusMissing.join(', ')}`)
   A.comparisonCorpus = corpus
   log(`manifest loaded (split): files=${(A.files || []).length} fields=${fieldEntries.length} corpus=${Object.keys(corpus).length}`)

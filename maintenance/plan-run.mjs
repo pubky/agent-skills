@@ -212,10 +212,29 @@ const wfDir = (val('--wf-dir') || '/tmp/sync-wf')
 rmSync(wfDir, { recursive: true, force: true })
 mkdirSync(wfDir, { recursive: true })
 const writeSlice = (fn, value) => { writeFileSync(join(wfDir, fn), JSON.stringify(value)); return fn }
+// A corpus entry is a whole reference file, and a canonical one can pass 40 KB on its own, so its
+// markdown is cut at line boundaries into ordered parts the workflow rejoins. Each entry maps to a
+// list of slice names; one line longer than the limit still gets a part to itself.
+const CORPUS_PART_CHARS = 20000
+const splitLines = (text, max) => {
+  const parts = []
+  let cur = ''
+  for (const line of text.split(/(?<=\n)/)) {
+    if (cur && cur.length + line.length > max) { parts.push(cur); cur = '' }
+    cur += line
+  }
+  if (cur || !parts.length) parts.push(cur)
+  return parts
+}
 const corpusSlices = {}
 let corpusIdx = 0
+let corpusParts = 0
 for (const [p, v] of Object.entries(comparisonCorpus)) {
-  corpusSlices[p] = writeSlice(`corpus-${corpusIdx++}.json`, { path: p, markdown: v.markdown, role: v.role })
+  const parts = splitLines(v.markdown, CORPUS_PART_CHARS)
+  corpusSlices[p] = parts.map((markdown, part) =>
+    writeSlice(`corpus-${corpusIdx}-${part}.json`, { path: p, part, parts: parts.length, markdown, role: v.role }))
+  corpusIdx++
+  corpusParts += parts.length
 }
 // One file per job keeps every slice a few KB no matter how many references are in scope.
 const fileSlices = files.map(({ priorMarkdown, priorProvenance, ...rest }, i) => writeSlice(`file-${i}.json`, rest))
@@ -234,7 +253,7 @@ const wfHeader = {
 }
 writeSlice('header.json', wfHeader)
 const largest = readdirSync(wfDir).map(fn => statSync(join(wfDir, fn)).size).reduce((a, b) => Math.max(a, b), 0)
-console.error(`wf split: header ${(JSON.stringify(wfHeader).length / 1024).toFixed(1)}KB + ${fileSlices.length} file + ${Object.keys(fieldSlices).length} field + ${corpusIdx} corpus slice(s), largest ${(largest / 1024).toFixed(1)}KB -> ${wfDir}`)
+console.error(`wf split: header ${(JSON.stringify(wfHeader).length / 1024).toFixed(1)}KB + ${fileSlices.length} file + ${Object.keys(fieldSlices).length} field + ${corpusIdx} corpus entr(ies) in ${corpusParts} slice(s), largest ${(largest / 1024).toFixed(1)}KB -> ${wfDir}`)
 
 // summary to stderr (stdout is pure JSON for piping)
 console.error(`mode=${mode}  in-scope=${files.length}/${Object.keys(refs).length}  testnet=${testnet.up ? 'up' : 'down'}`)
