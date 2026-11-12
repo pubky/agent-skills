@@ -2,7 +2,7 @@
   "path": "skills/pubky/references/app-specs.md",
   "role": "canonical",
   "accept": true,
-  "generatedAt": "2026-10-26T14:07:49.115Z",
+  "generatedAt": "2026-11-12T09:13:58.784Z",
   "sourcesUsed": [
     {
       "repo": "pubky-app-specs",
@@ -21,23 +21,16 @@
     {
       "anchor": "scope-and-stability",
       "repo": "pubky/pubky-app-specs",
-      "path": "README.md",
+      "path": "Cargo.toml",
       "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
-      "url": "https://github.com/pubky/pubky-app-specs/blob/main/README.md"
+      "url": "https://github.com/pubky/pubky-app-specs/blob/main/Cargo.toml"
     },
     {
       "anchor": "scope-and-stability",
       "repo": "pubky/pubky-nexus",
       "path": "Cargo.toml",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
+      "sha": "b043426",
       "url": "https://github.com/pubky/pubky-nexus/blob/main/Cargo.toml"
-    },
-    {
-      "anchor": "scope-and-stability",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "src/content/docs/pubky-app-specs.md",
-      "sha": "44fcaed5b122464fef97ce8e0f7909d13d0ee350",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/src/content/docs/pubky-app-specs.md"
     },
     {
       "anchor": "paths-and-uris",
@@ -49,8 +42,15 @@
     {
       "anchor": "paths-and-uris",
       "repo": "pubky/pubky-nexus",
+      "path": "nexus-watcher/src/events/mod.rs",
+      "sha": "b043426",
+      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-watcher/src/events/mod.rs"
+    },
+    {
+      "anchor": "paths-and-uris",
+      "repo": "pubky/pubky-nexus",
       "path": "nexus-watcher/src/events/event.rs",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
+      "sha": "b043426",
       "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-watcher/src/events/event.rs"
     },
     {
@@ -61,18 +61,25 @@
       "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/types.rs"
     },
     {
-      "anchor": "pubkyid-raw-z32-only",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-common/src/keys.rs",
-      "sha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811",
-      "url": "https://github.com/pubky/pubky-core/blob/v0.16.2/pubky-common/src/keys.rs"
-    },
-    {
       "anchor": "uri-helpers",
       "repo": "pubky/pubky-app-specs",
       "path": "src/uri/",
       "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
       "url": "https://github.com/pubky/pubky-app-specs/tree/main/src/uri"
+    },
+    {
+      "anchor": "uri-helpers",
+      "repo": "pubky/pubky-nexus",
+      "path": "nexus-watcher/src/events/handlers/tag.rs",
+      "sha": "b043426",
+      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-watcher/src/events/handlers/tag.rs"
+    },
+    {
+      "anchor": "object-ids",
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/traits.rs",
+      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/traits.rs"
     },
     {
       "anchor": "object-ids",
@@ -82,18 +89,11 @@
       "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/common.rs"
     },
     {
-      "anchor": "hash-ids-tag-bookmark-feed-blob",
+      "anchor": "validation-lifecycle",
       "repo": "pubky/pubky-app-specs",
       "path": "src/traits.rs",
       "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
       "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/traits.rs"
-    },
-    {
-      "anchor": "validation-lifecycle",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-sdk/bindings/js/src/actors/storage/session.rs",
-      "sha": "d6c5afc7ff0481ae7c343d1e2bd2be312ce8c811",
-      "url": "https://github.com/pubky/pubky-core/blob/v0.16.2/pubky-sdk/bindings/js/src/actors/storage/session.rs"
     },
     {
       "anchor": "pubkyappuser",
@@ -101,6 +101,13 @@
       "path": "src/models/user.rs",
       "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
       "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/models/user.rs"
+    },
+    {
+      "anchor": "pubkyappuser",
+      "repo": "pubky/pubky-app-specs",
+      "path": "README.md",
+      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/main/README.md"
     },
     {
       "anchor": "pubkyapppost",
@@ -117,18 +124,18 @@
       "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/wasm.rs"
     },
     {
+      "anchor": "pubkyapppost",
+      "repo": "pubky/pubky-app-specs",
+      "path": "pkg/example.js",
+      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/main/pkg/example.js"
+    },
+    {
       "anchor": "lock-optional-since-060",
       "repo": "pubky/pubky-app",
       "path": "docs/locks.md",
-      "sha": "202b027572294cffc359ef7f4010094a748ce4e5",
-      "url": "https://github.com/pubky/pubky-app/blob/main/docs/locks.md"
-    },
-    {
-      "anchor": "collection-posts-kind-collection",
-      "repo": "pubky/pubky-app-specs",
-      "path": "src/models/post/content/collection.rs",
-      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
-      "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/models/post/content/collection.rs"
+      "sha": "292587b7",
+      "url": "https://github.com/pubky/pubky-app/blob/dev/docs/locks.md"
     },
     {
       "anchor": "pubkyapptag",
@@ -136,20 +143,6 @@
       "path": "src/models/tag.rs",
       "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
       "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/models/tag.rs"
-    },
-    {
-      "anchor": "pubkyappbookmark",
-      "repo": "pubky/pubky-app-specs",
-      "path": "src/models/bookmark.rs",
-      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
-      "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/models/bookmark.rs"
-    },
-    {
-      "anchor": "pubkyappfollow-and-pubkyappmute",
-      "repo": "pubky/pubky-app-specs",
-      "path": "src/models/follow.rs",
-      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
-      "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/models/follow.rs"
     },
     {
       "anchor": "pubkyappfile-and-pubkyappblob",
@@ -160,10 +153,17 @@
     },
     {
       "anchor": "pubkyappfile-and-pubkyappblob",
-      "repo": "pubky/pubky-ai-kit",
-      "path": "pubky-dev-context.md",
-      "sha": "5654d0d272189aee00cd8e11c1ecb45dcc09a04a",
-      "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
+      "repo": "pubky/pubky-app-specs",
+      "path": "src/models/blob.rs",
+      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
+      "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/models/blob.rs"
+    },
+    {
+      "anchor": "pubkyappfile-and-pubkyappblob",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/constants.rs",
+      "sha": "main (post-#808, 2026-11-10)",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/src/constants.rs"
     },
     {
       "anchor": "pubkyappfeed",
@@ -171,13 +171,6 @@
       "path": "src/models/feed.rs",
       "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
       "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/models/feed.rs"
-    },
-    {
-      "anchor": "pubkyappfeed",
-      "repo": "pubky/pubky-app-specs",
-      "path": "pkg/example.js",
-      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
-      "url": "https://github.com/pubky/pubky-app-specs/blob/main/pkg/example.js"
     },
     {
       "anchor": "pubkyappfeed",
@@ -203,44 +196,30 @@
     {
       "anchor": "validation-limits",
       "repo": "pubky/pubky-app-specs",
-      "path": "docs/UNICODE_NOTES.md",
-      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
-      "url": "https://github.com/pubky/pubky-app-specs/blob/main/docs/UNICODE_NOTES.md"
-    },
-    {
-      "anchor": "the-deleted-keyword",
-      "repo": "pubky/pubky-nexus",
-      "path": "nexus-watcher/src/events/handlers/post.rs",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-watcher/src/events/handlers/post.rs"
-    },
-    {
-      "anchor": "the-deleted-keyword",
-      "repo": "pubky/pubky-app",
-      "path": "src/core/services/nexus/nexus.types.ts",
-      "sha": "202b027572294cffc359ef7f4010094a748ce4e5",
-      "url": "https://github.com/pubky/pubky-app/blob/main/src/core/services/nexus/nexus.types.ts"
-    },
-    {
-      "anchor": "builder-and-crate-apis",
-      "repo": "pubky/pubky-app-specs",
       "path": "pkg/README.md",
       "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
       "url": "https://github.com/pubky/pubky-app-specs/blob/main/pkg/README.md"
     },
     {
-      "anchor": "rust-crate",
+      "anchor": "the-deleted-keyword",
+      "repo": "pubky/pubky-nexus",
+      "path": "nexus-watcher/src/events/handlers/post.rs",
+      "sha": "b043426",
+      "url": "https://github.com/pubky/pubky-nexus/blob/main/nexus-watcher/src/events/handlers/post.rs"
+    },
+    {
+      "anchor": "builder-and-crate-apis",
       "repo": "pubky/pubky-app-specs",
       "path": "src/lib.rs",
       "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
       "url": "https://github.com/pubky/pubky-app-specs/blob/main/src/lib.rs"
     },
     {
-      "anchor": "rust-crate",
-      "repo": "pubky/pubky-app-specs",
-      "path": "examples/create_user.rs",
-      "sha": "86a561e8485b3a0525661c7fb52ba72f5c17b70e",
-      "url": "https://github.com/pubky/pubky-app-specs/blob/main/examples/create_user.rs"
+      "anchor": "doc-vs-code-drift",
+      "repo": "pubky/pubky-ai-kit",
+      "path": "pubky-dev-context.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
     },
     {
       "anchor": "doc-vs-code-drift",
@@ -258,13 +237,15 @@
     "failing": []
   },
   "factCheck": {
-    "supported": 53,
-    "refuted": 1,
-    "caveated": 8,
+    "supported": 34,
+    "refuted": 0,
+    "caveated": 2,
     "unsupported": 0
   },
-  "guardrailViolations": [],
-  "wordCount": 5336,
+  "guardrailViolations": [
+    "Doc-vs-code drift table, last row: '`/priv` shipped as **alpha** in homeserver v0.10.0' says only 'alpha'. The guardrail requires the full caveat wherever /priv is documented: 'alpha, not for production, access-controlled but not encrypted from the operator'. The lock section has it; this row does not."
+  ],
+  "wordCount": 6525,
   "substance": {
     "ok": true,
     "reasons": []
