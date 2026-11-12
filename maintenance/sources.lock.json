@@ -22,7 +22,11 @@
         "docs/INSTALL.md",
         "docs/REPUBLISHING.md",
         "docs/STORAGE_ADDRESSING_MIGRATION.md",
-        "homeservercli/**"
+        "homeservercli/**",
+        "docs/grant-session-lifecycle.md",
+        "docs/CUSTOM_POP.md",
+        "docs/scoped-encryption-keys.md",
+        "docs/delegated-grants.md"
       ]
     },
     "pubky-app-specs": {
@@ -131,7 +135,9 @@
       "branch": "main",
       "lastSeenSha": "f35c7f9d86a88f67988776cf4c768c64393a0839",
       "pathsOfInterest": [
-        "README.md"
+        "README.md",
+        "DEPLOY.md",
+        "CHANGELOG.md"
       ]
     },
     "pubky-cli": {
@@ -181,7 +187,8 @@
       "lastSeenSha": "292587b740610e9d7332b682e03df0feba1dfdbd",
       "pathsOfInterest": [
         "README.md",
-        "src/**"
+        "src/**",
+        "docs/locks/**"
       ]
     },
     "pubky-explorer": {
@@ -219,9 +226,7 @@
       "verifiedSnippets": true,
       "pathsOfInterest": [
         "snippets/js/**",
-        "snippets/react-native/**",
-        "snippets/rust/**",
-        "src/content/docs/explore/**",
+        "src/content/docs/*.md",
         ".ai-rules.md"
       ]
     },
@@ -325,8 +330,7 @@
         {
           "repo": "pubky-knowledge-base-v2",
           "paths": [
-            "src/content/docs/explore/concepts/**",
-            "src/content/docs/explore/technologies/{key-pair,dht,dns,doh,https}/**"
+            "src/content/docs/{architecture,pkarr,mainline-dht,pkdns,homeserver,security-model,glossary,credible-exit,censorship-resistance,semantic-social-graph}.md"
           ]
         },
         {
@@ -345,7 +349,7 @@
     },
     "skills/pubky/references/auth.md": {
       "role": "normal",
-      "covers": "pubkyauth handshake; capabilities; pubkyauth:// URLs; relays; recovery files; signup tokens; session lifecycle.",
+      "covers": "pubkyauth handshake; capabilities; pubkyauth:// URLs; relays; recovery files; signup tokens; session lifecycle; grant/session lifecycle, custom PoP and scoped encryption keys; parent/child (delegated) grants only once released, and then as feature-gated via /info.",
       "sources": [
         {
           "repo": "pubky-ai-kit",
@@ -356,7 +360,11 @@
         {
           "repo": "pubky-homeserver",
           "paths": [
-            "docs/AUTH.md"
+            "docs/AUTH.md",
+            "docs/grant-session-lifecycle.md",
+            "docs/CUSTOM_POP.md",
+            "docs/scoped-encryption-keys.md",
+            "docs/delegated-grants.md"
           ]
         }
       ],
@@ -441,7 +449,7 @@
         {
           "repo": "pubky-knowledge-base-v2",
           "paths": [
-            "snippets/rust/**"
+            "src/content/docs/sdk.md"
           ]
         },
         {
@@ -522,13 +530,14 @@
     },
     "skills/pubky/references/reference-apps.md": {
       "role": "normal",
-      "covers": "pubky.app structure; the explorer read pattern; the workshop end-to-end flow; the official pubky-app-templates starters (vite-starter, basic-pubky-app) and their relay config; local-first data and error-handling patterns; opens with a one-line pointer to new-project.md (hand-authored new-app procedure that owns intake, network choice and version check; do not restate it).",
+      "covers": "pubky.app structure (including the Locks paid-content feature, an app-level product and not a protocol primitive); Pubky Market as an app-layer example; the explorer read pattern; the workshop end-to-end flow; the official pubky-app-templates starters (vite-starter, basic-pubky-app) and their relay config; local-first data and error-handling patterns; opens with a one-line pointer to new-project.md (hand-authored new-app procedure that owns intake, network choice and version check; do not restate it).",
       "sources": [
         {
           "repo": "pubky-app",
           "paths": [
             "README.md",
-            "src/**"
+            "src/**",
+            "docs/locks/**"
           ]
         },
         {
@@ -547,7 +556,7 @@
         {
           "repo": "pubky-knowledge-base-v2",
           "paths": [
-            "src/content/docs/explore/pubky-apps/**"
+            "src/content/docs/{pubky-app,pubky-explorer,app-architectures,indexing-and-aggregation,pubky-locks,pubky-market}.md"
           ]
         },
         {
@@ -648,12 +657,6 @@
           "paths": [
             "README.md",
             "src/**"
-          ]
-        },
-        {
-          "repo": "pubky-knowledge-base-v2",
-          "paths": [
-            "snippets/react-native/**"
           ]
         },
         {
@@ -806,7 +809,7 @@
     },
     "skills/pubky-infra/references/signup-gating.md": {
       "role": "normal",
-      "covers": "Homegate signup-gating routes (SMS/Lightning/IP); the pepper secret; PostgreSQL backing; openapi.yaml.",
+      "covers": "Homegate signup-gating routes (SMS/Lightning/IP/Google/Apple); the pepper secret; PostgreSQL backing; openapi.yaml.",
       "sources": [
         {
           "repo": "homegate",
@@ -856,12 +859,14 @@
     },
     "skills/pubky-infra/references/http-relay.md": {
       "role": "normal",
-      "covers": "Run the http-relay binary/Docker; the inbox API; TTL/persistence/CORS flags; inbox IDs are bearer secrets.",
+      "covers": "Run the http-relay binary/Docker; the inbox API; TTL/persistence (SQLite)/CORS flags; production deploy behind an HTTP-parsing reverse proxy (TLS, timeouts, --trusted-proxy); inbox IDs are bearer secrets.",
       "sources": [
         {
           "repo": "http-relay",
           "paths": [
-            "README.md"
+            "README.md",
+            "DEPLOY.md",
+            "CHANGELOG.md"
           ]
         }
       ],
