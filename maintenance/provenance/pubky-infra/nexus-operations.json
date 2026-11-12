@@ -2,125 +2,139 @@
   "path": "skills/pubky-infra/references/nexus-operations.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-10-26T14:07:49.115Z",
+  "generatedAt": "2026-11-12T08:25:14.580Z",
   "sourcesUsed": [
     {
       "repo": "pubky-nexus",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d"
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2"
     }
   ],
   "provenance": [
     {
       "anchor": "versions-what-you-are-actually-running",
       "repo": "pubky/pubky-nexus",
-      "path": ".github/workflows/docker.yml",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/compare/adc9811d9625...bf809b07f766"
+      "path": "Cargo.lock",
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/compare/fc03062118e1...b0434269cbdd"
     },
     {
       "anchor": "architecture",
       "repo": "pubky/pubky-nexus",
-      "path": "README.md",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/README.md"
+      "path": "nexus-common/src/db/graph/setup.rs",
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexus-common/src/db/graph/setup.rs#L13"
     },
     {
       "anchor": "nexusd-cli",
       "repo": "pubky/pubky-nexus",
       "path": "nexusd/src/cli.rs",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/nexusd/src/cli.rs"
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexusd/src/cli.rs"
     },
     {
-      "anchor": "nexusd-cli",
-      "repo": "pubky/pubky-nexus",
-      "path": "nexus-webapi/src/mock.rs",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/nexus-webapi/src/mock.rs"
-    },
-    {
-      "anchor": "config-toml",
+      "anchor": "configtoml",
       "repo": "pubky/pubky-nexus",
       "path": "nexusd/default.config.toml",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/nexusd/default.config.toml"
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexusd/default.config.toml"
     },
     {
-      "anchor": "stack-media",
+      "anchor": "configtoml",
       "repo": "pubky/pubky-nexus",
-      "path": "nexusd/default.config.toml",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/nexusd/default.config.toml"
+      "path": "nexus-common/src/config/file/loader.rs",
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexus-common/src/config/file/loader.rs"
+    },
+    {
+      "anchor": "stacknet",
+      "repo": "pubky/pubky-nexus",
+      "path": "nexus-webapi/src/builder.rs",
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexus-webapi/src/builder.rs#L95-L108"
     },
     {
       "anchor": "scheduled-jobs",
       "repo": "pubky/pubky-nexus",
       "path": "nexusd/src/jobs/registry.rs",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/nexusd/src/jobs/registry.rs"
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexusd/src/jobs/registry.rs"
     },
     {
       "anchor": "trust-recompute",
       "repo": "pubky/pubky-nexus",
-      "path": "docker/docker-compose.yml",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/docker/docker-compose.yml#L29-L49"
+      "path": "docker/neo4j/Dockerfile",
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/docker/neo4j/Dockerfile"
     },
     {
-      "anchor": "watcher-event-ingestion",
+      "anchor": "primary-homeserver",
       "repo": "pubky/pubky-nexus",
-      "path": "nexus-watcher/src/service/mod.rs",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/nexus-watcher/src/service/mod.rs"
+      "path": "nexus-watcher/src/events/event.rs",
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexus-watcher/src/events/event.rs#L78-L100"
+    },
+    {
+      "anchor": "user-homeserver-resolver",
+      "repo": "pubky/pubky-nexus",
+      "path": "nexus-watcher/src/service/user_hs_resolver.rs",
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexus-watcher/src/service/user_hs_resolver.rs#L402-L427"
+    },
+    {
+      "anchor": "user-homeserver-resolver",
+      "repo": "pubky/pubky-nexus",
+      "path": "nexus-common/src/db/graph/queries/put.rs",
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexus-common/src/db/graph/queries/put.rs#L465-L531"
     },
     {
       "anchor": "retry-queue",
       "repo": "pubky/pubky-nexus",
       "path": "nexus-watcher/src/events/retry/scheduler.rs",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/nexus-watcher/src/events/retry/scheduler.rs#L52"
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexus-watcher/src/events/retry/scheduler.rs#L52"
     },
     {
       "anchor": "migration-manager",
       "repo": "pubky/pubky-nexus",
       "path": "nexusd/src/migrations/manager.rs",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/nexusd/src/migrations/manager.rs"
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexusd/src/migrations/manager.rs"
     },
     {
-      "anchor": "migration-manager",
+      "anchor": "adding-a-migration",
       "repo": "pubky/pubky-nexus",
-      "path": "nexusd/src/migrations/builder.rs",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/nexusd/src/migrations/builder.rs"
+      "path": "nexusd/src/migrations/catalog/mod.rs",
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/nexusd/src/migrations/catalog/mod.rs"
     },
     {
       "anchor": "observability",
       "repo": "pubky/pubky-nexus",
       "path": "docker/docker-compose.observability.yml",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/docker/docker-compose.observability.yml"
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/docker/docker-compose.observability.yml"
     },
     {
       "anchor": "deploying",
       "repo": "pubky/pubky-nexus",
       "path": "Dockerfile",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/Dockerfile"
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/Dockerfile"
     },
     {
-      "anchor": "example-binaries",
+      "anchor": "deploying",
       "repo": "pubky/pubky-nexus",
-      "path": "nexus-watcher/src/service/mod.rs",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/nexus-watcher/src/service/mod.rs#L37-L41"
+      "path": "docker/docker-compose.yml",
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/docker/docker-compose.yml"
     },
     {
       "anchor": "tests",
       "repo": "pubky/pubky-nexus",
       "path": ".github/workflows/test.yml",
-      "sha": "bf809b07f766b883474aa9735ed97d3a9bc9316d",
-      "url": "https://github.com/pubky/pubky-nexus/blob/bf809b07f766/.github/workflows/test.yml"
+      "sha": "b0434269cbdd5122baf5190e0400900f8c3c5ed2",
+      "url": "https://github.com/pubky/pubky-nexus/blob/b0434269cbdd/.github/workflows/test.yml"
     }
   ],
   "snippet": {
@@ -131,15 +145,13 @@
     "failing": []
   },
   "factCheck": {
-    "supported": 54,
-    "refuted": 1,
-    "caveated": 10,
+    "supported": 7,
+    "refuted": 0,
+    "caveated": 6,
     "unsupported": 0
   },
-  "guardrailViolations": [
-    "Not a planned-feature violation, but mirrored detail that drifts easily (CLAUDE.md section 4): the full 'Watcher trace spans' list and the enumeration of every retry-classification error variant (InvalidEventLine ... ParseFailed) copy internal enum and span names that change with each build. Keep only the variants an operator acts on, and link to nexus-watcher/src/events/retry/scheduler.rs (should_enqueue_related_event) and the instrument(name=...) call sites. The instruments table already carries an 'unstable, confirm against call sites' caveat, which is acceptable."
-  ],
-  "wordCount": 5894,
+  "guardrailViolations": [],
+  "wordCount": 6513,
   "substance": {
     "ok": true,
     "reasons": []

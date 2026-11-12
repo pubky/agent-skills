@@ -2,168 +2,135 @@
   "path": "skills/pubky/references/advanced-messaging-payments.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-10-26T14:07:49.115Z",
+  "generatedAt": "2026-11-12T08:25:14.580Z",
   "sourcesUsed": [
     {
       "repo": "pubky-noise",
-      "sha": "17aed3577411410ddfd7fdf1254d4e56fbd3d6bf"
+      "sha": "2439e9e33a2bdbd210a328abfce48e06822d4e57"
     },
     {
       "repo": "paykit-rs",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
+      "sha": "47f405e9f1efeb624078cc44386636e67654b6dd"
     }
   ],
   "provenance": [
     {
       "anchor": "status-and-guardrails-read-first",
-      "repo": "pubky/paykit-rs",
-      "path": "SECURITY.md",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df",
-      "url": "https://github.com/pubky/paykit-rs/blob/84239143fa17a5a0b2ba0b13694ff6a6e68763df/SECURITY.md"
+      "repo": "crates.io",
+      "path": "api/v1/crates/{pubky-noise,paykit-lib,paykit-sdk}/0.1.0/dependencies",
+      "sha": "checked-2026-11-12",
+      "url": "https://crates.io/api/v1/crates/paykit-lib/0.1.0/dependencies"
     },
     {
       "anchor": "status-and-guardrails-read-first",
       "repo": "pubky/paykit-rs",
-      "path": "README.md",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df",
-      "url": "https://github.com/pubky/paykit-rs#homeserver-requirements"
-    },
-    {
-      "anchor": "status-and-guardrails-read-first",
-      "repo": "pubky/paykit-rs",
-      "path": "paykit-lib/Cargo.toml",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
-    },
-    {
-      "anchor": "status-and-guardrails-read-first",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/shipped-vs-planned.md",
-      "sha": "a4f0094e40ef6239231b87774c07fc91ca6c1b51"
+      "path": "paykit-lib/Cargo.toml; SECURITY.md; README.md#homeserver-requirements",
+      "sha": "47f405e",
+      "url": "https://github.com/pubky/paykit-rs/blob/47f405e/paykit-lib/Cargo.toml"
     },
     {
       "anchor": "when-to-reach-for-which",
       "repo": "pubky/paykit-rs",
-      "path": "paykit-sdk/README.md",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
+      "path": "README.md#library-crates",
+      "sha": "47f405e",
+      "url": "https://github.com/pubky/paykit-rs/blob/47f405e/README.md#library-crates"
     },
     {
       "anchor": "pubky-noise-e2e-messaging",
       "repo": "pubky/pubky-noise",
       "path": "pubky-noise/README.md",
-      "sha": "17aed3577411410ddfd7fdf1254d4e56fbd3d6bf",
+      "sha": "17aed35",
       "url": "https://github.com/pubky/pubky-noise/blob/17aed3577411410ddfd7fdf1254d4e56fbd3d6bf/pubky-noise/README.md"
     },
     {
-      "anchor": "pubky-noise-e2e-messaging",
+      "anchor": "pubky-noise-e2e-messaging (zeroize scoping)",
       "repo": "pubky/pubky-noise",
-      "path": "pubky-noise/src/lib.rs",
-      "sha": "17aed3577411410ddfd7fdf1254d4e56fbd3d6bf"
-    },
-    {
-      "anchor": "pubky-noise-e2e-messaging",
-      "repo": "pubky/pubky-noise",
-      "path": "pubky-noise/src/path_derivation.rs",
-      "sha": "17aed3577411410ddfd7fdf1254d4e56fbd3d6bf"
+      "path": "pubky-noise/Cargo.toml; pubky-noise/README.md",
+      "sha": "2439e9e",
+      "url": "https://github.com/pubky/pubky-noise/compare/17aed35...2439e9e"
     },
     {
       "anchor": "sending-and-receiving-use-the-staged-api",
       "repo": "pubky/pubky-noise",
-      "path": "pubky-noise/src/serializer.rs",
-      "sha": "17aed3577411410ddfd7fdf1254d4e56fbd3d6bf"
-    },
-    {
-      "anchor": "sending-and-receiving-use-the-staged-api",
-      "repo": "pubky/pubky-noise",
-      "path": "pubky-noise/README.md",
-      "sha": "17aed3577411410ddfd7fdf1254d4e56fbd3d6bf",
-      "url": "https://github.com/pubky/pubky-noise/blob/17aed3577411410ddfd7fdf1254d4e56fbd3d6bf/pubky-noise/README.md#quick-start"
+      "path": "pubky-noise/README.md#quick-start",
+      "sha": "17aed35",
+      "url": "https://github.com/pubky/pubky-noise/blob/17aed3577411410ddfd7fdf1254d4e56fbd3d6bf/pubky-noise/README.md"
     },
     {
       "anchor": "session-snapshots-and-encrypted-backup",
       "repo": "pubky/pubky-noise",
-      "path": "pubky-noise/src/backup_crypto.rs",
-      "sha": "17aed3577411410ddfd7fdf1254d4e56fbd3d6bf"
-    },
-    {
-      "anchor": "session-snapshots-and-encrypted-backup",
-      "repo": "pubky/pubky-noise",
-      "path": "pubky-noise/README.md",
-      "sha": "17aed3577411410ddfd7fdf1254d4e56fbd3d6bf",
+      "path": "pubky-noise/README.md#encrypted-homeserver-backup",
+      "sha": "17aed35",
       "url": "https://github.com/pubky/pubky-noise/blob/17aed3577411410ddfd7fdf1254d4e56fbd3d6bf/pubky-noise/README.md#encrypted-homeserver-backup"
     },
     {
       "anchor": "handshake-write-failures-and-errors",
       "repo": "pubky/pubky-noise",
-      "path": "pubky-noise/README.md",
-      "sha": "17aed3577411410ddfd7fdf1254d4e56fbd3d6bf",
+      "path": "pubky-noise/README.md#error-handling",
+      "sha": "17aed35",
       "url": "https://github.com/pubky/pubky-noise/blob/17aed3577411410ddfd7fdf1254d4e56fbd3d6bf/pubky-noise/README.md#error-handling"
     },
     {
       "anchor": "paykit-cross-app-payments",
       "repo": "pubky/paykit-rs",
-      "path": "paykit-sdk/README.md",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
+      "path": "paykit-sdk/README.md; README.md",
+      "sha": "47f405e",
+      "url": "https://github.com/pubky/paykit-rs/blob/47f405e/paykit-sdk/README.md"
+    },
+    {
+      "anchor": "paykit-cross-app-payments (republish_identity)",
+      "repo": "pubky/paykit-rs",
+      "path": "paykit-ffi/README.md#pubky-session-bootstrap",
+      "sha": "47f405e",
+      "url": "https://github.com/pubky/paykit-rs/blob/47f405e/paykit-ffi/README.md#pubky-session-bootstrap"
     },
     {
       "anchor": "storage-layout-app-scoped",
       "repo": "pubky/paykit-rs",
-      "path": "paykit-lib/src/pubky_routing.rs",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
-    },
-    {
-      "anchor": "storage-layout-app-scoped",
-      "repo": "pubky/paykit-rs",
-      "path": "paykit-lib/src/payment_endpoint.rs",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
+      "path": "paykit-lib/README.md",
+      "sha": "47f405e",
+      "url": "https://github.com/pubky/paykit-rs/blob/47f405e/paykit-lib/README.md"
     },
     {
       "anchor": "public-payment-endpoints",
       "repo": "pubky/paykit-rs",
+      "path": "paykit-lib/README.md#quick-start",
+      "sha": "47f405e",
+      "url": "https://github.com/pubky/paykit-rs/blob/47f405e/paykit-lib/README.md"
+    },
+    {
+      "anchor": "encrypted-link-private-channel",
+      "repo": "pubky/paykit-rs",
       "path": "paykit-lib/README.md",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df",
-      "url": "https://github.com/pubky/paykit-rs/blob/84239143fa17a5a0b2ba0b13694ff6a6e68763df/paykit-lib/README.md#quick-start"
-    },
-    {
-      "anchor": "encrypted-link-private-channel",
-      "repo": "pubky/paykit-rs",
-      "path": "paykit-lib/src/encrypted_link/handshake.rs",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
-    },
-    {
-      "anchor": "encrypted-link-private-channel",
-      "repo": "pubky/paykit-rs",
-      "path": "paykit-sdk/src/pubky_session.rs",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
+      "sha": "47f405e",
+      "url": "https://github.com/pubky/paykit-rs/blob/47f405e/paykit-lib/README.md"
     },
     {
       "anchor": "private-messages-payment-requests-allowances-receipts",
       "repo": "pubky/paykit-rs",
-      "path": "paykit-lib/src/allowance/api.rs",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
+      "path": "paykit-lib/README.md; CHANGELOG.md#unreleased; specs/",
+      "sha": "47f405e",
+      "url": "https://github.com/pubky/paykit-rs/blob/47f405e/CHANGELOG.md"
     },
     {
-      "anchor": "private-messages-payment-requests-allowances-receipts",
+      "anchor": "mobile-bindings-paykit-ffi-paykit-react-native",
       "repo": "pubky/paykit-rs",
-      "path": "paykit-lib/src/payment_request/types.rs",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
+      "path": "paykit-react-native/README.md#security; README.md#development; CHANGELOG.md",
+      "sha": "47f405e",
+      "url": "https://github.com/pubky/paykit-rs/blob/47f405e/paykit-react-native/README.md#security"
     },
     {
-      "anchor": "private-messages-payment-requests-allowances-receipts",
-      "repo": "pubky/paykit-rs",
-      "path": "paykit-lib/src/receipt/access.rs",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
-    },
-    {
-      "anchor": "mobile-bindings-paykit-ffi",
-      "repo": "pubky/paykit-rs",
-      "path": "paykit-ffi/README.md",
-      "sha": "84239143fa17a5a0b2ba0b13694ff6a6e68763df"
+      "anchor": "mobile-bindings-paykit-ffi-paykit-react-native (npm 404)",
+      "repo": "npm registry",
+      "path": "@synonymdev/react-native-paykit",
+      "sha": "checked-2026-11-12",
+      "url": "https://registry.npmjs.org/@synonymdev%2freact-native-paykit"
     },
     {
       "anchor": "upstream-sources-of-truth",
       "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/concepts.md",
-      "sha": "a4f0094e40ef6239231b87774c07fc91ca6c1b51"
+      "path": "skills/pubky/references/{shipped-vs-planned,concepts,sdk-rust,auth}.md; skills/pubky-mobile/references/{native-ffi,react-native}.md",
+      "sha": "038f17c"
     }
   ],
   "snippet": {
@@ -174,16 +141,13 @@
     "failing": []
   },
   "factCheck": {
-    "supported": 55,
+    "supported": 10,
     "refuted": 1,
-    "caveated": 7,
+    "caveated": 2,
     "unsupported": 0
   },
-  "guardrailViolations": [
-    "CLAUDE.md section 4 (link, don't mirror): the 'Snapshot format' paragraph copies drift-prone byte-level layout from upstream: ephemeral secret at bytes 4-35, static at 37-68, byte 197 holds the incoming-message count, completed sizes 248/232/296/298, and backup record sizes 252-2288. The 'Envelope' bullet does the same with the magic, version and algorithm_id byte layout. Keep only the stable point (variable length, not a fixed 197 bytes, and it contains secrets) and link https://github.com/pubky/pubky-noise/blob/master/pubky-noise/README.md#snapshot-format.",
-    "Provenance gap: the backup-snippet caption says 'The README says it works against crates.io 0.1.0', and the pubky-noise README contains no such statement. This is an unsourced claim attributed to upstream."
-  ],
-  "wordCount": 6174,
+  "guardrailViolations": [],
+  "wordCount": 6550,
   "substance": {
     "ok": true,
     "reasons": []

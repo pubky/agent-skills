@@ -2,250 +2,234 @@
   "path": "skills/pubky-mobile/references/react-native.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-10-26T14:07:49.115Z",
+  "generatedAt": "2026-11-12T08:25:14.580Z",
   "sourcesUsed": [
     {
       "repo": "react-native-pubky",
-      "sha": "e85e34453a1c7ecb4e2a2b4016914d252aa63c51"
+      "sha": "e47862450427e9c1bbf762094019e22db5b8a994"
     },
     {
       "repo": "pubky-knowledge-base-v2",
-      "sha": "44fcaed5b122464fef97ce8e0f7909d13d0ee350"
+      "sha": "827fb3ad3a2f2775946130500a390b7b2bc81a52"
     },
     {
       "repo": "npm:@synonymdev/react-native-pubky",
-      "sha": "e85e34453a1c7ecb4e2a2b4016914d252aa63c51"
+      "sha": "e47862450427e9c1bbf762094019e22db5b8a994"
     }
   ],
   "provenance": [
     {
-      "anchor": "Version",
-      "repo": "pubky/react-native-pubky",
-      "path": "setup-remote-android-bindings.js",
-      "sha": "e85e34453a1c",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/setup-remote-android-bindings.js#L9"
-    },
-    {
-      "anchor": "Version (GrantSessionInfo change in 0.14.1)",
-      "repo": "pubky/react-native-pubky",
-      "path": "src/index.tsx",
-      "sha": "91e0fcc",
-      "url": "https://github.com/pubky/react-native-pubky/blob/91e0fcc/src/index.tsx"
-    },
-    {
-      "anchor": "Install and linking",
-      "repo": "pubky/react-native-pubky",
-      "path": "android/src/main/java/com/pubky/PubkyModule.kt",
-      "sha": "e85e34453a1c",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/android/src/main/java/com/pubky/PubkyModule.kt#L26-L30"
-    },
-    {
-      "anchor": "Result and errors",
-      "repo": "pubky/react-native-pubky",
-      "path": "src/index.tsx",
-      "sha": "e85e34453a1c",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/src/index.tsx#L33-L129"
-    },
-    {
-      "anchor": "Result and errors (nativeCode mapping)",
-      "repo": "pubky/react-native-pubky",
-      "path": "android/src/main/java/com/pubky/PubkyBindingSupport.kt",
-      "sha": "e85e34453a1c",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/android/src/main/java/com/pubky/PubkyBindingSupport.kt"
-    },
-    {
-      "anchor": "Result and errors (expired flag)",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/binding_error.rs",
-      "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/binding_error.rs"
-    },
-    {
-      "anchor": "Runtime values vs TypeScript types",
-      "repo": "pubky/react-native-pubky",
-      "path": "src/index.tsx",
-      "sha": "e85e34453a1c",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/src/index.tsx#L551-L924"
-    },
-    {
-      "anchor": "Pick an auth path",
-      "repo": "pubky/react-native-pubky",
-      "path": "src/index.tsx",
-      "sha": "e85e34453a1c",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/src/index.tsx#L349-L532"
-    },
-    {
-      "anchor": "Pick an auth path (clientId rule)",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-common/src/auth/jws.rs",
-      "sha": "pubky-common-0.16.1",
-      "url": "https://docs.rs/pubky-common/0.16.1/pubky_common/auth/jws/struct.ClientId.html"
-    },
-    {
-      "anchor": "Grant auth via Ring (no secret key)",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/lib.rs",
-      "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/lib.rs#L789-L830"
-    },
-    {
-      "anchor": "Resumable, cancellable and signup Grant flows",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/auth_flow.rs",
-      "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/auth_flow.rs#L39-L182"
-    },
-    {
-      "anchor": "List and revoke grants",
-      "repo": "pubky/react-native-pubky",
-      "path": "README.md",
-      "sha": "e85e34453a1c",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/README.md#listGrants"
-    },
-    {
-      "anchor": "Session types",
+      "anchor": "#react-native-client-synonymdevreact-native-pubky",
       "repo": "pubky/react-native-pubky",
       "path": "src/index.tsx",
       "sha": "e85e34453a1c",
       "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/src/index.tsx"
     },
     {
-      "anchor": "Homeserver and session methods",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/lib.rs",
-      "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/lib.rs#L464-L572"
-    },
-    {
-      "anchor": "Homeserver and session methods (signInGrantBlocking)",
-      "repo": "pubky/pubky-core",
-      "path": "pubky-sdk (PubkySigner::signin_blocking)",
-      "sha": "pubky-0.16.1",
-      "url": "https://docs.rs/pubky/0.16.1/pubky/struct.PubkySigner.html#method.signin_blocking"
-    },
-    {
-      "anchor": "Client configuration",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/lib.rs",
-      "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/lib.rs#L62-L159"
-    },
-    {
-      "anchor": "Key management",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "snippets/react-native/src/key-management.ts",
-      "sha": "bb7232d5e8ebebc61c55945bedc87d83d2d6bc26",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/react-native/src/key-management.ts"
-    },
-    {
-      "anchor": "Legacy string ops (/pub only)",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/lib.rs",
-      "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/lib.rs#L872-L901"
-    },
-    {
-      "anchor": "Binary storage APIs (0.15)",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/storage.rs",
-      "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/storage.rs#L11-L24"
-    },
-    {
-      "anchor": "Binary storage APIs (list cap)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/shared/utils.rs",
-      "sha": "main",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-homeserver/src/shared/utils.rs"
-    },
-    {
-      "anchor": "/priv (alpha; code-presence only)",
+      "anchor": "#version",
       "repo": "pubky/react-native-pubky",
-      "path": "src/__tests__/index.test.tsx",
-      "sha": "e85e34453a1c",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/src/__tests__/index.test.tsx"
+      "path": "package.json",
+      "sha": "e47862450427",
+      "url": "https://registry.npmjs.org/@synonymdev/react-native-pubky"
     },
     {
-      "anchor": "Storage locks (0.15)",
+      "anchor": "#install-and-linking",
       "repo": "pubky/react-native-pubky",
       "path": "src/index.tsx",
-      "sha": "e85e34453a1c",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/src/index.tsx#L1398-L1453"
+      "sha": "e47862450427",
+      "url": "https://github.com/pubky/react-native-pubky/blob/e47862450427/src/index.tsx#L4-L21"
     },
     {
-      "anchor": "Homeserver event streams (0.15)",
-      "repo": "pubky/react-native-pubky",
-      "path": "src/index.tsx",
-      "sha": "e85e34453a1c",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/src/index.tsx#L1311-L1396"
-    },
-    {
-      "anchor": "Legacy event listener is a placeholder",
+      "anchor": "#result-and-errors",
       "repo": "pubky/pubky-core-ffi",
-      "path": "src/lib.rs",
+      "path": "src/binding_error.rs",
       "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/lib.rs#L229-L252"
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/binding_error.rs"
     },
     {
-      "anchor": "Custom grant proofs and scoped encryption keys",
+      "anchor": "#result-and-errors",
       "repo": "pubky/pubky-core-ffi",
       "path": "src/grant_features.rs",
       "sha": "cecd67c",
       "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/grant_features.rs"
     },
     {
-      "anchor": "Authenticator side",
+      "anchor": "#result-and-errors",
+      "repo": "pubky/react-native-pubky",
+      "path": "ios/PubkyBindings.swift",
+      "sha": "e85e34453a1c",
+      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/ios/PubkyBindings.swift"
+    },
+    {
+      "anchor": "#runtime-values-vs-typescript-types",
       "repo": "pubky/pubky-core-ffi",
       "path": "src/lib.rs",
       "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/lib.rs#L1263-L1338"
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/lib.rs"
     },
     {
-      "anchor": "PKARR publish and resolve",
+      "anchor": "#grant-auth-via-ring-no-secret-key",
       "repo": "pubky/pubky-core-ffi",
       "path": "src/lib.rs",
       "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/lib.rs#L333-L380"
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/lib.rs"
     },
     {
-      "anchor": "PKARR publish and resolve (snippet)",
+      "anchor": "#resumable-cancellable-and-signup-grant-flows",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/auth_flow.rs",
+      "sha": "cecd67c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/auth_flow.rs"
+    },
+    {
+      "anchor": "#resumable-cancellable-and-signup-grant-flows",
+      "repo": "pubky/react-native-pubky",
+      "path": "src/index.tsx",
+      "sha": "e47862450427",
+      "url": "https://github.com/pubky/react-native-pubky/blob/e47862450427/src/index.tsx#L968-L1035"
+    },
+    {
+      "anchor": "#list-and-revoke-grants",
+      "repo": "pubky/react-native-pubky",
+      "path": "README.md",
+      "sha": "e85e34453a1c",
+      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/README.md#L461-L488"
+    },
+    {
+      "anchor": "#session-types",
+      "repo": "pubky/react-native-pubky",
+      "path": "src/index.tsx",
+      "sha": "e47862450427",
+      "url": "https://github.com/pubky/react-native-pubky/blob/e47862450427/src/index.tsx#L47-L127"
+    },
+    {
+      "anchor": "#homeserver-and-session-methods",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "cecd67c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/lib.rs"
+    },
+    {
+      "anchor": "#client-configuration",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/lib.rs",
+      "sha": "cecd67c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/lib.rs#L89"
+    },
+    {
+      "anchor": "#key-management",
+      "repo": "pubky/pubky-knowledge-base-v2",
+      "path": "snippets/react-native/src/key-management.ts",
+      "sha": "bb7232d5e8ebebc61c55945bedc87d83d2d6bc26",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/react-native/src/key-management.ts"
+    },
+    {
+      "anchor": "#legacy-string-ops-pub-only",
+      "repo": "pubky/react-native-pubky",
+      "path": "src/index.tsx",
+      "sha": "e85e34453a1c",
+      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/src/index.tsx"
+    },
+    {
+      "anchor": "#binary-storage-apis-015",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/storage.rs",
+      "sha": "cecd67c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/storage.rs"
+    },
+    {
+      "anchor": "#priv-alpha-code-presence-only",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/shipped-vs-planned.md",
+      "sha": "038f17cf708cf6e488e4b02c5b53a941375de41c"
+    },
+    {
+      "anchor": "#storage-locks-015",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/locks.rs",
+      "sha": "cecd67c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/locks.rs"
+    },
+    {
+      "anchor": "#homeserver-event-streams-015",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/events.rs",
+      "sha": "cecd67c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/events.rs"
+    },
+    {
+      "anchor": "#legacy-event-listener-is-a-placeholder",
+      "repo": "pubky/react-native-pubky",
+      "path": "src/index.tsx",
+      "sha": "3326c1f",
+      "url": "https://github.com/pubky/react-native-pubky/commit/3326c1f"
+    },
+    {
+      "anchor": "#custom-grant-proofs-and-scoped-encryption-keys",
+      "repo": "pubky/pubky-core-ffi",
+      "path": "src/grant_features.rs",
+      "sha": "cecd67c",
+      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/grant_features.rs"
+    },
+    {
+      "anchor": "#custom-grant-proofs-and-scoped-encryption-keys",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/scoped-encryption-keys.md",
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/scoped-encryption-keys.md"
+    },
+    {
+      "anchor": "#signed-approval-flow-with-scoped-encryption-keys",
+      "repo": "pubky/react-native-pubky",
+      "path": "example/src/App.tsx",
+      "sha": "e47862450427",
+      "url": "https://github.com/pubky/react-native-pubky/blob/e47862450427/example/src/App.tsx#L77-L142"
+    },
+    {
+      "anchor": "#authenticator-side",
+      "repo": "pubky/react-native-pubky",
+      "path": "src/index.tsx",
+      "sha": "e85e34453a1c",
+      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/src/index.tsx"
+    },
+    {
+      "anchor": "#pkarr-publish-and-resolve",
       "repo": "pubky/pubky-knowledge-base-v2",
       "path": "snippets/react-native/src/resolve.ts",
       "sha": "bb7232d5e8ebebc61c55945bedc87d83d2d6bc26",
       "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/react-native/src/resolve.ts"
     },
     {
-      "anchor": "README drift (0.15.0)",
+      "anchor": "#readme-drift-0150",
       "repo": "pubky/react-native-pubky",
       "path": "README.md",
       "sha": "e85e34453a1c",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/README.md"
+      "url": "https://github.com/pubky/react-native-pubky/blob/e85e34453a1c/README.md#L547-L549"
     },
     {
-      "anchor": "Shipped vs planned",
+      "anchor": "#shipped-vs-planned",
       "repo": "pubky/agent-skills",
       "path": "skills/pubky/references/shipped-vs-planned.md",
-      "sha": "a4f0094e40ef6239231b87774c07fc91ca6c1b51"
+      "sha": "038f17cf708cf6e488e4b02c5b53a941375de41c"
     }
   ],
   "snippet": {
     "total": 12,
-    "pass": 12,
-    "fail": 0,
+    "pass": 11,
+    "fail": 1,
     "unverifiable": 0,
-    "failing": []
+    "failing": [
+      "rn-grant-resumable"
+    ]
   },
   "factCheck": {
-    "supported": 40,
-    "refuted": 1,
-    "caveated": 14,
+    "supported": 16,
+    "refuted": 3,
+    "caveated": 7,
     "unsupported": 0
   },
-  "guardrailViolations": [
-    "Mirrored API detail that should be a link (CLAUDE.md §4): the 'Session types' section copies GrantSessionInfo/CookieSessionInfo/SessionInfo/GrantInfo verbatim from src/index.tsx. Pubky is pre-1.0, and this exact block already drifted once (0.14.0 → 0.14.1). Link the typings and keep only the gotchas: bare z32 pubky/homeserver, numeric timestamps, GrantInfo.capabilities as a string vs string[]. The GrantAuthFlowConfig field table and the full PubkyStorageEvent/EventStreamConfig field lists are similar mirrors and could be trimmed the same way.",
-    "No planned or unshipped feature is presented as available. /priv carries the alpha / not-for-production / not-encrypted-from-operator caveat in each place it appears, scoped keys are framed as key delivery only, and backup restore/cloud/sync/mirroring are explicitly denied. Public-key string usage is correct: bare z32 from .z32() is used in pubky:// URLs, and the pubky:// homeserver form is accepted by PublicKey::try_from."
-  ],
-  "wordCount": 5192,
+  "guardrailViolations": [],
+  "wordCount": 5529,
   "substance": {
     "ok": true,
     "reasons": []

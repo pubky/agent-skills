@@ -18,10 +18,11 @@ the event streams behind it. This file covers only the `/v0` HTTP surface.
 > the `/v0` route prefix while the API undergoes active development and changes. Expect potential
 > breaking changes as we work toward stability."* See
 > [`./shipped-vs-planned.md`](./shipped-vs-planned.md#everything-is-v0).
-> Between 2026-09-17 and 2026-10-26 the live API gained a new stream source, new search params,
-> `deleted` flags, a new media variant and a new count field. The version stayed `0.4.1` the
-> whole time. **Check every route, param and shape here against the live Swagger/OpenAPI before you
-> rely on it.** Parse responses defensively, and keep Nexus calls behind your own adapter.
+> Between 2026-09-17 and 2026-11-12 the live API gained a stream source, search params, `deleted`
+> flags, a media variant, a count field, the `locked` post-stream filter, the notification `types`
+> filter, `tag_uri`, `epoch` and documented 400 responses. It reported version `0.4.1` the whole
+> time. **Check every route, param and shape here against the live Swagger/OpenAPI before you rely
+> on it.** Parse responses defensively, and keep Nexus calls behind your own adapter.
 
 ## Base URLs and source of truth
 
@@ -31,20 +32,20 @@ the event streams behind it. This file covers only the `/v0` HTTP surface.
 | Staging ("latest") | `https://nexus.staging.pubky.app/v0` | <https://nexus.staging.pubky.app/swagger-ui/> |
 | Local dev | `http://localhost:8080/v0` | `http://localhost:8080/swagger-ui` |
 
-- **OpenAPI JSON:** `/api-docs/v0/openapi.json` covers `/v0` (43 paths).
-  `/api-docs/static/openapi.json` covers media under `/static`. On 2026-10-26, prod and staging
+- **OpenAPI JSON:** `/api-docs/v0/openapi.json` covers `/v0` (43 paths), and
+  `/api-docs/static/openapi.json` covers media under `/static`. On 2026-11-12, prod and staging
   served a byte-identical `/v0` document.
-- **Detect features by route or param, not by version.** On 2026-10-26, `GET /v0/info` reported
-  `nexus-webapi` `0.4.1` on both prod and staging, at commit `adc9811d` (dated 2026-10-09).
-  Upstream `main` is 24 commits ahead and still reports `0.4.1`. To check for a feature, look for
-  its route or param in the OpenAPI JSON. Behavior that exists only in `main` is not live (see
-  [Not live yet](#not-live-yet-upstream-main-only)).
+- **Detect features by route or param, not by version.** On 2026-11-12, `GET /v0/info` reported
+  `nexus-webapi` `0.4.1` on prod and staging, at commit `fc030621` (2026-11-03). Upstream `main`
+  was 3 commits ahead, none of them API-visible. To check for a feature, look for its route or
+  param in the OpenAPI JSON. Before you code against anything that exists only in upstream `main`,
+  compare the `/v0/info` `commit_hash`.
 - **Browser calls work.** Responses carry `access-control-allow-origin: *`. The default body limit
   is 1 MiB, and the default request timeout is 30 s.
 - **Local Nexus:** the local `pubky-docker` stack runs one on `:8080`. See the
   [`pubky-infra` local-stack reference](../../pubky-infra/references/local-stack.md).
 
-Pick the base URL from an env override, and fall back to hosted production. This pattern comes
+Read the base URL from an env override, and fall back to hosted production. This pattern comes
 from ai-kit:
 
 ```js
@@ -53,6 +54,9 @@ const NEXUS_API_BASE_URL = process.env.NEXT_PUBLIC_NEXUS ?
   `${process.env.NEXT_PUBLIC_NEXUS}/v0` :
   'https://nexus.pubky.app/v0';
 ```
+
+Verified on 2026-11-12 (Node). With the env var unset, the snippet gave the production base, and
+`GET <base>/info` returned 200. With it set, the snippet gave `<override>/v0`.
 
 **A missing result can mean "not indexed" rather than "absent".** Nexus returns only what this
 instance has indexed, and indexing takes time. The primary homeserver is bulk-indexed. Users on
@@ -85,8 +89,8 @@ Key formats: [`./concepts.md`](./concepts.md#public-key-string-formats). Post ID
 
 ## Endpoint map
 
-This is an overview of the live routes (43 paths, unchanged since 2026-09-17). The OpenAPI is the
-contract.
+An overview of the live routes (43 paths as of 2026-11-12, the same set as on 2026-09-17). The
+OpenAPI is the contract.
 
 - **Info:** `GET /v0/info`
 - **Bootstrap / ingest:**
@@ -120,8 +124,7 @@ reads use `POST` only so they can carry an id list (1–100 ids) in the body.
 - `GET /v0/user/{id}/muted` returns 404 with an empty body.
 
 **Some ai-kit (`pubky-dev-context.md`) param names are wrong on live.** Live Nexus silently ignores
-unknown query params and returns 200. A wrong name therefore raises no error. It just has no
-effect:
+unknown query params and returns 200, so a wrong name raises no error. It just has no effect:
 
 | ai-kit | Live |
 | :-- | :-- |
@@ -144,7 +147,7 @@ const response = await fetch(
 const posts = await response.json();
 ```
 
-Verified 2026-10-26 against production Nexus: it returned 10 `PostView` objects.
+Verified 2026-11-12 against production Nexus: it returned 10 `PostView` objects.
 
 `source` is a discriminated enum. **If you omit a source's required param, the call returns 400.**
 For example, `?source=following` without `observer_id` returns
@@ -157,8 +160,8 @@ For example, `?source=following` without `observer_id` returns
 | `bookmarks` | `observer_id` | |
 | `author`, `author_replies` | `author_id` | |
 | `post_replies` | `author_id` + `post_id` | |
-| `collection` | `author_id` + `post_id` of the Collection post | Curator order. **400** if you send `tags`/`kind`/`exclude_kinds`/`sorting`/`order`/`start`/`end` |
-| `post_collections` | `author_id` + `post_id` of **any** post | The Collection posts that contain it, newest first. **400** on `kind`/`exclude_kinds` |
+| `collection` | `author_id` + `post_id` of the Collection post | Curator order. **400** if you send `tags`/`kind`/`exclude_kinds`/`locked`/`sorting`/`order`/`start`/`end` |
+| `post_collections` | `author_id` + `post_id` of **any** post | The Collection posts that contain it, newest first. **400** on `kind`/`exclude_kinds`/`locked` |
 | `wot` | `observer_id` | `depth` 1–3 (default 2). `depth=0` is invalid. Excludes the observer, even through follow cycles |
 | `wot_domain` | `observer_id` + `domain_tags` (max 5) | `depth` 0–3 (default 2). `0` is the observer-only "Me" trust set. Returns every post by authors the WoT has tagged. Add `tags=` to scope results to a topic. **Includes** the observer's own posts if the observer carries a matching label |
 
@@ -173,6 +176,8 @@ Other params:
   - `post_collections`, `post_replies` and `author_replies` reject `kind`. `collection`,
     `post_collections`, `post_replies` and `author_replies` reject `exclude_kinds`.
   - `exclude_kinds` never drops a post whose kind is missing or unrecognized.
+- `locked=true` keeps only posts that have a `lock` set (see [Locked posts](#locked-posts-locked)).
+  `false` (default) applies no filter.
 - `sorting` is `timeline` (default) or `total_engagement`. Ties are broken by post id, so paging
   through equal scores is best-effort.
 - `order` is `ascending` or `descending` (default).
@@ -189,6 +194,13 @@ Other params:
   Collection. An empty result doesn't prove the post is in no Collection.
 - `/stream/posts/keys` is a best-effort snapshot and can point at deleted posts. To get the posts,
   call `/stream/posts` or `POST /stream/posts/by_ids`. Both drop any ref they can't resolve.
+- **The global feed may hide unranked authors.** The deployed code has a
+  `[features] hide_unranked_authors` switch. When it is on, the OpenAPI says posts by authors
+  outside the trust ranking are left out of `source=all` (any sorting, tags or kind). Sending
+  `viewer_id` with `source=all`, `sorting=timeline` and no `tags` brings back the viewer's own
+  posts. Upstream defaults the switch to `false`, but no public source says how the hosted
+  instance sets it. **Don't treat a post missing from `all` as proof that it isn't indexed.** Fetch
+  it by id, and send `viewer_id` so users see their own new posts.
 
 To find which Collections contain a post (Collection model:
 [`./app-specs.md`](./app-specs.md#collection-posts-kind-collection)):
@@ -203,14 +215,54 @@ if (!res.ok) throw new Error(`Nexus ${res.status}`);
 const collections = await res.json(); // PostView[] with details.kind === "collection"
 ```
 
-Verified 2026-10-26 against production Nexus (read-only): it returned the one Collection that
+Verified 2026-11-12 against production Nexus (read-only): it returned the one Collection that
 contains the post. Without `author_id`, the call returns
 `400 "source 'post_collections' requires 'author_id' parameter"`.
 
 The `POST /v0/stream/posts/by_ids` body is
 `{ post_ids: GlobalPostId[] /*1-100*/, viewer_id?, include_attachment_metadata? }`.
 **An empty `post_ids` returns 400** (`post_ids: At least 1 item(s) required`). The OpenAPI lists
-only 200/429/500 for this route, so it doesn't document this 400.
+200/400/429/500 for this route.
+
+### Locked posts (`locked`)
+
+`locked=true` on `GET /v0/stream/posts` and `GET /v0/stream/posts/keys` returns only posts whose
+`details.lock` is set. It matches **every** locked post, whoever the viewer is and whether or not
+they unlocked it. It doesn't tell you what a viewer can read.
+
+```js
+const NEXUS = "https://nexus.pubky.app/v0";
+// locked=true keeps only posts whose details.lock is set (any kind, any viewer).
+// Don't combine with kind/exclude_kinds (400); rejected for collection,
+// post_collections, post_replies and author_replies sources.
+const res = await fetch(`${NEXUS}/stream/posts?locked=true&limit=10`);
+if (!res.ok) throw new Error(`Nexus ${res.status}: ${(await res.json()).error}`);
+const lockedPosts = await res.json(); // PostView[]; every details.lock is a pubky:// URL
+```
+
+Verified 2026-11-12 against production Nexus (read-only, Node 24): it returned 10 posts, each with
+`details.lock` set. Every 400 in the table below was probed live. The error path assumes a JSON
+body, so a 429 (empty body) throws a `SyntaxError` there. Use `nexusGet` (below) in real code.
+
+- **Replies are left out**, except with `source=bookmarks`, which keeps locked replies. Every other
+  source returns parent posts only.
+- Upstream tests cover `locked` with the sources `all`, `author`, `following` and `bookmarks`, with
+  `sorting=total_engagement`, with `skip`/`limit` and with `viewer_id`. Like `kind`, it is served
+  from the graph rather than the Redis cache.
+- Send the literal `true` or `false`. These are the 400s it can return:
+
+  | Request | `error` |
+  | :-- | :-- |
+  | `locked=true` + `kind` or `exclude_kinds` | ``Invalid input: `locked` cannot be combined with `kind` or `exclude_kinds` `` |
+  | `source=post_replies` or `author_replies` | ``Invalid input: `kind`, `exclude_kinds` and `locked` are not supported with `source=post_replies` or `source=author_replies` `` |
+  | `source=post_collections` | ``Invalid input: `kind`, `exclude_kinds` and `locked` are not supported with `source=post_collections` `` |
+  | `source=collection` | ``Invalid input: `locked` is not supported with `source=collection` `` |
+  | `locked=yes` | ``Invalid input: Failed to deserialize query string: locked: provided string was not `true` or `false` `` |
+
+- **A locked post is not private or encrypted.** `lock` is only a schema field, and the post body
+  is public. The lock convention pubky.app uses (a lock file URL and teaser `content`) and the
+  `/priv` caveats are in [`./app-specs.md`](./app-specs.md#lock-optional-since-060). Read that
+  before you render or describe locked posts.
 
 ## User streams: `GET /v0/stream/users`
 
@@ -221,6 +273,10 @@ only 200/429/500 for this route, so it doesn't document this 400.
 | `influencers` | Optional `user_id` (omit it for global). `reach` (default `wot_2`) applies only when `user_id` is set **and** `timeframe` ≠ `all_time` |
 | `post_replies` | `author_id` + `post_id` |
 | `starter_pack` | `tags` (1–5 interest labels) required |
+
+**`most_followed` lags.** A scheduled job rebuilds it from graph follower counts, once a day at
+04:06 UTC in upstream's default config. Follows and unfollows don't update it directly, so a new
+follow can take up to a day to show up.
 
 `starter_pack`:
 - Works for brand-new accounts.
@@ -272,12 +328,12 @@ posts, pass the keys to `POST /stream/posts/by_ids`.
 const NEXUS = "https://nexus.pubky.app/v0";
 const meZ32 = publicKey.z32(); // raw z32, never "pubky<z32>"
 // user_id and reach must be sent together (400 otherwise); results never include meZ32's own posts
-const hits = await (
-  await fetch(
-    `${NEXUS}/search/posts/by_content?q=${encodeURIComponent(q)}` +
-      `&user_id=${meZ32}&reach=following&limit=20`,
-  )
-).json(); // [{ post_key: "<z32>:<postId>", score }]
+const searchRes = await fetch(
+  `${NEXUS}/search/posts/by_content?q=${encodeURIComponent(q)}` +
+    `&user_id=${meZ32}&reach=following&limit=20`,
+);
+if (!searchRes.ok) throw new Error(`Nexus ${searchRes.status}`);
+const hits = await searchRes.json(); // [{ post_key: "<z32>:<postId>", score }]
 let posts = [];
 if (hits.length > 0) { // by_ids returns 400 for an empty post_ids
   const res = await fetch(`${NEXUS}/stream/posts/by_ids`, {
@@ -290,10 +346,11 @@ if (hits.length > 0) { // by_ids returns 400 for an empty post_ids
 }
 ```
 
-Verified 2026-10-26 against production Nexus (read-only, `@synonymdev/pubky` 0.12.0 `PublicKey`).
+Verified 2026-11-12 against production Nexus (read-only, `@synonymdev/pubky` 0.12.0 `PublicKey`).
 It returned 20 hits, none of them by the searcher, and resolved all 20 to `PostView`s. Sending
-`user_id` without `reach` returned 400, and so did an empty `post_ids`. Drop `user_id`/`reach` for
-a global search.
+`user_id` without `reach` returned 400, and so did an empty `post_ids`. The `searchRes.ok` check was
+added after that run, so a 400 or 429 throws instead of being read as "no hits". For a global
+search, drop `user_id`/`reach`.
 
 ## Users, posts, tags, notifications
 
@@ -301,32 +358,49 @@ a global search.
   - Applies to `GET /v0/user/{id}`, `/user/{id}/tags`, `/user/{id}/taggers/{label}` and
     `/post/{a}/{p}/tags`.
   - These routes accept `depth` (1–3) **only together with** `viewer_id`. `depth` without
-    `viewer_id` returns `400 {"error":"Invalid input: `depth` requires `viewer_id`"}`.
+    `viewer_id` returns ``400 {"error":"Invalid input: `depth` requires `viewer_id`"}``.
     `viewer_id` without `depth` returns the global view.
 - `/user/{id}/followers|following|friends` return arrays of z32 IDs.
 - `/user/{id}/notifications`:
-  - Returns `{ timestamp, body }` items. As of 2026-10-26, `body.type` is one of `follow,
+  - Returns `{ timestamp, body }` items. As of 2026-11-12, `body.type` is one of `follow,
     new_friend, lost_friend, tag_post, tag_profile, untag_post, untag_profile, reply, repost,
-    mention, post_deleted, post_edited`. Handle unknown types without failing.
+    mention, post_deleted, post_edited`. Don't fail on unknown types.
   - `post_deleted` / `post_edited` carry `delete_source` / `edit_source`
     (`reply|repost|bookmark|reply_parent|repost_embed|tagged_post`), plus `linked_uri` and
     `post_kind`.
   - Supports `start`/`end` and `skip`/`limit`.
+  - **`types` filter:** a comma list of 1–12 of the types above (duplicates are ignored). An
+    unknown value returns
+    `400 "Invalid input: Failed to deserialize query string: types: unknown notification type: bogus"`.
+    With `types`, `skip`/`limit` count matching notifications only.
+  - **A filtered page can be short or empty before the history ends.** Each request scans at most
+    10,000 notifications. If it hits that cap before the page fills, the response carries an
+    **`X-Next-Start`** header (int64): send it as `start` on the next request. If the header is
+    absent, the page is full or the history has been read to the end. Don't stop paging on an
+    empty page while `X-Next-Start` is present. CORS exposes the header, so browsers can read it.
 
 ## Response shapes (summaries; check the Swagger schemas)
 
 - **`PostView`** = `{ details, counts, tags, relationships, bookmark? }`:
   - `details`: required `{ content, id, indexed_at (ms), author (z32), kind, uri }`, plus
-    `attachments?`, `lock?` (`pubky://` URL of the lock server, or `null`) and `deleted` (bool).
-    `uri` = `pubky://<z32>/pub/pubky.app/posts/<id>`.
+    `attachments?`, `lock?` (a `pubky://` URL, or `null` when the post isn't locked) and `deleted`
+    (bool). `uri` = `pubky://<z32>/pub/pubky.app/posts/<id>`.
+  - **`lock`:** the OpenAPI calls it the lock server's URL, but on live pubky.app posts it points at
+    the creator's lock file, `pubky://<z32>/pub/app.locks/<lockId>.json`. See
+    [`./app-specs.md`](./app-specs.md#lock-optional-since-060) for what that means.
   - `counts` = `{ tags, unique_tags, replies, reposts, collections }`. `collections` is the number
     of Collections that contain the post. If it's absent, treat it as `0`.
   - `relationships` = `{ mentioned: z32[], replied?: uri|null, reposted?: uri|null }`.
     `mentioned` holds raw z32 user IDs. Only `replied` and `reposted` are `pubky://` URIs.
-  - `tags[]` = `TagDetails { label, taggers[], taggers_count, relationship? }`.
+  - `tags[]` = `TagDetails { label, taggers[], taggers_count, relationship?, tag_uri? }`.
+    `tag_uri` (`string|null`) is the address of the **viewer's** tag file for this label, so it
+    needs `viewer_id`. `relationship` is `true` exactly when `tag_uri` is set.
   - `PostViewDetailed` adds `attachments_metadata` when you request it.
 - **`UserView`** = `{ details, counts, tags, relationship, social_graph_status? }`:
-  - `details`: required `{ name, id, indexed_at }`, plus `bio, image, links, status, deleted`.
+  - `details`: required `{ name, id, indexed_at }`, plus `bio, image, links, status, deleted,
+    epoch`.
+  - `epoch` is `"v0"` or `"v1"`. It is Nexus indexing state, not app data, so don't treat it as
+    part of the profile.
   - `relationship` = `{ following, followed_by }`.
   - `counts` keys: `tagged, tags, unique_tags, posts, replies, collections, following, followers,
     friends, bookmarks`.
@@ -348,9 +422,8 @@ a global search.
   `bio`/`links`/`status`/`image` `null`, `deleted: true`. Its counts and edges remain.
 
 The deployed Nexus no longer emits a `"[DELETED]"` sentinel for posts or user names.
-[`./app-specs.md`](./app-specs.md#the-deleted-keyword) still says it does. That Nexus-side
-description is stale for `/v0` reads. The client-side write rules in that section are a separate
-matter.
+[`./app-specs.md`](./app-specs.md#the-deleted-keyword) still says it does, and that Nexus-side
+description is stale for `/v0` reads. The client-side write rules in that section still apply.
 
 ## Pagination and errors
 
@@ -375,6 +448,9 @@ bounds as of 2026-10-26. They change, so check the OpenAPI.
 | search posts by_content | 1–100 (20) |
 | search tags by_prefix | 1–100 (20) |
 | events | 1–1000 (500) |
+
+As of 2026-11-12, the OpenAPI documents the 400 response on 42 of the 43 `/v0` routes (all except
+`/v0/info`).
 
 | Status | Body | Meaning |
 | :-- | :-- | :-- |
@@ -401,7 +477,7 @@ bounds as of 2026-10-26. They change, so check the OpenAPI.
 Upstream's default config sets `enabled = false`, and no public source says whether the hosted
 instance turns rate limiting on. **Handle 429 anyway.**
 
-Don't assume every error body is JSON. Tell data 404s apart from route 404s:
+Don't assume every error body is JSON, and tell data 404s apart from route 404s:
 
 ```js
 async function nexusGet(url) {
@@ -418,14 +494,15 @@ async function nexusGet(url) {
 }
 ```
 
-Verified 2026-10-26 against production Nexus (read-only, Node 24):
+Verified 2026-11-12 against production Nexus (read-only, Node 24; it also type-checks under
+`tsc --checkJs`):
 - A 200 returned parsed JSON.
 - An unindexed key returned `null`.
 - `/feeds/global` threw `Nexus 404: (empty body: unrouted path?)`.
 - A JSON 400 threw with its `error` text.
 
-The 429 branch follows the OpenAPI (empty body plus a `Retry-After` integer). It was not triggered
-live.
+The 429 branch follows the OpenAPI and upstream's rate-limit middleware (empty body plus a
+`Retry-After` integer). It was not triggered live.
 
 ## Files and media
 
@@ -434,7 +511,7 @@ live.
     `encodeURIComponent("pubky://<z32>/pub/pubky.app/files/<id>")`.
   - To fetch several at once, call `POST /v0/files/by_ids` with `{ "uris": [...] }` (1–100 URIs).
 - `FileDetails` = `{ id, uri, owner_id, indexed_at, created_at, src, name, size, content_type,
-  urls, metadata }`. **In live samples, `created_at` is in microseconds** while `indexed_at` is in
+  urls, metadata }`. **In live samples, `created_at` is in microseconds**, while `indexed_at` is in
   ms.
 - **Gotcha: `urls` arrives as a JSON-encoded string.** The OpenAPI declares it as an object
   `{ main, large?, feed?, small? }`, but the server sends a string. Handle both. Each value is a
@@ -472,10 +549,10 @@ try {
 const large = urls?.large && `https://nexus.pubky.app/static/files/${urls.large}`;
 ```
 
-Verified 2026-10-26 against production Nexus (read-only). `urls` had the keys
-`[main, large, feed, small]`, and the `large` URL built from it returned 200 `image/webp`. With
-malformed JSON, `large` stayed `undefined`. If a variant is absent, fall back to `main`. Videos
-and non-image files have only `main`.
+Verified 2026-11-12 against production Nexus (read-only). `urls` came back as a string with the
+keys `[main, large, feed, small]`, and the `large` URL built from it returned 200 `image/webp`. The
+object form also worked, and malformed JSON left `large` as `undefined`. If a variant is absent,
+fall back to `main`. Videos and non-image files have only `main`.
 
 ## Events feed (plain text)
 
@@ -483,8 +560,8 @@ and non-image files have only `main`.
 through `nexusGet`.
 - Each line is `PUT pubky://<pk>/<path>` or `DEL pubky://<pk>/<path>`.
 - The last line is always `cursor: <n>`.
-- The OpenAPI marks `cursor` as required. The server still accepts a request without it and starts
-  from the beginning.
+- The OpenAPI marks `cursor` as required, but the server also accepts a request without it and
+  starts from the beginning.
 
 This route is Nexus re-serving the homeserver event stream. For the native homeserver endpoints,
 see [`./concepts.md`](./concepts.md#homeserver-write-vs-nexus-read).
@@ -496,20 +573,8 @@ const nextCursor = lines.at(-1)?.replace("cursor: ", "");
 const events = lines.slice(0, -1); // "PUT pubky://..." | "DEL pubky://..."
 ```
 
-Verified 2026-10-26 against production Nexus. It returned 500 `PUT`/`DEL` lines and a numeric
-`nextCursor`, and requesting `?cursor=<nextCursor>` returned the next page.
-
-## Not live yet (upstream `main` only)
-
-Upstream `main` has API-visible changes that are **not** live on the deployed commit `adc9811d`.
-Wait until `/v0/info` `commit_hash` and the OpenAPI show a change before you code against it:
-- `tag_uri` on tag and tagger responses when the request includes `viewer_id`.
-- Hiding posts by unranked authors from shared streams (the global timeline and engagement feeds,
-  and tag sets). This sits behind a `[features] hide_unranked_authors` switch that is off in
-  upstream's default config. No public source says whether the hosted instance turns it on, so
-  global feeds may shrink.
-- A per-user `epoch` field (`"v0"`) in `UserDetails`.
-- 400 responses documented on every route that can return them.
+Verified 2026-11-12 against production Nexus: it returned `text/plain` with 500 `PUT`/`DEL` lines
+and a numeric `nextCursor`.
 
 ## Upstream references
 
@@ -520,6 +585,7 @@ Wait until `/v0/info` `commit_hash` and the OpenAPI show a change before you cod
 - Repo: <https://github.com/pubky/pubky-nexus>. Indexing coverage:
   <https://github.com/pubky/pubky-nexus/blob/main/docs/decentralization.md>. Docs:
   <https://pubky.org/explore/pubky-apps/indexing-and-aggregation/pubky-nexus/>
+- `locked` filter: [pubky-nexus#1207](https://github.com/pubky/pubky-nexus/commit/1e61c2768aa23fc0dcd1501aa7ac31f98de74ee1)
 - Ad-hoc graph queries: [`nexus-scout` skill](../../nexus-scout/SKILL.md)
   (<https://nexus-scout.pubky.app/llms.txt>)
 - Running your own Nexus: [`pubky-infra` nexus-operations](../../pubky-infra/references/nexus-operations.md),
