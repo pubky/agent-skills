@@ -4,12 +4,14 @@ Rules for editing this repo. They keep the skills correct, cheap to load, and dr
 
 ## 1. Split by audience, never by SDK language
 
-Four skills, divided by who the developer is and what they're doing:
+Five skills, divided by who the developer is and what they're doing:
 
 - `skills/pubky` — building **web / server** apps (JS/WASM + Rust SDKs)
 - `skills/pubky-mobile` — building **native** apps (React Native, UniFFI Swift/Kotlin)
 - `skills/pubky-infra` — **operating / self-hosting** Pubky backend services
 - `skills/nexus-scout` — **querying** the social graph with read-only Cypher (vendored, see §7)
+- `skills/pubky-shop-import` — **selling**: importing a WooCommerce / WordPress catalog into Pubky Shop
+  with bundled scripts (its two references are hand-authored, see §8)
 
 Do **not** add a skill per SDK or per language. Every SDK re-expresses the same protocol
 spine (identity, `pubkyauth`, homeserver signup/session, `pubky://` CRUD, app-specs
@@ -65,9 +67,10 @@ distinct, and keep the "NOT for … (use the X skill)" cross-references intact.
 
 `nexus-scout` (cypher/followers/tags/threads/follow-distance — reading the graph, not building on
 it) is the fourth vocabulary. Its `VOCAB` entry in `verify.mjs` deliberately uses terms absent from
-the other three descriptions, so registering it cannot retroactively flag an existing trigger. Every
-skill's `NOT for …` clause must name **all** the others — adding a fifth skill means touching all of
-them.
+the other three descriptions, so registering it cannot retroactively flag an existing trigger.
+`pubky-shop-import` (woocommerce/wordpress/shop.pubky.app — a seller moving a store catalog) is the
+fifth, registered the same way. Every skill's `NOT for …` clause must name **all** the others —
+adding a sixth skill means touching all of them.
 
 ## 6. Only document what exists
 
@@ -99,6 +102,9 @@ Rules for any vendored skill:
 building, which network to default to, which SDK version to install — so there is no upstream
 document to generate it from. It is written and edited **by hand**, and the generation workflow
 must never rewrite it.
+
+`skills/pubky-shop-import/references/{workflow,listing-record}.md` are hand-authored the same way:
+they document the skill's bundled scripts, which have no upstream doc to generate from.
 
 - It is registered in `sources.lock.json` with `handAuthored: true` and `sources: []`. Registering
   it rather than omitting it keeps it in the reconcile `layout`, so the workflow doesn't propose a
