@@ -2,15 +2,15 @@
   "path": "skills/pubky-infra/references/dns-and-relays.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-10-26T14:07:49.115Z",
+  "generatedAt": "2026-11-12T08:25:14.580Z",
   "sourcesUsed": [
     {
       "repo": "pkdns",
-      "sha": "221fe940116b076174e67782e426b69761cc32b6"
+      "sha": "2d21258a71d725ce56eeedca104d8cc26050bf71"
     },
     {
       "repo": "pkarr",
-      "sha": "c39419b5ca1cb3a99f4baa72297aa680599d9d2a"
+      "sha": "1fe1b2e9b013438998dd5491f6d169bb9b580d39"
     },
     {
       "repo": "mainline",
@@ -19,141 +19,149 @@
   ],
   "provenance": [
     {
-      "anchor": "pkdns resolver (versions, released vs master split)",
+      "anchor": "pkdns-resolver",
+      "repo": "pubky/pkdns",
+      "path": "README.md",
+      "sha": "2d21258a71d725ce56eeedca104d8cc26050bf71",
+      "url": "https://github.com/pubky/pkdns/blob/master/README.md"
+    },
+    {
+      "anchor": "cli",
       "repo": "pubky/pkdns",
       "path": "server/src/main.rs",
       "sha": "a39d2b4a613a5775405ef8998e7efc498f23e4b7",
       "url": "https://github.com/pubky/pkdns/blob/v0.7.1/server/src/main.rs"
     },
     {
-      "anchor": "Config: <pkdns-dir>/pkdns.toml",
+      "anchor": "config-pkdns-dirpkdnstoml",
       "repo": "pubky/pkdns",
       "path": "server/src/config/config_file.rs",
       "sha": "a39d2b4a613a5775405ef8998e7efc498f23e4b7",
       "url": "https://github.com/pubky/pkdns/blob/v0.7.1/server/src/config/config_file.rs"
     },
     {
-      "anchor": "master-only # [dht] gotcha / config.toml / no -c",
+      "anchor": "dns-over-https",
       "repo": "pubky/pkdns",
-      "path": "server/config.sample.toml",
-      "sha": "221fe940116b076174e67782e426b69761cc32b6",
-      "url": "https://github.com/pubky/pkdns/blob/master/server/config.sample.toml"
-    },
-    {
-      "anchor": "Old dependencies (.no_relays, cache disabled)",
-      "repo": "pubky/pkdns",
-      "path": "server/src/resolution/pkd/pkarr_resolver.rs",
+      "path": "docs/dns-over-https.md",
       "sha": "a39d2b4a613a5775405ef8998e7efc498f23e4b7",
-      "url": "https://github.com/pubky/pkdns/blob/v0.7.1/server/src/resolution/pkd/pkarr_resolver.rs"
+      "url": "https://github.com/pubky/pkdns/blob/v0.7.1/docs/dns-over-https.md"
     },
     {
-      "anchor": "DNS-over-HTTPS",
-      "repo": "pubky/pkdns",
-      "path": "server/src/dns_over_https/server.rs",
-      "sha": "221fe940116b076174e67782e426b69761cc32b6",
-      "url": "https://github.com/pubky/pkdns/blob/master/server/src/dns_over_https/server.rs"
-    },
-    {
-      "anchor": "Docker (pkdns)",
+      "anchor": "docker",
       "repo": "pubky/pkdns",
       "path": "compose.yaml",
-      "sha": "221fe940116b076174e67782e426b69761cc32b6",
+      "sha": "2d21258a71d725ce56eeedca104d8cc26050bf71",
       "url": "https://github.com/pubky/pkdns/blob/master/compose.yaml"
     },
     {
-      "anchor": "Verify and log",
+      "anchor": "verify-and-log",
       "repo": "pubky/pkdns",
-      "path": "server/src/helpers.rs",
+      "path": "servers.txt",
+      "sha": "2d21258a71d725ce56eeedca104d8cc26050bf71",
+      "url": "https://github.com/pubky/pkdns/blob/master/servers.txt"
+    },
+    {
+      "anchor": "pkdns-cli-publish-your-own-records",
+      "repo": "pubky/pkdns",
+      "path": "cli/src/cli.rs",
       "sha": "a39d2b4a613a5775405ef8998e7efc498f23e4b7",
-      "url": "https://github.com/pubky/pkdns/blob/v0.7.1/server/src/helpers.rs"
+      "url": "https://github.com/pubky/pkdns/blob/v0.7.1/cli/src/cli.rs"
     },
     {
-      "anchor": "pkdns-cli (publish your own records)",
-      "repo": "pubky/pkdns",
-      "path": "cli/src/commands/publish.rs",
-      "sha": "a39d2b4a613a5775405ef8998e7efc498f23e4b7",
-      "url": "https://github.com/pubky/pkdns/blob/v0.7.1/cli/src/commands/publish.rs"
-    },
-    {
-      "anchor": "pkdns-cli master-only hex seeds",
-      "repo": "pubky/pkdns",
-      "path": "cli/src/commands/publish.rs",
-      "sha": "221fe940116b076174e67782e426b69761cc32b6",
-      "url": "https://github.com/pubky/pkdns/blob/master/cli/src/commands/publish.rs"
-    },
-    {
-      "anchor": "pkarr-relay (install, config, rate limiter)",
+      "anchor": "pkarr-relay",
       "repo": "pubky/pkarr",
-      "path": "relay/src/config.rs",
-      "sha": "900be538f92e9d6790570e85410cceb241300bda",
-      "url": "https://github.com/pubky/pkarr/blob/v8.1.0/relay/src/config.rs"
+      "path": "relay/README.md",
+      "sha": "345230027f17b94a322df385d8ce7b3dac294de3",
+      "url": "https://github.com/pubky/pkarr/releases/tag/v9.0.0"
     },
     {
-      "anchor": "HTTP API",
+      "anchor": "install-and-run",
       "repo": "pubky/pkarr",
-      "path": "design/relays.md",
-      "sha": "900be538f92e9d6790570e85410cceb241300bda",
-      "url": "https://github.com/pubky/pkarr/blob/v8.1.0/design/relays.md"
+      "path": "relay/src/main.rs",
+      "sha": "345230027f17b94a322df385d8ce7b3dac294de3",
+      "url": "https://github.com/pubky/pkarr/blob/v9.0.0/relay/src/main.rs"
     },
     {
-      "anchor": "Docker and health (pkarr-relay)",
+      "anchor": "config",
+      "repo": "pubky/pkarr",
+      "path": "relay/src/config.example.toml",
+      "sha": "345230027f17b94a322df385d8ce7b3dac294de3",
+      "url": "https://github.com/pubky/pkarr/blob/v9.0.0/relay/src/config.example.toml"
+    },
+    {
+      "anchor": "http-api",
+      "repo": "pubky/pkarr",
+      "path": "relay/src/response.rs",
+      "sha": "345230027f17b94a322df385d8ce7b3dac294de3",
+      "url": "https://github.com/pubky/pkarr/blob/v9.0.0/relay/src/response.rs"
+    },
+    {
+      "anchor": "docker-and-health",
       "repo": "pubky/pkarr",
       "path": "docker-compose.yml",
-      "sha": "900be538f92e9d6790570e85410cceb241300bda",
-      "url": "https://github.com/pubky/pkarr/blob/v8.1.0/docker-compose.yml"
+      "sha": "345230027f17b94a322df385d8ce7b3dac294de3",
+      "url": "https://github.com/pubky/pkarr/blob/v9.0.0/docker-compose.yml"
     },
     {
-      "anchor": "Public relays",
+      "anchor": "public-relays",
       "repo": "pubky/pkarr",
       "path": "relays.txt",
-      "sha": "0d68e6af0b17ea3e141b74702865403f5671d3ae",
-      "url": "https://github.com/pubky/pkarr/blob/main/relays.txt"
+      "sha": "345230027f17b94a322df385d8ce7b3dac294de3",
+      "url": "https://github.com/pubky/pkarr/blob/v9.0.0/relays.txt"
     },
     {
-      "anchor": "Pointing clients at relays",
+      "anchor": "pointing-clients-at-relays",
       "repo": "pubky/pkarr",
       "path": "pkarr/src/client/builder.rs",
-      "sha": "900be538f92e9d6790570e85410cceb241300bda",
-      "url": "https://github.com/pubky/pkarr/blob/v8.1.0/pkarr/src/client/builder.rs"
+      "sha": "345230027f17b94a322df385d8ce7b3dac294de3",
+      "url": "https://github.com/pubky/pkarr/blob/v9.0.0/pkarr/src/client/builder.rs"
     },
     {
-      "anchor": "Republishing",
+      "anchor": "pointing-clients-at-relays",
+      "repo": "pubky/pubky-homeserver",
+      "path": "Cargo.toml",
+      "sha": "8612a646b2fc0dd26cbecaf3f62366d04d381b03",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/Cargo.toml"
+    },
+    {
+      "anchor": "republishing",
       "repo": "pubky/pkarr",
       "path": "docs/integration.md",
-      "sha": "0d68e6af0b17ea3e141b74702865403f5671d3ae",
-      "url": "https://github.com/pubky/pkarr/blob/main/docs/integration.md#republishing-patterns"
+      "sha": "345230027f17b94a322df385d8ce7b3dac294de3",
+      "url": "https://github.com/pubky/pkarr/blob/v9.0.0/docs/integration.md#updating-a-published-packet"
     },
     {
-      "anchor": "mainline (the DHT node)",
+      "anchor": "republishing",
+      "repo": "pubky/pkarr",
+      "path": "pkarr/src/types/timestamp.rs",
+      "sha": "345230027f17b94a322df385d8ce7b3dac294de3",
+      "url": "https://github.com/pubky/pkarr/blob/v9.0.0/pkarr/src/types/timestamp.rs"
+    },
+    {
+      "anchor": "mainline-the-dht-node",
       "repo": "pubky/mainline",
-      "path": "src/dht.rs",
+      "path": "README.md",
       "sha": "f362949c731158112d6e0b4b0a25ecf059bee490",
-      "url": "https://github.com/pubky/mainline/blob/v8.0.1/src/dht.rs"
-    },
-    {
-      "anchor": "Canonical links (concepts/homeserver/sdk-js)",
-      "repo": "pubky/agent-skills",
-      "path": "skills/pubky/references/concepts.md",
-      "sha": "a4f0094e40ef6239231b87774c07fc91ca6c1b51"
+      "url": "https://github.com/pubky/mainline"
     }
   ],
   "snippet": {
-    "total": 8,
-    "pass": 8,
+    "total": 9,
+    "pass": 9,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 61,
-    "refuted": 4,
-    "caveated": 4,
+    "supported": 19,
+    "refuted": 0,
+    "caveated": 5,
     "unsupported": 0
   },
   "guardrailViolations": [
-    "Not a planned-feature violation, but it breaks the same 'only document what exists' rule (CLAUDE.md §6): the pkdns section presents unreleased master behavior (7 commits after v0.7.1: config.toml path, no -c flag, hex seeds, `# [dht]` sample, publickey broken) as the behavior of the shipped v0.7.1 binary and the 0.7.0 Docker image."
+    "pkdns section: 'This upstream README warning (added in #129) also covers the public servers in servers.txt and the public DoH endpoint', and in Verify and log: 'the README warning says not to rely on them'. This attributes to upstream a statement it does not make. The warning names only pkdns, and README line 20 still promotes the hosted servers for trying pkdns. Present it as our inference."
   ],
-  "wordCount": 3742,
+  "wordCount": 4465,
   "substance": {
     "ok": true,
     "reasons": []

@@ -1,30 +1,30 @@
 # Rust client (`pubky` crate)
 
-The `pubky` crate is the official Rust SDK for signing in and reading or writing `pubky://` data. This page covers install, client setup, storage calls and error handling. Other pages own the protocol knowledge:
+The `pubky` crate is the official Rust SDK for signing in and reading or writing `pubky://` data. This page covers install, client setup, storage calls and error handling. Protocol knowledge lives elsewhere:
 
 - **[`concepts.md`](./concepts.md):** identity, `pubky://` addressing, PKARR, the homeserver model, [public-key string formats](./concepts.md#public-key-string-formats) and [path rules](./concepts.md#path-rules).
-- **[`auth.md`](./auth.md):** `pubkyauth` flows, capabilities, selective approval, signup tokens, session persistence and grant management.
+- **[`auth.md`](./auth.md):** `pubkyauth` flows, capabilities, selective approval, signup tokens, session lifecycle and grant management.
 - **[`testing-and-testnet.md`](./testing-and-testnet.md):** `EphemeralTestnet` and local development.
 - **[`shipped-vs-planned.md`](./shipped-vs-planned.md):** which features are production-ready.
 
 **Upstream (authoritative):**
-- **API reference:** [docs.rs/pubky/0.16.2](https://docs.rs/pubky/0.16.2/pubky/) ([latest](https://docs.rs/pubky/latest/pubky/)). If this page and docs.rs for your installed version disagree on a signature, trust docs.rs.
-- **Crate docs:** [SDK README at v0.16.2](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md).
-- **Breaking changes:** [GitHub release notes](https://github.com/pubky/pubky-homeserver/releases). The only migration guide is [v0.10](https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/README.md) (0.9.x → 0.10). There is none for 0.12 → 0.16.
-- **Crate source:** [`pubky-sdk/`](https://github.com/pubky/pubky-homeserver/tree/v0.16.2/pubky-sdk) in `pubky-homeserver`.
-- **Runnable examples:** [`examples/rust`](https://github.com/pubky/pubky-homeserver/tree/main/examples/rust). The KB no longer ships Rust snippets; `pubky-knowledge-base-v2/snippets/rust` was deleted in [1999172](https://github.com/pubky/pubky-knowledge-base-v2/commit/19991727750f807ac829ea261fec8e77c45cf78c).
+- **API reference:** [docs.rs/pubky/0.18.0](https://docs.rs/pubky/0.18.0/pubky/) ([latest](https://docs.rs/pubky/latest/pubky/)). If this page and docs.rs for your installed version disagree on a signature, trust docs.rs.
+- **Crate docs:** [SDK README at v0.18.0](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md).
+- **Breaking changes:** [GitHub release notes](https://github.com/pubky/pubky-homeserver/releases) ([v0.17.1](https://github.com/pubky/pubky-homeserver/releases/tag/v0.17.1), [v0.18.0](https://github.com/pubky/pubky-homeserver/releases/tag/v0.18.0)). The only SDK migration guide is [v0.10](https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/README.md) (0.9.x → 0.10). For 0.16 → 0.18, read the release notes.
+- **Crate source:** [`pubky-sdk/`](https://github.com/pubky/pubky-homeserver/tree/v0.18.0/pubky-sdk) in `pubky-homeserver`.
+- **Runnable examples:** [`examples/rust`](https://github.com/pubky/pubky-homeserver/tree/main/examples/rust). The knowledge base has no Rust snippets; its developer guide only says `cargo add pubky` and links docs.rs.
 
-> **Version:** latest release **0.16.2** (2026-10-15). The crate is pre-1.0; expect breaking changes. **MSRV 1.89**, edition 2024.
-> - **`main` already carries unreleased API** past the v0.16.2 tag (`f60e502`): an `Error::CredentialRefresh` variant, MSRV 1.91 and wasm Blob PUT helpers. Don't use them against 0.16.2, and don't trust the README on `main` for your version; use the v0.16.2 tag or docs.rs.
-> - Every Rust snippet below passed `cargo clippy -- -D warnings` against `pubky =0.16.2` with `json`. All except the extra-CA-roots snippet were also run against a local testnet (with `Pubky::testnet()` in place of `Pubky::new()` where needed).
+> **Version:** latest release **0.18.0** (2026-11-09). Pre-1.0; expect breaking changes. **MSRV 1.91**, edition 2024. 0.17.1 shipped 2026-10-26; **0.17.0 was never published**, so don't pin it.
+> - **`main` carries unreleased API** past the v0.18.0 tag (`3b615c3`): `request_timeout` applied on wasm, `BuildError::RequestTimeoutTooLong` with `PubkyHttpClientBuilder::MAX_REQUEST_TIMEOUT`, child/delegated grants and a `GrantKind` re-export. Don't use them against 0.18.0, and don't trust the README on `main` for your version; use the v0.18.0 tag or docs.rs.
+> - **Snippet verification:** every Rust snippet below passed `cargo clippy -- -D warnings` against `pubky` 0.18.0, and all except the CA-roots one were executed against a local testnet (2026-11-12). Each snippet's source is given under it.
 >
-> **Changes since 0.12** (breaking ones are listed in the release notes):
-> - **0.13.0:** HTTP error bodies are capped (see [Error handling](#error-handling)), event streams use a new parser with a payload limit, and storage locks arrive.
-> - **0.15.0:** `add_root_certificates_pem` for extra CA roots (new feature) and WebDAV locks in the JS bindings. **Breaking:** shared browser-tab sessions (JS).
-> - **0.16.0 (breaking):** scoped encryption keys (see [`auth.md`](./auth.md)). Grant parameters are now built with `new()`, not struct literals.
-> - **0.16.1:** selective auth approval.
+> **Changes since 0.16** (full lists in the release notes):
+> - **0.17.1:** `Error::CredentialRefresh(CredentialRefreshError)` for failed automatic grant refresh, and `RequestError::kind()` request categories (see [Error handling](#error-handling)). MSRV raised to 1.91. Homeserver: `HEAD` now returns 405 on `/signup_tokens/{token}`, admin `/generate_signup_token` and both `/events-stream` endpoints (storage `HEAD`, used by `exists`/`stats`, is unchanged).
+> - **0.18.0 (breaking):** storage paths are plain names, not percent-encoded (see [How the SDK handles paths](#how-the-sdk-handles-paths)). `PubkyResource::new` takes `IntoResourcePath`. Native grant requests and `revalidate()` recover after a rejected bearer. New: `GrantSessionView::account()`, `RequestErrorKind::TlsVerification`, `expected_signer` on grant auth flows. A failed `/info` fetch no longer downgrades storage to legacy addressing. Homeserver: legacy Base32 event cursors are removed.
 >
-> **0.10 broke the 0.9.x API.** `signin` takes a `ClientId`, `signup` returns `()`, cookie auth is deprecated, and grant secrets replace session files. Discard code that calls `signin()` with no argument or uses `start_auth_flow`. `export_secret` and `import_secret` still exist but are deprecated and cookie-only; don't use them.
+> **Cookie auth will be removed in August 2027.** Deprecated since 0.10.0, with only limited security maintenance from 0.18.0. Use grant auth ([v0.10 migration guide](https://github.com/pubky/pubky-homeserver/blob/main/docs/v0.10-migration/README.md)).
+>
+> **0.10 broke the 0.9.x API.** `signin` takes a `ClientId`, `signup` returns `()`, and grant secrets replace session files. Discard code that calls `signin()` with no argument or uses `start_auth_flow`.
 
 ## Install and runtime
 
@@ -35,25 +35,30 @@ cargo add anyhow serde_json
 cargo add futures-util   # only for event streams (StreamExt)
 ```
 
-<sub>Run against crates.io (resolves `pubky` 0.16.2); a program using only these dependencies built under clippy and ran against a local testnet.</sub>
+<sub>Executed: resolves `pubky` 0.18.0 from crates.io. Needs Rust 1.91 or newer.</sub>
 
 - **Async only.** The crate needs an async runtime. The examples use Tokio with `#[tokio::main]`.
 - **Features.** `default = []`. `json` adds `put_json`/`get_json` on `SessionStorage` and `get_json` on `PublicStorage`. Without it, use `put`/`get` with bytes or text.
-- **Targets.** Native builds use `reqwest` 0.13 with rustls and Tokio. `wasm32` uses reqwest's fetch backend; the JS bindings wrap that build.
-- **`pubky::prelude` omits** `ClientId`, `PubkySigner`, `PubkySession`, `SessionStorage`, `PublicStorage`, `GrantManager`, `Pkdns` and `EventStreamBuilder`. Import those explicitly. Contents: [docs.rs `prelude`](https://docs.rs/pubky/0.16.2/pubky/prelude/index.html).
+- **Targets.** Native builds use `reqwest` 0.13 with rustls, pkarr 8.1 and Tokio. `wasm32` uses reqwest's fetch backend; the JS bindings wrap that build.
+- **`pubky::prelude` omits** `ClientId`, `PubkySigner`, `PubkySession`, `SessionStorage`, `PublicStorage`, `GrantManager`, `Pkdns`, `EventStreamBuilder`, `AccountInfo` and `CredentialRefreshError`. Import those explicitly. Contents: [docs.rs `prelude`](https://docs.rs/pubky/0.18.0/pubky/prelude/index.html).
 - **Re-exports:** `pubky::StatusCode` and `pubky::Method` (from reqwest) and `pubky::pkarr`. You don't need `reqwest` as a direct dependency to match status codes.
 - **Logging.** Native builds log through `tracing`; wasm uses `log`. Install a subscriber before calling the SDK, for example `tracing_subscriber::fmt().with_env_filter(..)`. See [`examples/rust/7-logging`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/7-logging/main.rs).
 
 ## Quick start
 
 ```rust
-use pubky::{ClientId, Keypair, Pubky};
+use pubky::{ClientId, Keypair, Pubky, PublicKey};
 
 let pubky = Pubky::new()?;
 let keypair = Keypair::random();
-
-// Sign in (user already has an account on a homeserver)
 let signer = pubky.signer(keypair);
+
+// A new key has no account yet: sign up on a homeserver first
+// (production homeservers may require a signup token instead of `None`).
+let homeserver = PublicKey::try_from("<homeserver z32 public key>")?;
+signer.signup(&homeserver, None).await?;
+
+// Sign in
 let session = signer
     .signin(ClientId::new("myapp.example").unwrap())
     .await?;
@@ -69,7 +74,7 @@ session
 let profile: serde_json::Value = session.storage().get_json("/pub/myapp/profile").await?;
 ```
 
-<sub>Source: the last KB Rust snippet before it was deleted, [`snippets/rust/src/lib.rs` @ bb7232d](https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/rust/src/lib.rs). The body goes inside an `async fn` that returns `anyhow::Result<()>`. Run against a local testnet with an already-signed-up key. `Keypair::random()` creates a new identity with no account, so `signin` fails at runtime. Real code must load an existing key; see [`auth.md`](./auth.md).</sub>
+<sub>Adapted from the last KB Rust snippet, [`snippets/rust/src/lib.rs` @ bb7232d](https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/rust/src/lib.rs), with a signup step added: `signin` with a fresh `Keypair::random()` fails with "could not resolve homeserver". Executed against a local testnet (`Pubky::testnet()` and the testnet homeserver key). The body goes inside an `async fn` returning `anyhow::Result<()>`, because `PublicKey::try_from`'s error doesn't convert into `pubky::Error`. For a returning user, skip `signup` and load the existing key (`pubky.signer_from_recovery_file(..)`); see [`auth.md`](./auth.md).</sub>
 
 | Type | Role |
 |---|---|
@@ -87,9 +92,9 @@ let profile: serde_json::Value = session.storage().get_json("/pub/myapp/profile"
 - `Pubky::new() -> Result<Self>`: mainnet, with **no HTTP timeouts**.
 - `Pubky::testnet() -> Result<Self>`: local testnet (DHT `localhost:6881`, relay `http://localhost:15411`).
 - `Pubky::with_client(PubkyHttpClient) -> Self`: wraps a client you configured.
-- **Create one `Pubky` at startup and reuse it.** It is `Clone`, so clone it, pass it down or hold it in a `OnceCell`. Don't create one per request.
+- **Create one `Pubky` at startup and reuse it.** It is `Clone`; clone it, pass it down or hold it in a `OnceCell`. Don't create one per request.
 
-In production, set timeouts (native only):
+In production, set timeouts (native only in 0.18.0):
 
 ```rust
 use std::time::Duration;
@@ -102,13 +107,14 @@ let client = PubkyHttpClient::builder()
 let pubky = Pubky::with_client(client);
 ```
 
-<sub>Source: [`Pubky::with_client` doc example](https://docs.rs/pubky/0.16.2/pubky/struct.Pubky.html#method.with_client). Works with `?` in a `pubky::Result` fn, because `Error::Build(BuildError)` has a `From` impl. Run against a local testnet (with `.testnet()` added to the chain).</sub>
+<sub>Source: [`Pubky::with_client` doc example](https://docs.rs/pubky/0.18.0/pubky/struct.Pubky.html#method.with_client). Works with `?` in a `pubky::Result` fn, because `Error::Build(BuildError)` has a `From` impl.</sub>
 
-**`PubkyHttpClientBuilder`** ([docs.rs](https://docs.rs/pubky/0.16.2/pubky/struct.PubkyHttpClientBuilder.html)):
+**`PubkyHttpClientBuilder`** ([docs.rs](https://docs.rs/pubky/0.18.0/pubky/struct.PubkyHttpClientBuilder.html)):
 - Setters take `&mut self -> &mut Self`, and `build(&self)` returns `Result<PubkyHttpClient, BuildError>`, so one-expression chains compile.
 - All targets: `testnet()`, `testnet_with_host(&str)`, `pkarr(|p| ..)`, `user_agent_extra(..)`, `max_error_body_bytes(usize)`.
-- Native only: `request_timeout`, `read_timeout`, `pool_max_idle_per_host(usize)` (0 disables pooling) and `add_root_certificates_pem` (0.15.0+). On wasm, the two timeouts are deprecated no-ops.
-- Defaults: pkarr default relays, **no total or read timeout**, 4096-byte error-body capture, user-agent `pubky.org@<crate-version>`, Mozilla roots for ICANN HTTPS.
+- Native only: `request_timeout`, `read_timeout`, `pool_max_idle_per_host(usize)` (0 disables pooling) and `add_root_certificates_pem` (0.15.0+). **In 0.18.0, the two timeouts are deprecated no-ops on wasm.** (`main` applies `request_timeout` on wasm and makes `build()` fail above `MAX_REQUEST_TIMEOUT`; unreleased.)
+- Defaults: pkarr default relays, **no total or read timeout**, 4096-byte error-body capture, user agent `pubky.org@<crate-version>`, Mozilla roots for ICANN HTTPS.
+- `BuildError` is not `#[non_exhaustive]`, and `main` adds a variant. Keep a catch-all arm if you match on it.
 
 Extra CA roots for ICANN HTTPS (0.15.0+; for example, a corporate proxy CA). They add to the Mozilla roots and do **not** affect PubkyTLS or the pkarr relay client. The method returns `Result`, so bind the builder with `let mut`:
 
@@ -120,7 +126,7 @@ builder.add_root_certificates_pem(&pem)?;
 let client = builder.build()?;
 ```
 
-<sub>Source: [`add_root_certificates_pem` doc example](https://docs.rs/pubky/0.16.2/pubky/struct.PubkyHttpClientBuilder.html#method.add_root_certificates_pem). Needs a fn returning `anyhow::Result` or `Result<_, Box<dyn Error>>`; the env and IO errors don't convert into `pubky::Error`. Compile-checked, and `build()` succeeded with a real PEM bundle; no testnet request was made.</sub>
+<sub>Source: [`add_root_certificates_pem` doc example](https://docs.rs/pubky/0.18.0/pubky/struct.PubkyHttpClientBuilder.html#method.add_root_certificates_pem). Needs a fn returning `anyhow::Result` or `Result<_, Box<dyn Error>>`; the env and IO errors don't convert into `pubky::Error`. Compiled and run (`build()` succeeds), but makes no request, so it was not exercised against a testnet.</sub>
 
 **Transport:** native clients prefer PubkyTLS, which verifies the homeserver's public key directly. The SDK uses an ICANN HTTPS endpoint advertised in PKARR only when the direct endpoint is absent or fails a TCP reachability check. A later TLS or request failure does **not** fall back. Native clients behind HTTPS proxies have known discovery and routing limits ([pubky-homeserver#657](https://github.com/pubky/pubky-homeserver/issues/657)). Model: [`concepts.md`](./concepts.md#transport-and-wire-addressing).
 
@@ -145,7 +151,7 @@ signer
     .await?;
 ```
 
-<sub>Source (runnable): [`examples/rust/1-signup/signup.rs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/1-signup/signup.rs). `homeserver` is a `PublicKey` from `PublicKey::try_from(&str)?`, in a fn returning `anyhow::Result`. Run against a local testnet with `cli.testnet = true`. Call `signin` afterwards to get a session.</sub>
+<sub>Source (runnable): [`examples/rust/1-signup/signup.rs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/1-signup/signup.rs). `homeserver` is a `PublicKey` from `PublicKey::try_from(&str)?`, in a fn returning `anyhow::Result`. Call `signin` afterwards to get a session.</sub>
 
 > **Gotcha: `?` does not convert these errors into `pubky::Error`.** `ClientId::new` returns `pubky_common::auth::jws::Error` and `PublicKey::try_from` returns `ParseError`. Neither has a `From` impl into `pubky::Error`, so in a fn returning `pubky::Result`, `?` on either fails with E0277.
 > - For static values, call `.expect(..)`, as the SDK README does.
@@ -153,13 +159,14 @@ signer
 
 **Other auth APIs** (Rust calls in [`auth.md`](./auth.md)):
 - **Third-party and keyless sign-in:** `pubky.start_grant_auth_flow(&caps, AuthFlowKind, ClientId)`. See [`auth.md`](./auth.md#third-party-app-grant-auth-flow).
-- **Selective approval (0.16.1+):** `signer.approve_auth_with_capabilities(url, &approved)` approves a subset; `approve_auth()` approves everything requested. See [`auth.md`](./auth.md#authenticator-side-approving-requests).
-- **Scoped encryption keys (0.16.0+):** the `e` capability action, read through `grant.encryption_keys()`. This is client-side key delivery, **not** homeserver-encrypted storage, which is still planned ([`shipped-vs-planned.md`](./shipped-vs-planned.md#no-private-encrypted-or-guarded-storage)). Upstream warns that these keys are **permanent**: they derive from the identity secret, survive grant revocation and expiry, and can't be rotated. `e` on `/` yields every key the user will ever have. Read [`docs/scoped-encryption-keys.md`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/docs/scoped-encryption-keys.md) before requesting `e`.
+- **Pin the approving identity (0.18.0+):** `PubkyGrantAuthFlow::builder(..).expected_signer(public_key)` adds `spk=<z32>` to a sign-in link, so an approval from any other key is rejected. Sign-up flows reject it. Use it only when the app already knows the user, for example to re-authorize or upgrade capabilities.
+- **Selective approval (0.16.1+):** `signer.approve_auth_with_capabilities(url, &approved)` approves a subset; `approve_auth()` approves everything requested. See [`auth.md`](./auth.md#selective-approval).
+- **Scoped encryption keys (0.16.0+):** the `e` capability action, read through `grant.encryption_keys()`. This is client-side key delivery, **not** homeserver-encrypted storage, which is still planned ([`shipped-vs-planned.md`](./shipped-vs-planned.md#no-private-encrypted-or-guarded-storage)). The keys are **permanent**: they derive from the identity secret, survive grant revocation and expiry, and can't be rotated. Read [`auth.md`](./auth.md#scoped-encryption-keys) before requesting `e`.
 - **Recovery files:** `pubky.signer_from_recovery_file(path, passphrase)` (native only), or `pubky::recovery_file::decrypt_recovery_file(&bytes, &passphrase)` (all targets). The examples try an **empty passphrase** first because the bundled testnet `sample_recovery.key` uses one. Don't copy that fallback into production code.
 
 ## Session storage (your own data)
 
-`session.storage()` returns a `SessionStorage` ([docs.rs](https://docs.rs/pubky/0.16.2/pubky/struct.SessionStorage.html)).
+`session.storage()` returns a `SessionStorage` ([docs.rs](https://docs.rs/pubky/0.18.0/pubky/struct.SessionStorage.html)). Paths are generic over `P: IntoResourcePath` (`&str`, `String`, `ResourcePath`).
 
 | Method | Returns | Notes |
 |---|---|---|
@@ -172,6 +179,8 @@ signer
 | `stats(path)` | `Result<Option<ResourceStats>>` | `content_length`, `content_type`, `last_modified`, `etag` (each an `Option`) |
 | `list(path)` | `Result<ListBuilder>` | **Not async.** Call `.send().await` on the builder |
 | `lock` and friends | | See [Storage locks](#storage-locks) |
+
+Ignore `prepare_blob_put`/`retry_blob_put`: they are wasm-only, `#[doc(hidden)]` helpers for the JS binding.
 
 ```rust
 let storage = session.storage();
@@ -197,31 +206,60 @@ let entries = storage.list("/pub/my.app/")?.limit(50).send().await?;
 storage.delete("/pub/my.app/hello.txt").await?;
 ```
 
-<sub>Source: [`SessionStorage` rustdoc overview](https://docs.rs/pubky/0.16.2/pubky/struct.SessionStorage.html), inside `async fn(session: PubkySession) -> pubky::Result<()>`. Run against a local testnet. For a runnable put/get/delete program, see [`examples/rust/3-storage`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/3-storage/main.rs).</sub>
+<sub>Source: [`SessionStorage` rustdoc overview](https://docs.rs/pubky/0.18.0/pubky/struct.SessionStorage.html), inside `async fn(session: PubkySession) -> pubky::Result<()>`. Runnable put/get/delete program: [`examples/rust/3-storage`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/3-storage/main.rs).</sub>
 
 **Failure contract:**
 - An invalid path gives `Error::Request(RequestError::Validation { .. })`. A bad URL gives `Error::Parse`.
 - Any non-2xx status, including 401, 403 and 5xx, gives `RequestError::Server { status, message }`.
 - Only `exists` and `stats` treat 404/410 as "missing".
+- With an expired grant bearer, storage calls refresh it automatically. A failed refresh returns `Error::CredentialRefresh`, not `Error::Request` (see [Error handling](#error-handling)).
 
-**How the SDK handles paths** (protocol rules: [`concepts.md`](./concepts.md#path-rules)):
+### How the SDK handles paths
+
+Protocol rules: [`concepts.md`](./concepts.md#path-rules).
+
+- **A path is the file's plain name (0.18.0+).** Write `/pub/my.app/My File.txt`. `ResourcePath` stores it unencoded, and the SDK percent-encodes once when it builds the HTTP URL. `Display`, `as_str()` and `to_pubky_url()` return the plain name. Up to 0.17, they returned `/pub/My%20File.txt`.
 - The SDK adds a missing leading `/`, so `"pub/app/f"` and `"/pub/app/f"` are the same path. It keeps a trailing `/`.
-- Empty paths, `//` and `.`/`..` segments are validation errors.
-- Segments are percent-encoded: `"pub/My File.txt"` becomes `/pub/My%20File.txt`.
+- Empty paths, `//` and `.`/`..` segments are `RequestError::Validation`. Other name rules (characters, length) belong to the homeserver, which answers 400.
 - **`list()` needs a trailing `/`.** Without one, it fails at once with ``directory listings must end with `/` ``.
 - **A path can't be both a file and a folder.** Writing one where the other exists returns **409 Conflict**.
 - Keep app data under a domain-like folder, such as `/pub/my.app/`. The `/pub` layout is **not stabilized**.
 
-> **`/priv` is ALPHA (v0.10.0+) and NOT for production.** The rustdoc says `/priv/` paths are private to the signed-in user, but that is access control, **not encryption**: a homeserver admin can read and write all tenant data, including `/priv`. Apps that need confidentiality from the homeserver must encrypt data and manage keys themselves. Upstream's [`docs/PRIVATE_STORAGE.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/PRIVATE_STORAGE.md) has only a JavaScript SDK example (plus raw HTTP), no Rust. See [`shipped-vs-planned.md`](./shipped-vs-planned.md#priv-private-storage-alpha).
+```rust
+use pubky::ResourcePath;
+// Parse from &str (relative becomes absolute)
+let p = ResourcePath::parse("pub/my-cool-app/file")?;
+assert_eq!(p.to_string(), "/pub/my-cool-app/file");
+
+// Trailing slash is preserved
+let dir = ResourcePath::parse("/pub/my-cool-app/")?;
+assert_eq!(dir.to_string(), "/pub/my-cool-app/");
+
+// Names keep their characters as written
+let name = ResourcePath::parse("pub/My File.txt")?;
+assert_eq!(name.to_string(), "/pub/My File.txt");
+```
+
+<sub>Source: [`ResourcePath` rustdoc doctest](https://docs.rs/pubky/0.18.0/pubky/struct.ResourcePath.html) (CI-run), inside a fn returning `pubky::Result<()>`.</sub>
+
+> **Upgrading from ≤0.17: old files keep their encoded names.** Files that SDK 0.6–0.17 wrote under a name that HTTP encoding escapes were stored with the escape in the name: `pub/my file.txt` was stored as `pub/my%20file.txt`. They are **not** renamed. From 0.18, read them at the stored name (`"pub/my%20file.txt"`); upstream says "`list()` will display the path correctly". A `%` in a name is now encoded once (`/pub/100%.txt` goes on the wire as `/pub/100%25.txt`). `StoragePath::url_encode` (`pubky-common`) remains only as a deprecated wrapper.
+
+> **`/priv` is ALPHA (v0.10.0+) and NOT for production.** The rustdoc says `/priv/` paths are private to the signed-in user, but that is access control, **not encryption**: a homeserver admin can read and write all tenant data, including `/priv`. Apps that need confidentiality from the homeserver must encrypt data and manage keys themselves. Upstream's [`docs/PRIVATE_STORAGE.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/PRIVATE_STORAGE.md) has only JavaScript and raw-HTTP examples, no Rust. See [`shipped-vs-planned.md`](./shipped-vs-planned.md#priv-private-storage-alpha).
 
 **Listing** (`ListBuilder`, `#[must_use]`; nothing is sent until `.send()`):
-- `.reverse(bool)`, `.shallow(bool)` (skip subfolder contents), `.limit(u16)` and `.cursor(&str)`.
-- `.send().await` returns `Result<Vec<PubkyResource>>`.
+- `.reverse(bool)`, `.shallow(bool)` (skip subfolder contents), `.limit(u16)` (the homeserver may cap it) and `.cursor(&str)`.
+- `.send().await` returns `Result<Vec<PubkyResource>>`. An empty page is an empty `Vec`. A missing directory is a 404 `RequestError::Server`. A bad cursor is a 400.
 - To paginate, pass the previous page's last `entry.to_pubky_url()` to `.cursor(..)`.
+
+**`PubkyResource` renderings:**
+- `to_pubky_url()` gives `pubky://<z32><path>`, the form listings, event streams and cursors use. `FromStr` parses it back.
+- `Display` gives the identifier form `pubky<z32><path>`.
+- `to_transport_url()` gives `https://_pubky.<z32>/storage/<z32><path>` with the path percent-encoded.
+- `PubkyResource::new(owner: PublicKey, path: impl IntoResourcePath)` (0.18.0; it took `AsRef<str>` before).
 
 ## Storage locks
 
-WebDAV-style locks (SDK and homeserver 0.13.0+). The JS bindings expose them too since 0.15.0 ([JS pkg README](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/pkg/README.md)). The homeserver advertises the `webdav-locks` feature. API: [`StorageLock`](https://docs.rs/pubky/0.16.2/pubky/struct.StorageLock.html).
+WebDAV-style locks (SDK and homeserver 0.13.0+; JS bindings since 0.15.0). The homeserver advertises the `webdav-locks` feature. Model: [`concepts.md`](./concepts.md#storage-locks). API: [`StorageLock`](https://docs.rs/pubky/0.18.0/pubky/struct.StorageLock.html).
 
 - `storage.lock(path, timeout: Duration) -> Result<StorageLock>`
 - `storage.refresh_lock(&mut lock, Duration) -> Result<()>`
@@ -239,7 +277,7 @@ storage.put_locked(&lock, state).await?;
 storage.unlock(&lock).await?;
 ```
 
-<sub>Source: [`StorageLock` rustdoc example](https://docs.rs/pubky/0.16.2/pubky/struct.StorageLock.html#example), inside `async fn example(session: pubky::PubkySession) -> pubky::Result<()>` with `use std::time::Duration;`. Run against a local testnet homeserver with lock support.</sub>
+<sub>Source: [`StorageLock` rustdoc example](https://docs.rs/pubky/0.18.0/pubky/struct.StorageLock.html#example), inside `async fn example(session: pubky::PubkySession) -> pubky::Result<()>` with `use std::time::Duration;`. Needs a homeserver with lock support.</sub>
 
 | Call | Status | Meaning / what to do |
 |---|---|---|
@@ -262,7 +300,7 @@ match storage.lock("/pub/my.app/state.json", Duration::from_secs(30)).await {
 }
 ```
 
-<sub>Authored for this page (not upstream), inside `async fn(storage: SessionStorage) -> pubky::Result<()>`. Both the `LOCKED` and `Ok` arms were run against a local testnet.</sub>
+<sub>Authored for this page (not upstream), inside `async fn(storage: SessionStorage) -> pubky::Result<()>`. Both the `Ok` and `LOCKED` arms were executed.</sub>
 
 - **The homeserver caps a lock at 60 s** (default 30; `Infinite` gets the cap). Call `refresh_lock` to hold it longer. A write made under the lock keeps it alive until the write ends.
 - **The lock token is a bearer token.** Anyone holding it who can write the path can use or release it. Don't log it.
@@ -272,7 +310,7 @@ match storage.lock("/pub/my.app/state.json", Duration::from_secs(30)).await {
 
 `pubky.public_storage()` returns a read-only `PublicStorage` with `get`, `get_json` (`json` feature), `exists`, `stats` and `list`. Prefer it to `PublicStorage::new()`, which builds a separate client.
 
-Accepted address forms: `pubky<z32>/pub/...` (preferred), `pubky://<z32>/...`, a `(PublicKey, path)` or `(&PublicKey, path)` tuple, and `PubkyResource`. **`https://_pubky.<z32>/...` is not accepted.**
+Accepted address forms (`A: IntoPubkyResource`): `pubky<z32>/pub/...` (preferred), `pubky://<z32>/...`, a `(PublicKey, path)` or `(&PublicKey, path)` tuple, and `PubkyResource`. **`https://_pubky.<z32>/...` is not accepted.**
 
 ```rust
 use pubky::{Pubky, PublicKey};
@@ -296,7 +334,7 @@ for entry in entries {
 }
 ```
 
-<sub>Source: [SDK README doctest](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#storage-api-session--public), inside `async fn run(user_id: PublicKey) -> pubky::Result<()>`. Run against a local testnet with `Pubky::testnet()`. The tuple form `public.get((&user_id, "/pub/example.com/file.bin"))` also compiles.</sub>
+<sub>Source: [SDK README, Storage API](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#storage-api-session--public) (doctest), inside `async fn run(user_id: PublicKey) -> pubky::Result<()>`. Use `Pubky::testnet()` against a local testnet. The tuple form `public.get((&user_id, "/pub/example.com/file.bin"))` also compiles.</sub>
 
 **Key formats in Rust** (full rules: [`concepts.md`](./concepts.md#public-key-string-formats)):
 - `format!("{user}")` / `.to_string()` gives `pubky<z32>`, valid in the compact address form above.
@@ -305,9 +343,9 @@ for entry in entries {
 
 ## Error handling
 
-- `pubky::Result<T>` is `Result<T, pubky::Error>`. Details: [docs.rs `Error`](https://docs.rs/pubky/0.16.2/pubky/errors/enum.Error.html).
-- `pubky::Error` variants (0.16.2): `Request(RequestError)`, `Pkarr(PkarrError)`, `Parse(url::ParseError)`, `Authentication(AuthError)` and `Build(BuildError)`.
-- **Always keep a catch-all `Err(e)` arm.** The enum isn't `#[non_exhaustive]`, but `main` already adds an unreleased `Error::CredentialRefresh` variant, so exhaustive matches written against 0.16.2 will break on the next release.
+- `pubky::Result<T>` is `Result<T, pubky::Error>`. Details: [docs.rs `Error`](https://docs.rs/pubky/0.18.0/pubky/errors/enum.Error.html).
+- `pubky::Error` variants (0.18.0): `Request(RequestError)`, `CredentialRefresh(CredentialRefreshError)` (0.17.1+), `Pkarr(PkarrError)`, `Parse(url::ParseError)`, `Authentication(AuthError)` and `Build(BuildError)`.
+- **Always keep a catch-all `Err(e)` arm.** The enum isn't `#[non_exhaustive]`; adding `CredentialRefresh` in 0.17.1 broke exhaustive matches, and later variants will too.
 - `RequestError` (`pubky::errors::RequestError`):
   - `Server { status, message }`: any non-2xx response. `message` holds **at most the error-body limit**, not the whole body.
   - `Transport(reqwest::Error)`: the request didn't complete, or reading a response body failed (`From<reqwest::Error>` maps here, so `.text().await?` errors land in `Transport`).
@@ -315,10 +353,50 @@ for entry in entries {
   - `DecodeJson { message }`: a JSON body didn't parse.
 - `PkarrError::is_retryable()` is `true` only for `Publish` and `Resolve`. `pubky::Error` itself has no `is_retryable()`.
 
+**`CredentialRefreshError`** ([docs.rs](https://docs.rs/pubky/0.18.0/pubky/enum.CredentialRefreshError.html); crate root, `#[non_exhaustive]`, 0.17.1+):
+- One variant: `Request { status: Option<StatusCode> }`. `status` is `None` for transport failures.
+- Returned by storage calls, `refresh_if_needed()`, `force_refresh()` and `revalidate()` when automatic grant-bearer refresh fails. For `revalidate()`, a revoked grant gives `Ok(None)` instead. Other failures keep their original variants.
+- Secret-safe: `Display`/`Debug` omit URLs, response bodies, grants, proofs and bearer values. The refresh path never reads the error body, whatever `max_error_body_bytes` says.
+
+**Request categories (0.17.1+):** `RequestError::kind()` returns a [`RequestErrorKind`](https://docs.rs/pubky/0.18.0/pubky/errors/enum.RequestErrorKind.html) (`Copy + Eq + Hash`, `#[non_exhaustive]`, so a wildcard arm is required). Branch on it instead of digging into `reqwest::Error`. Several kinds can come from a `Transport` error, so don't infer the `RequestError` variant from the kind.
+
+| `RequestErrorKind` | From | Notes |
+|---|---|---|
+| `Http { status: u16 }` | `Server`, or a `Transport` error that carries a status | |
+| `Timeout` | `Transport` | Takes precedence over other transport kinds |
+| `Connection` | `Transport` | Native only |
+| `TlsVerification` | `Transport` | 0.18.0+, native only; see below |
+| `Body` | `Transport` (upload) | In practice, request-body failures; response reads report as `Decode` |
+| `Decode` | `DecodeJson`, or a `Transport` response-body read | Covers failed `.bytes().await?`/`.text().await?` and incomplete framing, not only JSON parsing |
+| `InvalidRequest` | `Validation`, or a `Transport` builder error | |
+| `Other` | `Transport` | Browsers often report `Other` |
+
+- The kind carries no URL, body or credentials, so it is safe to log.
+- **A kind describes what happened, not whether a retry is safe.** A timeout doesn't prove a write wasn't committed. Make retried writes idempotent, or check with `stats`/`get` first.
+- **`TlsVerification`** means the server certificate was rejected: by the PubkyTLS verifier for pkarr hosts (the key presented isn't in the client's HTTPS/SVCB records), or by the X.509 verifier for ICANN hosts. A stale record after a legitimate key rotation looks the same as interception, so it doesn't prove tampering. Retrying without re-resolving the record is unlikely to help.
+
+```rust
+use pubky::errors::RequestErrorKind;
+
+match storage.get("/pub/my.app/state.json").await {
+    Ok(resp) => { let _bytes = resp.bytes().await?; }
+    Err(pubky::Error::Request(e)) => match e.kind() {
+        RequestErrorKind::Http { status: 404 } => { /* missing: prefer exists()/stats() */ }
+        RequestErrorKind::Timeout | RequestErrorKind::Connection => { /* transient; a timed-out write may still have committed */ }
+        RequestErrorKind::TlsVerification => { /* re-resolve the homeserver record before retrying */ }
+        _ => return Err(pubky::Error::Request(e)),
+    },
+    Err(e) => return Err(e),
+}
+```
+
+<sub>Authored for this page (not upstream), inside `async fn(storage: pubky::SessionStorage) -> pubky::Result<()>`; the 404 and `Ok` arms were executed. API from [`errors.rs` @ v0.18.0](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/src/errors.rs) and the [README "Request errors" section](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#request-errors).</sub>
+
 **Error-body limit (0.13.0+):**
 - Successful bodies are left unread. For an HTTP error, the client captures up to **4096 bytes** of the body into `message`. Longer bodies end with `\n[response body truncated at N bytes]`.
 - Lossy UTF-8 decoding can make `message` up to 3x the byte cap.
 - `max_error_body_bytes(0)` skips the body read and uses the HTTP status reason.
+- The limit applies to every checked request except credential refresh, which never reads the body. (The v0.18.0 rustdoc on `max_error_body_bytes` says it includes credential refresh; that wording is stale. The README and the code exclude refresh.)
 - A body that stalls below the cap still needs a request timeout.
 
 ```rust
@@ -330,7 +408,7 @@ let client = PubkyHttpClient::builder()
 let pubky = Pubky::with_client(client);
 ```
 
-<sub>Source: [SDK README, Error body limits](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#error-body-limits). Run against a local testnet (a GET of a missing path returned `RequestError::Server` with 404).</sub>
+<sub>Source: [SDK README, Error-body limits](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#error-body-limits) (doctest), inside a fn returning `Result<_, pubky::BuildError>` or `pubky::Result`.</sub>
 
 Match on the status code. This helper treats a repeated signup (409) as success:
 
@@ -355,22 +433,22 @@ pub async fn ensure_signup(signer: &PubkySigner, homeserver: &PublicKey) -> Resu
 }
 ```
 
-<sub>Source (runnable helper): [`examples/rust/testnet.rs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/testnet.rs). Upstream writes `reqwest::StatusCode`; `pubky::StatusCode` is the same type, re-exported. Imports: `use anyhow::Result; use pubky::{PubkySigner, PublicKey};`. Both arms were run against a local testnet.</sub>
+<sub>Source (runnable helper): [`examples/rust/testnet.rs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/testnet.rs). Upstream writes `reqwest::StatusCode`; `pubky::StatusCode` is the same type, re-exported. Imports: `use anyhow::Result; use pubky::{PubkySigner, PublicKey};`.</sub>
 
 ## Sessions: sign out and persist
 
-Refresh, revalidation, restore behavior and grants are covered in [`auth.md`](./auth.md#session-lifecycle). This section shows the Rust calls.
+Refresh, revalidation, restore behavior and grants: [`auth.md`](./auth.md#session-lifecycle). This section shows the Rust calls.
 
 - `PubkySession` is cheap to clone and thread-safe.
 - `info() -> SessionInfo`, `public_key() -> PublicKey`, `storage() -> SessionStorage`, and the views `as_grant()` / `as_cookie()`.
-- `revalidate() -> Result<Option<SessionInfo>>`. `None` means the session expired or was invalidated.
+- `revalidate() -> Result<Option<SessionInfo>>`: `Some` is valid, `None` means expired or invalidated, `Err` is a transport or server error. Grant sessions may refresh their bearer during the check. Since 0.18.0, native grant requests and `revalidate()` recover after the homeserver rejects a bearer.
 - `client()` returns the raw HTTP client **without** credentials.
 - `signout(self) -> Result<(), (Error, Self)>` consumes the session and gives it back on failure.
 
 ```rust
 session.signout().await.map_err(|(e, _session)| e)?;
 
-// non-fatal variant (examples/rust/6-session_management/main.rs:151-155)
+// non-fatal variant (examples/rust/6-session_management)
 async fn signout(session: PubkySession) {
     if let Err((err, _session)) = session.signout().await {
         eprintln!("Warning: failed to sign out management session: {err}");
@@ -378,7 +456,7 @@ async fn signout(session: PubkySession) {
 }
 ```
 
-<sub>Source: [`PubkySession` rustdoc](https://docs.rs/pubky/0.16.2/pubky/struct.PubkySession.html) and [`examples/rust/6-session_management`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/6-session_management/main.rs). Both variants were run against a local testnet.</sub>
+<sub>Source: [`PubkySession` rustdoc](https://docs.rs/pubky/0.18.0/pubky/struct.PubkySession.html) and [`examples/rust/6-session_management`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/6-session_management/main.rs).</sub>
 
 > **Signing out revokes the grant**, not just the session: every session from that grant stops working and its saved secrets no longer restore. Other grants are unaffected. If the session token was already invalid, sign-out can report success without revoking. Details: [`auth.md`](./auth.md#session-lifecycle).
 
@@ -403,20 +481,43 @@ let secret = grant
 let restored = pubky.restore_session(&secret).await?;
 ```
 
-<sub>Source: [SDK README, Keypair and session persistence](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#keypair-and-session-persistence), inside an `async fn` returning `anyhow::Result<()>`. Since 0.14.0 the README uses this pattern, not `write_secret_file`. Run against a local testnet with a real recovery file; the restored session could read and write.</sub>
+<sub>Source: [SDK README, Keypair and session persistence](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#keypair-and-session-persistence), inside an `async fn` returning `anyhow::Result<()>`. Needs a real recovery file and a signed-up identity.</sub>
 
 > **The exported secret is unencrypted and highly sensitive.** It contains the grant, its private proof-of-possession key and, for signed approvals, the encryption keys. Anyone holding it can act as the user within the capabilities until the grant expires or is revoked, and the encryption keys stay usable after that. Store it in a secret store (for example, the OS keychain). Never log or commit it.
 
-> **Deprecated cookie auth. Don't use:** `start_cookie_auth_flow`, `resume_cookie_auth_flow`, `session_from_file`, `signup_cookie`, `signin_cookie`, `signin_cookie_blocking`, `export_secret` and `import_secret`. The `.sess` file helpers are cookie-only, and **`write_secret_file` panics on grant sessions**.
+> **Deprecated cookie auth, removed in August 2027. Don't use:** `start_cookie_auth_flow`, `resume_cookie_auth_flow`, `session_from_file`, `signup_cookie`, `signin_cookie`, `signin_cookie_blocking`, `export_secret` and `import_secret`. The `.sess` file helpers are cookie-only, and **`write_secret_file` panics on grant sessions**.
+
+### Account info and quota (0.18.0+)
+
+`session.as_grant()?.account().await -> Result<AccountInfo>` ([docs.rs](https://docs.rs/pubky/0.18.0/pubky/struct.GrantSessionView.html#method.account)) calls `GET /account`.
+
+- **Grant sessions with root read only** (`/:r`, `/:rw`, …). A path-scoped session gets 403. Errors: 401/403 as `RequestError::Server`; an unparsable body as `RequestError::DecodeJson`.
+- A disabled user can still read it, so use it to explain why writes fail.
+- [`AccountInfo`](https://docs.rs/pubky/0.18.0/pubky/struct.AccountInfo.html): `pubky`, `created_at: String`, `disabled: bool`, `used_bytes: u64`, `quota: AccountQuota { effective, overrides }`.
+- Every `QuotaLimits` field is an `Option`; `storage_quota_mb` and the read/write rates are `QuotaLimit<T>`, which is `Unlimited | Value(T)`. `AccountInfo`, `AccountQuota`, `QuotaLimit` and `QuotaLimits` are re-exported at the crate root.
+
+```rust
+let grant = session
+    .as_grant()
+    .expect("signin creates a grant-backed session");
+let account = grant.account().await?;
+println!(
+    "used {} bytes, disabled: {}",
+    account.used_bytes, account.disabled
+);
+```
+
+<sub>Authored for this page (not upstream), inside `async fn(session: pubky::PubkySession) -> pubky::Result<()>` with a root-scoped session from `signer.signin`. `as_grant()` is `None` for a cookie session; where that is possible, handle the `None` instead of calling `expect`.</sub>
 
 ## Events, PKDNS and raw HTTP
 
-**Event streams** ([`EventStreamBuilder`](https://docs.rs/pubky/0.16.2/pubky/struct.EventStreamBuilder.html)):
+**Event streams** ([`EventStreamBuilder`](https://docs.rs/pubky/0.18.0/pubky/struct.EventStreamBuilder.html)):
 - **One user:** `pubky.event_stream_for_user(&user, cursor: Option<EventCursor>)`.
 - **Several users on one homeserver:** `pubky.event_stream_for(&homeserver).add_users(..)?`. Resolve the homeserver first with `get_homeserver_of`.
 - **Builder:** `.limit(u16)`, `.max_event_bytes(usize)` (0.13.0+), `.live()`, `.reverse()`, `.path(..)` (repeatable) and `.session(&PubkySession)`.
 - `.subscribe().await` returns `Result<Pin<Box<dyn Stream<Item = Result<Event>> + Send>>>` (not `Send` on wasm). Consume it with `futures_util::StreamExt::next`.
 - `Event` has `event_type` (`Display`; `.content_hash()` returns an `Option`), `resource` and `cursor`.
+- **Cursors are numeric event IDs.** `EventCursor` is a `u64` newtype, so SDK code is unaffected by homeserver 0.18.0 removing legacy Base32 timestamp cursors (raw HTTP clients now get 400). Persist the numeric cursor, or restart from 0 and handle repeated events.
 
 ```rust
 let stream = pubky.event_stream_for_user(&user, None)
@@ -426,7 +527,7 @@ let stream = pubky.event_stream_for_user(&user, None)
     .await?;
 ```
 
-<sub>Source: [SDK README, Event stream limits](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#event-stream-limits), inside `async fn example(pubky: pubky::Pubky, user: pubky::PublicKey) -> pubky::Result<()>`. Run against a local testnet (first event received).</sub>
+<sub>Source: [SDK README, Event-stream limits](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#event-stream-limits), inside `async fn example(pubky: pubky::Pubky, user: pubky::PublicKey) -> pubky::Result<()>`.</sub>
 
 > **Set `max_event_bytes` on untrusted streams.** The default is `usize::MAX`, which is effectively unbounded. The limit applies separately to event data, the event name and the ID. It is independent of `.limit()` (event count) and `max_error_body_bytes`. `0` is rejected at subscription time.
 >
@@ -453,10 +554,10 @@ let mut builder: EventStreamBuilder = if users.len() == 1 {
 // upstream then reassigns `builder` (e.g. `builder = builder.live();`), hence `let mut`
 ```
 
-<sub>Source (runnable, excerpt): [`examples/rust/5-events_stream/main.rs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/5-events_stream/main.rs), inside an `async fn` returning `anyhow::Result<()>` with `users: Vec<(PublicKey, Option<EventCursor>)>`. Both branches were run against a local testnet.</sub>
+<sub>Source (runnable, excerpt): [`examples/rust/5-events_stream/main.rs`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/5-events_stream/main.rs), inside an `async fn` returning `anyhow::Result<()>` with `users: Vec<(PublicKey, Option<EventCursor>)>`.</sub>
 
 **PKDNS** (what `_pubky` records are: [`concepts.md`](./concepts.md#pkarr-resolution)):
-- `pubky.get_homeserver_of(&pk) -> Result<Option<PublicKey>>`. It returns `Ok(None)` when there is no record or no homeserver configured. It returns `Err(Error::Pkarr(_))` when resolution fails or the `_pubky` target isn't a valid key; retry when `is_retryable()` is true.
+- `pubky.get_homeserver_of(&pk) -> Result<Option<PublicKey>>`. It returns `Ok(None)` when there is no record or no homeserver configured, and `Err(Error::Pkarr(_))` when resolution fails or the `_pubky` target isn't a valid key; retry when `is_retryable()` is true.
 
 ```rust
 use pubky::{Pubky, PublicKey, Keypair};
@@ -474,17 +575,18 @@ signer.pkdns().publish_homeserver_force(Some(&new_homeserver_id)).await?;
 signer.pkdns().get_homeserver().await?;
 ```
 
-<sub>Source: [SDK README, PKDNS](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#pkdns-pkarr), inside `async fn run(other: PublicKey, new_homeserver_id: PublicKey) -> pubky::Result<()>`. Run against a local testnet with `Pubky::testnet()`.</sub>
+<sub>Source: [SDK README, PKDNS](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#pkdns-pkarr), inside `async fn run(other: PublicKey, new_homeserver_id: PublicKey) -> pubky::Result<()>`. Use `Pubky::testnet()` against a local testnet.</sub>
 
 **Raw HTTP** (only for requests the storage APIs don't cover):
 1. `pubky::resolve_pubky(id)` turns a public resource id into its canonical `https://_pubky.<z32>/storage/<z32>/...` URL.
-2. `client.request_async(Method, Url)` returns `Result<RequestBuilder>`. It picks PubkyTLS or ICANN transport and falls back to legacy storage addressing when the homeserver doesn't advertise `path-addressed-storage`. **Use it for Pubky and PKDNS URLs.**
+2. `client.request_async(Method, Url)` returns `Result<RequestBuilder>`. It picks PubkyTLS or ICANN transport and falls back to legacy storage addressing only when the homeserver doesn't advertise `path-addressed-storage`. **Use it for Pubky and PKDNS URLs.**
+3. Since 0.18.0, a failed `/info` fetch no longer downgrades to legacy addressing: the SDK keeps the last known features and caches the failure for 5 s (success for 60 s).
 
 `PubkyHttpClient::request(method, &url)` is native-only and synchronous. It does **not** negotiate storage addressing or ICANN fallback. The [`4-request`](https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/4-request/main.rs) example uses it.
 
 ## Runnable examples
 
-[`pubky-homeserver/examples/rust`](https://github.com/pubky/pubky-homeserver/tree/main/examples/rust) contains these binaries: `keygen`, `signup` (1-signup), `authenticator` and `auth_client` (2-auth_flow), `storage` (3-storage), `request` (4-request), `events_stream` (5-events_stream), `sessions` (6-session_management), `logging` (7-logging) and `testnet` (8-testnet). They have not changed since v0.12.0 and build against the 0.16.x workspace.
+[`pubky-homeserver/examples/rust`](https://github.com/pubky/pubky-homeserver/tree/main/examples/rust) contains these binaries: `keygen`, `signup` (1-signup), `authenticator` and `auth_client` (2-auth_flow), `storage` (3-storage), `request` (4-request), `events_stream` (5-events_stream), `sessions` (6-session_management), `logging` (7-logging) and `testnet` (8-testnet). They have not changed since v0.16.2. They use `pubky.workspace = true`, so on `main` they build against the workspace SDK (0.18.0 plus unreleased changes), not a published crate.
 
 - Run them from `examples/rust` with `cargo run --bin <name> -- --testnet`.
 - Most need a running local testnet with PostgreSQL. `logging` and `testnet` start their own `EphemeralTestnet` (default feature `docker-postgres`).

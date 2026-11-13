@@ -2,15 +2,15 @@
   "path": "skills/pubky/references/sdk-js.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-10-26T14:07:49.115Z",
+  "generatedAt": "2026-11-12T08:25:14.580Z",
   "sourcesUsed": [
     {
       "repo": "pubky-knowledge-base-v2",
-      "sha": "44fcaed5b122464fef97ce8e0f7909d13d0ee350"
+      "sha": "827fb3ad3a2f2775946130500a390b7b2bc81a52"
     },
     {
       "repo": "pubky-homeserver",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8"
+      "sha": "8612a646b2fc0dd26cbecaf3f62366d04d381b03"
     },
     {
       "repo": "pubky-ai-kit",
@@ -18,199 +18,158 @@
     },
     {
       "repo": "npm:@synonymdev/pubky",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8"
+      "sha": "8612a646b2fc0dd26cbecaf3f62366d04d381b03"
     }
   ],
   "provenance": [
     {
-      "anchor": "version-note",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/package.json",
-      "sha": "f60e502fb4fc",
-      "url": "https://www.npmjs.com/package/@synonymdev/pubky"
-    },
-    {
-      "anchor": "version-note-unreleased",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/src",
-      "sha": "fd24bf0c8bbe",
-      "url": "https://github.com/pubky/pubky-homeserver/compare/v0.16.2...fd24bf0c8bbe"
-    },
-    {
-      "anchor": "install-and-runtime",
+      "anchor": "#javascript--wasm-client-synonymdevpubky",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/bindings/js/pkg/README.md",
-      "sha": "f60e502fb4fc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/pkg/README.md#initialization--events"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/bindings/js/pkg/README.md"
     },
     {
-      "anchor": "the-facade",
+      "anchor": "#install-and-runtime",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/pubky.d.ts",
-      "sha": "f60e502fb4fc",
-      "url": "https://unpkg.com/@synonymdev/pubky@0.16.2/pubky.d.ts"
+      "path": "examples/javascript",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/tree/v0.18.0/examples/javascript"
     },
     {
-      "anchor": "wasm-needs-pkarr-relays",
-      "repo": "pubky/pubky-knowledge-base-v2",
-      "path": "snippets/js/src/developer-guide.ts",
-      "sha": "44fcaed5b122",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/44fcaed5b122/snippets/js/src/developer-guide.ts"
+      "anchor": "#the-facade",
+      "repo": "npm/@synonymdev/pubky",
+      "path": "pubky.d.ts",
+      "sha": "0.18.0",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.18.0/pubky.d.ts"
     },
     {
-      "anchor": "wasm-needs-pkarr-relays-config",
+      "anchor": "#wasm-needs-pkarr-relays",
       "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/bindings/js/src/client/constructor.rs",
-      "sha": "f60e502fb4fc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/src/client/constructor.rs"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/bindings/js/src/client/constructor.rs"
     },
     {
-      "anchor": "quick-start-testnet-end-to-end",
+      "anchor": "#quick-start-testnet-end-to-end",
       "repo": "pubky/pubky-knowledge-base-v2",
       "path": "snippets/js/src/developer-guide.ts",
-      "sha": "44fcaed5b122",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/44fcaed5b122/snippets/js/src/developer-guide.ts"
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/main/snippets/js/src/developer-guide.ts"
     },
     {
-      "anchor": "sign-up-and-sign-in",
+      "anchor": "#sign-up-and-sign-in",
+      "repo": "npm/@synonymdev/pubky",
+      "path": "pubky.d.ts",
+      "sha": "0.18.0",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.18.0/pubky.d.ts"
+    },
+    {
+      "anchor": "#session",
+      "repo": "npm/@synonymdev/pubky",
+      "path": "pubky.d.ts",
+      "sha": "0.18.0",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.18.0/pubky.d.ts"
+    },
+    {
+      "anchor": "#storage-operations",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/pubky.d.ts",
-      "sha": "f60e502fb4fc",
-      "url": "https://unpkg.com/@synonymdev/pubky@0.16.2/pubky.d.ts"
+      "path": "pubky-sdk/bindings/js/src/actors/storage/session.rs",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/bindings/js/src/actors/storage/session.rs"
     },
     {
-      "anchor": "sign-up-and-sign-in-aikit",
+      "anchor": "#paths-and-addresses",
+      "repo": "pubky/pubky-homeserver",
+      "path": "release notes v0.18.0",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.18.0"
+    },
+    {
+      "anchor": "#metadata-exists-and-stats",
+      "repo": "npm/@synonymdev/pubky",
+      "path": "pubky.d.ts",
+      "sha": "0.18.0",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.18.0/pubky.d.ts"
+    },
+    {
+      "anchor": "#locks-optional",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/bindings/js/pkg/README.md",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/bindings/js/pkg/README.md#sessionstorage-readwrite"
+    },
+    {
+      "anchor": "#listing-and-pagination",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-homeserver/src/constants.rs",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-homeserver/src/constants.rs"
+    },
+    {
+      "anchor": "#listing-and-pagination",
       "repo": "pubky/pubky-ai-kit",
       "path": "pubky-dev-context.md",
-      "sha": "5654d0d27218",
-      "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md"
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-ai-kit/blob/main/pubky-dev-context.md"
     },
     {
-      "anchor": "session",
+      "anchor": "#error-handling",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/pubky.d.ts",
-      "sha": "f60e502fb4fc",
-      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.16.0"
+      "path": "pubky-sdk/bindings/js/src/js_error.rs",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/bindings/js/src/js_error.rs"
     },
     {
-      "anchor": "storage-operations",
+      "anchor": "#error-handling",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/README.md",
-      "sha": "f60e502fb4fc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/pkg/README.md#sessionstorage-readwrite"
+      "path": "pubky-homeserver/openapi-client.yml",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-homeserver/openapi-client.yml"
     },
     {
-      "anchor": "storage-operations-public-read",
-      "repo": "pubky/pubky-homeserver",
-      "path": "examples/javascript/3-storage.mjs",
-      "sha": "f60e502fb4fc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/examples/javascript/3-storage.mjs"
-    },
-    {
-      "anchor": "paths-and-addresses",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/pubky.d.ts",
-      "sha": "f60e502fb4fc",
-      "url": "https://unpkg.com/@synonymdev/pubky@0.16.2/pubky.d.ts"
-    },
-    {
-      "anchor": "paths-and-addresses-priv",
-      "repo": "pubky/pubky-homeserver",
-      "path": "docs/PRIVATE_STORAGE.md",
-      "sha": "f60e502fb4fc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/docs/PRIVATE_STORAGE.md"
-    },
-    {
-      "anchor": "metadata-exists-and-stats",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/pubky.d.ts",
-      "sha": "f60e502fb4fc",
-      "url": "https://unpkg.com/@synonymdev/pubky@0.16.2/pubky.d.ts"
-    },
-    {
-      "anchor": "locks-optional",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/README.md",
-      "sha": "f60e502fb4fc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/pkg/README.md#sessionstorage-readwrite"
-    },
-    {
-      "anchor": "listing-and-pagination",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/shared/utils.rs",
-      "sha": "f60e502fb4fc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-homeserver/src/shared/utils.rs"
-    },
-    {
-      "anchor": "listing-and-pagination-loop",
-      "repo": "pubky/pubky-ai-kit",
-      "path": "pubky-dev-context.md",
-      "sha": "5654d0d27218",
-      "url": "https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md"
-    },
-    {
-      "anchor": "error-handling",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/pubky.d.ts",
-      "sha": "f60e502fb4fc",
-      "url": "https://unpkg.com/@synonymdev/pubky@0.16.2/pubky.d.ts"
-    },
-    {
-      "anchor": "error-handling-404",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/README.md",
-      "sha": "f60e502fb4fc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/pkg/README.md#errors"
-    },
-    {
-      "anchor": "error-handling-retry",
+      "anchor": "#error-handling",
       "repo": "pubky/pubky-knowledge-base-v2",
       "path": "snippets/js/src/troubleshooting.ts",
       "sha": "1999172^",
-      "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/1999172^/snippets/js/src/troubleshooting.ts"
+      "url": "https://github.com/pubky/pubky-knowledge-base-v2/commit/1999172"
     },
     {
-      "anchor": "keys-and-homeserver-lookup",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/pubky.d.ts",
-      "sha": "f60e502fb4fc",
-      "url": "https://unpkg.com/@synonymdev/pubky@0.16.2/pubky.d.ts"
+      "anchor": "#keys-and-homeserver-lookup",
+      "repo": "npm/@synonymdev/pubky",
+      "path": "pubky.d.ts",
+      "sha": "0.18.0",
+      "url": "https://unpkg.com/@synonymdev/pubky@0.18.0/pubky.d.ts"
     },
     {
-      "anchor": "logging",
+      "anchor": "#logging",
       "repo": "pubky/pubky-homeserver",
       "path": "examples/javascript/7-logging.mjs",
-      "sha": "f60e502fb4fc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/examples/javascript/7-logging.mjs"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/examples/javascript/7-logging.mjs"
     },
     {
-      "anchor": "raw-fetch-resolvepubky",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/README.md",
-      "sha": "f60e502fb4fc",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/pkg/README.md"
+      "anchor": "#raw-fetch-resolvepubky",
+      "repo": "pubky/agent-skills",
+      "path": "skills/pubky/references/concepts.md",
+      "sha": "038f17cf708cf6e488e4b02c5b53a941375de41c"
     }
   ],
   "snippet": {
-    "total": 9,
-    "pass": 7,
-    "fail": 2,
+    "total": 8,
+    "pass": 8,
+    "fail": 0,
     "unverifiable": 0,
-    "failing": [
-      "install",
-      "snip-readme-404"
-    ]
+    "failing": []
   },
   "factCheck": {
-    "supported": 45,
+    "supported": 26,
     "refuted": 1,
-    "caveated": 4,
+    "caveated": 6,
     "unsupported": 0
   },
-  "guardrailViolations": [
-    "Storage operations table: the `session.storage` row gives Path = `/pub/${string}` | `/priv/${string}` and 'Read/write own data' with no inline qualifier. The alpha, not-for-production, not-encrypted-from-the-operator caveat appears only further down under 'Paths and addresses'. Add '(`/priv` is alpha; see below)' to that row so a skim of the table does not present /priv as production storage."
-  ],
-  "wordCount": 3467,
+  "guardrailViolations": [],
+  "wordCount": 4055,
   "substance": {
     "ok": true,
     "reasons": []

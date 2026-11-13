@@ -18,9 +18,10 @@ Ed25519 public key (the identity)
 
 ## Versions and sources
 
-- **Current release: 0.16.2** (2026-10-15) for Rust [`pubky`](https://docs.rs/pubky/0.16.2/pubky/), JS/WASM
-  [`@synonymdev/pubky`](https://www.npmjs.com/package/@synonymdev/pubky), and the homeserver. Releases since 0.12.0:
-  0.13.0, 0.14.0, 0.15.0, 0.16.0, 0.16.1, 0.16.2. React Native and UniFFI are covered by the `pubky-mobile` skill.
+- **Current release: 0.18.0** (2026-11-09) for Rust [`pubky`](https://docs.rs/pubky/0.18.0/pubky/), JS/WASM
+  [`@synonymdev/pubky`](https://www.npmjs.com/package/@synonymdev/pubky), and the homeserver. Releases since 0.16.2:
+  **0.17.1** (2026-10-26) and **0.18.0**. There is **no 0.17.0** release on GitHub or npm (a `chore: v0.17.0` commit exists,
+  but the published version is 0.17.1). React Native and UniFFI are covered by the `pubky-mobile` skill.
 - **KB snippets are CI-checked against 0.14.0** (`@synonymdev/pubky` 0.14.0 on `main`; Rust `pubky =0.14.0` only at
   permalink `bb7232d`, since `main` no longer has Rust snippets). The KB removed most snippet files on 2026-10-02.
   Snippets lifted from those files link to the **permalink**
@@ -29,9 +30,12 @@ Ed25519 public key (the identity)
 - **KB docs are flat:** `https://pubky.org/<page>/`, for example [security-model](https://pubky.org/security-model/)
   and [pkarr](https://pubky.org/pkarr/). Old `explore/...` paths are gone.
 - **Pin exact versions** and check signatures against docs.rs or the JS README for that version. Minor releases break
-  APIs, for example v0.16.0's `feat(sdk)!: add scoped encryption keys` (#668); see the
-  [release notes](https://github.com/pubky/pubky-homeserver/releases).
-- Unless noted otherwise, every snippet below was **executed against a local testnet** on both 0.12.0 and 0.16.2.
+  APIs. v0.17.1 rejects `HEAD` on token and SSE endpoints and takes the client IP from the TCP peer or PROXY protocol.
+  v0.18.0 makes storage paths plain names ([Path rules](#path-rules)) and accepts only numeric event cursors
+  ([Event streams](#event-streams)). See the [release notes](https://github.com/pubky/pubky-homeserver/releases).
+- **Snippet verification:** unless a caption says otherwise, every snippet below was **executed against a local testnet on
+  0.18.0** (`pubky =0.18.0` / `@synonymdev/pubky` 0.18.0). Rust snippets are clippy-clean (`-D warnings`) and JS snippets pass
+  `tsc --noEmit`. Captions note where a snippet also ran on, or fails on, the older 0.12.0 pin.
 
 ## Identity: the Ed25519 keypair
 
@@ -102,7 +106,7 @@ fn main() -> Result<()> {
 }
 ```
 
-<sub>Source: [`examples/rust/keygen.rs`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/examples/rust/keygen.rs), unchanged since v0.12.0. Executed (clippy-clean) and round-tripped through `decrypt_recovery_file` on 0.12.0 and 0.16.2. Dependencies: `anyhow`, `clap` (derive), `pubky-common`, `rpassword = "7"`. `rpassword::read_password` needs a TTY: piped stdin fails with `Device not configured (os error 6)`.</sub>
+<sub>Source: [`examples/rust/keygen.rs`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/examples/rust/keygen.rs), unchanged from v0.12.0 through v0.18.0. Clippy-clean on `pubky-common =0.18.0` and executed under a pseudo-TTY. The file it wrote round-tripped through `decrypt_recovery_file` to the same public key, and a wrong passphrase errored. It also compiles on 0.12.0. Dependencies: `anyhow`, `clap` (derive), `pubky-common`, `rpassword = "7"`. To skip the direct `pubky-common` dependency, use the re-exports `pubky::Keypair` and `pubky::recovery_file`. `rpassword::read_password` needs a TTY: piped stdin fails with `Device not configured (os error 6)`.</sub>
 
 > **Recovery-file caveat (from reading the code, not stated upstream).** The format is the spec line `pubky.org/recovery`
 > (decrypt also accepts the legacy `pkarr.org/recovery`), a newline, then the encrypted 32-byte secret. Encryption is
@@ -115,9 +119,9 @@ fn main() -> Result<()> {
 >   keeps its permissions unless you use `create_new` or call `set_permissions`.
 >
 > Never publish or share recovery files.
-> Source: [`recovery_file.rs`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-common/src/recovery_file.rs).
+> Source: [`recovery_file.rs`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-common/src/recovery_file.rs).
 
-**Sign up once, then sign in.** Rust `PubkySigner` methods ([docs.rs](https://docs.rs/pubky/0.16.2/pubky/struct.PubkySigner.html)):
+**Sign up once, then sign in.** Rust `PubkySigner` methods ([docs.rs](https://docs.rs/pubky/0.18.0/pubky/struct.PubkySigner.html)):
 
 | Method | Returns | PKDNS side effect |
 | :-- | :-- | :-- |
@@ -150,7 +154,7 @@ await session.storage.putJson(path, { message: "Hello Pubkyverse!" });
 const data = await session.storage.getJson(path);
 ```
 
-<sub>Source (KB CI type-checked, 0.14.0): [`snippets/js/src/developer-guide.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/44fcaed5b122464fef97ce8e0f7909d13d0ee350/snippets/js/src/developer-guide.ts), with the DOM rendering trimmed. Executed against a local testnet (imports added; asserted the read-back equals the write). **Adapted:** upstream logs `signer.publicKey.z32()` as "Your pubky"; anything a person reads must use `toString()` (`pubky<z32>`), see [Public-key string formats](#public-key-string-formats). The testnet homeserver key is always `8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo`. On first signup, a console **404** for `http://localhost:15411/<user-key>` is expected: the SDK checks for an existing PKARR record before publishing one. Testnet setup: [`testing-and-testnet.md`](testing-and-testnet.md).</sub>
+<sub>Source (KB CI type-checked, 0.14.0): [`snippets/js/src/developer-guide.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/44fcaed5b122464fef97ce8e0f7909d13d0ee350/snippets/js/src/developer-guide.ts), with the DOM rendering trimmed. Executed against a local testnet on 0.18.0 and 0.12.0, with imports added; the read-back was asserted equal to the write. **Adapted:** upstream logs `signer.publicKey.z32()` as "Your pubky", but anything a person reads must use `toString()` (`pubky<z32>`); see [Public-key string formats](#public-key-string-formats). The testnet homeserver key is always `8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo`. On first signup, a console **404** for `http://localhost:15411/<user-key>` is expected: the SDK checks for an existing PKARR record before publishing one. Testnet setup: [`testing-and-testnet.md`](testing-and-testnet.md).</sub>
 
 ### Public-key string formats
 
@@ -223,7 +227,7 @@ for entry in entries {
 }
 ```
 
-<sub>Source: [`pubky-sdk/README.md`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#storage-api-session--public), two separate `no_run` doctests. `keypair: Keypair` and `user_id: PublicKey` are doctest parameters. Both were executed against a local testnet with `Pubky::testnet()` in place of `Pubky::new()` and a previously signed-up user. `format!("{user_id}")` uses `Display` (`pubky<z32>`), the accepted addressed form.</sub>
+<sub>Source: [`pubky-sdk/README.md`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#storage-api-session--public), two separate `no_run` doctests. `keypair: Keypair` and `user_id: PublicKey` are doctest parameters. Both were executed on 0.18.0 against a local testnet, with `Pubky::testnet()` in place of `Pubky::new()` and a previously signed-up user. `format!("{user_id}")` uses `Display` (`pubky<z32>`), which is the accepted addressed form. The `PublicKey` import is unused in the snippet body, so a standalone copy warns. Since 0.18.0, `entry.to_pubky_url()` prints **plain** (not percent-encoded) names; see [Path rules](#path-rules).</sub>
 
 ```js
 import { Pubky } from "@synonymdev/pubky";
@@ -236,23 +240,31 @@ const stats = await pubky.publicStorage.stats(resource);
 const bytes = await pubky.publicStorage.getText(resource);
 ```
 
-<sub>Source: [`examples/javascript/3-storage.mjs`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/examples/javascript/3-storage.mjs). Executed against a local testnet in both address forms. `a` holds the parsed CLI args. In TypeScript, `resource` must be typed `Address`: a plain `string` from `toString()` fails with TS2322. `getText` returns a string, despite the variable name `bytes`.</sub>
+<sub>Source: [`examples/javascript/3-storage.mjs`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/examples/javascript/3-storage.mjs). Executed against a local testnet on 0.18.0 and 0.12.0, in both address forms. `a` holds the parsed CLI args. In TypeScript, `resource` must be typed `Address`: a plain `string` from `toString()` fails with TS2322. `getText` returns a string despite the variable name `bytes`; use `getBytes` for bytes.</sub>
 
-JS storage surface at 0.16.2 (full reference: [JS README](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/pkg/README.md#storage) and [`sdk-js.md`](sdk-js.md)):
+JS storage surface at 0.18.0 (full reference: [JS README](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/bindings/js/pkg/README.md#storage) and [`sdk-js.md`](sdk-js.md)):
 - `PublicStorage` has `get`, `getJson`, `getText`, `getBytes`, `exists`, `stats`, and `list(addr, cursor=null, reverse=false, limit?, shallow=false)`.
   - `stats` returns a `ResourceStats` with **camelCase, optional** fields, or **`undefined`** when the entry is missing. See
-    [`stats.rs`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/src/actors/storage/stats.rs). The
-    JS README comment that shows snake_case fields and `null` is stale.
+    [`stats.rs`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/bindings/js/src/actors/storage/stats.rs). The
+    JS README comment that shows snake_case fields and `null` is still stale at 0.18.0.
   - A `list` address **must end with `/`**.
-- `SessionStorage` adds `putJson`, `putText`, `putBytes`, and `delete`, plus the [lock helpers](#storage-locks).
+- `SessionStorage` adds `putJson`, `putText`, `putBytes`, `putBlob(path, Blob | File)`, and `delete`, plus the
+  [lock helpers](#storage-locks). `putBlob` (0.17.1+) uploads without copying the contents into WASM memory, so prefer it
+  for files and large payloads.
 
 ### Path rules
 
-Paths are validated by [`StoragePath`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-common/src/storage_path.rs):
+Paths are validated by [`StoragePath`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-common/src/storage_path.rs):
 
 - **Absolute.** At most **255 bytes** per segment and **972 bytes** in total, measured as decoded UTF-8. This leaves room for the 52-byte
   tenant key in a 1024-byte object key.
+- **A path is the file's plain name (0.18.0+, breaking, #797).** Write `/pub/app/My File.txt`, not `/pub/app/My%20File.txt`. The SDK
+  percent-encodes only when it builds the HTTP URL. Rust `ResourcePath::as_str()`, `Display`, and `to_pubky_url()`, and JS
+  `resource.path`, `toPubkyUrl()`, `list()` entries, and `event.resource.path` all return plain names. Listings and events return
+  `pubky://<user><path>` with the plain name; pass that value back unchanged as a listing cursor.
 - `%` is literal, so URL-decode **before** you construct a path.
+- **Migration gotcha:** files that SDK v0.6 to v0.17 wrote under a name HTTP encoding escapes (for example `pub/my file.txt`) are
+  stored as `pub/my%20file.txt` and are **not renamed**. From SDK 0.18, read them at the stored name, `pub/my%20file.txt`.
 - **Rejected:** control characters, backslashes, trailing Unicode whitespace, and `..` that climbs above the root (`TraversalAboveRoot`).
 - **Scope coverage (`covers_path`, 0.16.0+):** a directory scope covers itself and its descendants; a file scope covers only itself.
   `/pub/app/` covers `/pub/app/file` but **not** `/pub/app` and **not** `/pub/app-evil/file`. Always end directory scopes with `/`.
@@ -285,8 +297,18 @@ Paths are validated by [`StoragePath`](https://github.com/pubky/pubky-homeserver
 > confidentiality, encrypt client-side and manage the keys yourself. `/priv` does not provide sharing with other identities,
 > and choosing `/priv` does not retract copies already published under `/pub`. See the guardrail in
 > [`shipped-vs-planned.md`](shipped-vs-planned.md), the upstream
-> [`PRIVATE_STORAGE.md`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/docs/PRIVATE_STORAGE.md), and
+> [`PRIVATE_STORAGE.md`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/docs/PRIVATE_STORAGE.md), and
 > [KB private storage](https://pubky.org/private-storage/).
+
+**HTTP caching of `/priv` (0.18.0+):**
+- **Successful private file reads** (`GET`/`HEAD` returning 200 or 304) carry `Cache-Control: private, no-cache`. A browser may keep the
+  body but must revalidate it with the ETag.
+- **Every other private response** (errors, directory listings, `/events-stream`) is `no-store`. Shared caches never store either kind.
+- **`Vary`:** `/storage/{user_z32}/priv/...` varies on `Authorization` and `Cookie`. The deprecated `/priv/...` route and `/events-stream`
+  also vary on `pubky-host`. Public `/storage/{user_z32}/pub/...` responses do not vary on `pubky-host`.
+- **Gotcha:** private file bodies **stay in the browser's disk cache after sign-out**, because the server sends no `Clear-Site-Data`
+  by design. On shared machines, request private files with Fetch `cache: 'no-store'`, or clear the browser cache.
+- Source: [homeserver README, caching and proxies](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-homeserver/README.md#caching-and-proxies).
 
 ## PKARR resolution
 
@@ -343,14 +365,14 @@ signer.pkdns().publish_homeserver_force(Some(&new_homeserver_id)).await?;
 signer.pkdns().get_homeserver().await?;
 ```
 
-<sub>Source: [`pubky-sdk/README.md`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#pkdns-pkarr) (`no_run`; `other` and `new_homeserver_id` are doctest parameters). Executed against a local testnet: `get_homeserver_of(&other)` and, after the force publish, `get_homeserver()` both resolved to the testnet homeserver. API reference: [docs.rs `Pkdns`](https://docs.rs/pubky/0.16.2/pubky/struct.Pkdns.html).</sub>
+<sub>Source: [`pubky-sdk/README.md`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#pkdns-pkarr) (`no_run`; `other` and `new_homeserver_id` are doctest parameters). Executed on 0.18.0 against a local testnet with `Pubky::testnet()`. `get_homeserver_of(&other)` resolved to the testnet homeserver. On the fresh key, `publish_homeserver_if_stale(None)` was a silent no-op. After the force publish, `get_homeserver()` resolved to the testnet homeserver. API reference: [docs.rs `Pkdns`](https://docs.rs/pubky/0.18.0/pubky/struct.Pkdns.html).</sub>
 
 - **Rust `get_homeserver_of(&PublicKey) -> Result<Option<PublicKey>>`** (and `get_homeserver()` for your own key) uses `CacheFirst`.
   `Ok(None)` means no record or no `_pubky` target. Errors: `Pkarr` (resolution failed) and `PkarrError::InvalidRecord` (the existing
   target is malformed). Publishing without a keypair returns `Authentication`.
 - **Publishing with `None` and no existing host does nothing.** Both `publish_homeserver_force(None)` and
-  `publish_homeserver_if_stale(None)` log "No existing host found; skipping publish" and return `Ok(())`. Pass an explicit homeserver,
-  or run `signup` first.
+  `publish_homeserver_if_stale(None)` log that no existing host was found for the user and the publish is skipped, then return `Ok(())`.
+  Pass an explicit homeserver, or run `signup` first.
 - **Staleness:** `DEFAULT_STALE_AFTER` is **1 hour**. `set_stale_after` is a builder-style `#[must_use] const fn`, not a setter, so assign
   the result: `let pkdns = pkdns.set_stale_after(d);`.
 - **JS:** `pubky.getHomeserverOf(user: PublicKey): Promise<PublicKey | undefined>` returns `undefined` when no record resolves and
@@ -390,7 +412,7 @@ function invalidateHomeserver(userPublicKey: string): void {
 }
 ```
 
-<sub>Adapted from the KB snippet (CI type-checked, 0.14.0) [`troubleshooting.ts#L112-L131`](https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/js/src/troubleshooting.ts#L112-L131) (permalink; the file has since been deleted). Executed against a local testnet: miss, hit, invalidation, and an unknown user returning `undefined`. Upstream keys the cache by the raw input string, so `<z32>` and `pubky<z32>` for the same user become two entries. Its entries also never expire, so after a [migration](#trust-model-and-credible-exit) they keep pointing at the old homeserver. This version stores the z32 string and builds a fresh `PublicKey` per hit, because some JS calls consume their `PublicKey` argument (see [Republishing](#republishing)).</sub>
+<sub>Adapted from the KB snippet (CI type-checked, 0.14.0) [`troubleshooting.ts#L112-L131`](https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/js/src/troubleshooting.ts#L112-L131) (permalink; the file has since been deleted). Executed on 0.18.0 against a local testnet: cache miss, hit, invalidation, and an unknown user returning `undefined`. **Version gotcha:** on SDK 0.12.0, `getHomeserverOf` for an unpublished key **throws** a `PkarrError` ("resolve query received no responses") instead of returning `undefined`, so the `if (!homeserver)` branch works as written only on newer SDKs. Upstream keys the cache by the raw input string, so `<z32>` and `pubky<z32>` for the same user become two entries. Its entries also never expire, so after a [migration](#trust-model-and-credible-exit) they keep pointing at the old homeserver. This version stores the z32 string and builds a fresh `PublicKey` per hit, because some JS calls consume their `PublicKey` argument (see [Republishing](#republishing)).</sub>
 
 Route PKARR through specific relays (browsers require relays):
 
@@ -404,7 +426,7 @@ const client = new Client({
 const pubky = Pubky.withClient(client);
 ```
 
-<sub>Source (KB CI type-checked, 0.14.0): [`developer-guide.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/44fcaed5b122464fef97ce8e0f7909d13d0ee350/snippets/js/src/developer-guide.ts). Type-checked and constructed only; it was not run against the mainnet relays. **Gotcha:** `pkarr.relays` **replaces** the default relays rather than appending to them, so list every relay you want. Config shape: `{ maxErrorBodyBytes?: number, pkarr?: { relays?: string[], requestTimeout?: number } }`, where `requestTimeout` is the relay HTTP timeout in ms.</sub>
+<sub>Source (KB CI type-checked, 0.14.0): [`developer-guide.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/44fcaed5b122464fef97ce8e0f7909d13d0ee350/snippets/js/src/developer-guide.ts). On 0.18.0 it type-checks and the constructors run. It makes no network call and was not run against the mainnet relays. **Gotcha:** `pkarr.relays` **replaces** the default relays rather than appending to them, so list every relay you want. Config shape: `{ maxErrorBodyBytes?: number, pkarr?: { relays?: string[], requestTimeout?: number } }`, where `requestTimeout` is the relay HTTP timeout in ms.</sub>
 
 ### Republishing
 
@@ -436,7 +458,7 @@ setInterval(
 ); // Hourly; IfStale publishes only once the 1 h staleness window has passed
 ```
 
-<sub>Adapted from [`troubleshooting.ts#L17-L33`](https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/js/src/troubleshooting.ts#L17-L33) (KB, 0.14.0, permalink). Upstream reuses `homeserverPk` on every call, which breaks after the first. It also uses a 2 h interval with no error handling. `signer` and `homeserverPk` are declared elsewhere. The force publish and handle consumption were executed against a local testnet. That run used an explicit-host tick; the no-argument tick follows the optional `overrideHost?` signature and was not run.</sub>
+<sub>Adapted from [`troubleshooting.ts#L17-L33`](https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/js/src/troubleshooting.ts#L17-L33) (KB, 0.14.0, permalink). Upstream reuses `homeserverPk` on every call, which breaks after the first. It also uses a 2 h interval with no error handling. `signer` and `homeserverPk` are declared elsewhere. Executed on 0.18.0 and 0.12.0 against a local testnet, with `setInterval` shimmed to fire once. The force publish with a fresh `PublicKey` and the no-argument `publishHomeserverIfStale()` both succeeded, `homeserverPk` stayed usable, and `getHomeserverOf` then resolved to the homeserver.</sub>
 
 **Who republishes user records.** By default the homeserver republishes its users' keys every **4 h**
 (`[pkdns] user_keys_republisher_interval = 14400`). It publishes over the DHT, plus the relays in
@@ -444,7 +466,7 @@ setInterval(
 target is the homeserver itself. Users who point elsewhere are skipped, and their data is not removed. Publishing directly from cache
 is disabled. A 4 h interval is slower than both the 1 h SDK staleness default and the "few hours" retention, so don't rely on
 server-side refresh alone. Operating a homeserver: [`pubky-infra`](../../pubky-infra/SKILL.md) and
-[`REPUBLISHING.md`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/docs/REPUBLISHING.md).
+[`REPUBLISHING.md`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/docs/REPUBLISHING.md).
 
 ## The homeserver model
 
@@ -458,12 +480,18 @@ offline. It does **not** decide feeds or ranking; apps and indexers do. Upstream
 - **Default listen sockets:** PubkyTLS `127.0.0.1:6287`, ICANN HTTP `127.0.0.1:6286` (clear-text; the browser and localhost fallback),
   admin `127.0.0.1:6288` (enabled), and metrics `127.0.0.1:6289` (disabled). The testnet runs a PKARR relay on **15411** and an HTTP relay
   on **15412**. **The admin interface is privileged, so keep it private.** Apps use the client API through the SDK. Running one:
+  [`pubky-infra`](../../pubky-infra/SKILL.md). These defaults are unchanged at v0.18.0.
+- **Operator changes that affect apps behind proxies:** since v0.17.1 the homeserver takes the client IP (used for rate limits) from
+  the TCP peer or PROXY protocol, not forwarding headers. v0.18.0 adds opt-in trusted client-IP headers; the defaults are
+  `icann_client_identity` and `pubky_client_identity` in `mode = "direct"`. Configuring these is covered in
   [`pubky-infra`](../../pubky-infra/SKILL.md).
+- **`HEAD` returns 405 (v0.17.1+)** on `/signup_tokens/{token}`, the admin `/generate_signup_token`, and both `/events-stream` endpoints.
+  `HEAD` on storage and websites is unchanged.
 - **Internals apps never touch:** user files live in a file store (local disk by default, or an object store), and PostgreSQL holds the
   metadata (users, quotas, sessions, events). **Apps never connect to PostgreSQL.**
 
 **What apps see.** Status codes and schemas are authoritative in
-[`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-homeserver/openapi-client.yml):
+[`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-homeserver/openapi-client.yml):
 
 - **Entries are opaque byte blobs with a MIME type:** JSON, images, ciphertext, or anything else.
 - **`PUT`** creates or overwrites an entry and returns **201**. Handle these errors:
@@ -475,19 +503,22 @@ offline. It does **not** decide feeds or ranking; apps and indexers do. Upstream
   | 409 | A file/folder collision, **or** "the file changed since the write was prepared" (an object-store backend's conditional publish) | For a change conflict, **read again and retry** |
   | 412 / 423 | The `If` header names a non-live lock token / the path is locked and no token was sent | See [Storage locks](#storage-locks) |
   | 429 | Rate limited | Back off; honor `Retry-After` |
-  | 507 | Quota exceeded | Surface it to the user. If you send `Content-Length`, the quota is checked before streaming starts. |
+  | 507 | Quota exceeded | Surface it to the user, with usage from [`GET /account`](#your-own-account-and-quota). If you send `Content-Length`, the quota is checked before streaming starts. |
 
 - **`DELETE`** returns 204, 404 if the entry is missing, and 412/423 for lock conflicts.
-- **LIST** is a `GET` on a path ending in `/`. It returns newline-separated `pubky://` URLs and takes `limit`, `cursor` (a bare entry path
-  or a `pubky://` URL), `shallow`, and `reverse`.
+- **LIST** is a `GET` on a path ending in `/`. It returns newline-separated `pubky://<user><path>` lines whose paths are **not
+  percent-encoded** (0.18.0+). It takes `limit`, `cursor` (a bare entry path or a `pubky://` URL, **as a listing returned it**),
+  `shallow`, and `reverse`.
   - `limit` defaults to **100** and is **clamped to 1000** in code; the OpenAPI `maximum: 65535` is not honored.
   - Ordering is **lexicographic by path** (`COLLATE "C"`), **not** by time. `reverse` reverses it.
 - **429 is normal.** Rate-limiter responses carry `Retry-After: <seconds>`, and the header is CORS-exposed. Since v0.15.0 the server also
   returns 429 when its storage backend rate-limits a request, with `Retry-After: 1` (the object store's per-object mutation limit). Still
   fall back to backoff when the header is absent.
-- **There is no hard per-request body cap to rely on** (from reading the code, not stated upstream). Tenant routes declare a
-  `DefaultBodyLimit` of 100 MiB, but the streaming `PUT` handler reads the raw body, which that limit does not cover. Quotas (507) and
-  operator policy or proxies are what actually limit uploads. Claims of a 10 MB / 413 default do not match the code.
+- **In released versions (through v0.18.0) there is no hard per-request body cap to rely on** (from reading the code, not stated
+  upstream). Tenant routes declare a `DefaultBodyLimit` of 100 MiB, but the streaming `PUT` handler reads the raw body, which that
+  limit does not cover. Quotas (507) and operator policy or proxies are what actually limit uploads. Claims of a 10 MB / 413 default do
+  not match the code. `main` enforces 100 MiB with **413** on both `PUT` routes, but that is **unreleased**
+  ([Stability](#stability-and-known-limits)), so don't depend on a 413 yet.
 
 ```ts
 function statusCodeOf(error: unknown): number | undefined {
@@ -521,7 +552,56 @@ async function putWithRetry(
 }
 ```
 
-<sub>Source (KB CI type-checked, 0.14.0): [`troubleshooting.ts#L68-L98`](https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/js/src/troubleshooting.ts#L68-L98) (permalink). Executed against a local testnet: the happy path, plus `statusCodeOf` extracting 404 from a real `RequestError`. The 429 branch was not exercised because the testnet does not rate-limit. `statusCodeOf` is not an SDK export; see [`sdk-js.md`](sdk-js.md#error-handling). The snippet uses a linear delay and **ignores `Retry-After`**; honor the header when it is present.</sub>
+<sub>Source (KB CI type-checked, 0.14.0): [`troubleshooting.ts#L68-L98`](https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/js/src/troubleshooting.ts#L68-L98) (permalink). Executed on 0.18.0 against a local testnet: the write read back correctly, and `statusCodeOf` extracted 404 from a real `RequestError`. Its `data` was `{reason:"Http",statusCode:404}` on 0.18.0 and `{statusCode}` on 0.12.0, so the check works on both. The 429 branch was not exercised, because the testnet does not rate-limit. `statusCodeOf` is not an SDK export; see [`sdk-js.md`](sdk-js.md#error-handling). The snippet uses a linear delay and **ignores `Retry-After`**; honor the header when it is present.</sub>
+
+**Error categories (0.17.1+).** A JS `RequestError` carries `RequestErrorData` with a `reason` (`Http`, `Timeout`, `Connection`,
+`TlsVerification`, `Body`, `Decode`, `InvalidRequest`, `Other`) and, for HTTP failures, `statusCode`. Browser Fetch may only report `Other`.
+A grant refresh failure is a separate `CredentialRefreshError`, with `data: { statusCode }` only when the refresh endpoint responded.
+**A reason describes the failure, not whether retrying a write is safe:** a timeout does not prove the write was not committed.
+Rust: `errors::RequestError::kind`. Details: [`sdk-js.md`](sdk-js.md#error-handling) and the
+[SDK README](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#request-errors).
+
+### Your own account and quota
+
+`GET /account` (0.18.0+) returns the caller's own account: `pubky`, `created_at`, `disabled`, `used_bytes`, and `quota.{effective,overrides}`
+(the admin `UserItem` shape). Use it to show storage use, for example alongside a 507.
+
+- **Needs a grant (bearer) session with read on the root scope** (`/:r` or `/:rw`). A cookie session gets **401**; a session without root
+  read gets **403**. Disabled users can still read it.
+- Responses are `no-store`, vary on `Authorization`, and are rate-limited to **60 requests/min per IP** by default.
+- **Rust:** `session.as_grant()` returns `Option<GrantSessionView>` (`None` for cookie sessions); then `.account().await` returns
+  `Result<AccountInfo>`. **JS:** `session.grant.account()`, with camelCase fields.
+
+```js
+// With a grant session that has read permission on `/` (`/:r`, `/:rw`, ...):
+// storage used and the quota that applies.
+const account = await session.grant.account();
+console.log(account.usedBytes, account.quota.effective.storageQuotaMb);
+```
+
+<sub>Source: [JS README](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/bindings/js/pkg/README.md) (0.18.0). Executed on 0.18.0 against a local testnet with a root session from `signinBlocking`; it printed `usedBytes` and `quota.effective`. It **fails to type-check on 0.12.0** (TS2339: `account` does not exist on `GrantSession`). Under strict TS, `session.grant` is `GrantSession | undefined` (cookie sessions have none), so guard it before you call `account()`. Status codes and schema: [`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-homeserver/openapi-client.yml). Requesting `/:r` exposes the user's whole tree to your app, so ask for it only if you need the account view.</sub>
+
+### Static websites
+
+Since v0.17.1 a homeserver serves each user's static sites from their **public** storage, chosen by the `Host` header. A homeserver that
+serves sites lists the `/info` feature `websites`. This is on by default. When an operator sets `[drive] websites = false`, requests fall
+through to the normal client API and `/info` omits `websites`. Spec: [`WEBSITES.md`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/docs/WEBSITES.md).
+
+| `Host` | Site folder |
+| :-- | :-- |
+| `<user-key>` | `/pub/website/_/` |
+| `<label>.<user-key>` | `/pub/website/<label>/` |
+
+- **Upload with the normal storage API**, for example `PUT /storage/<user-key>/pub/website/_/index.html`. The files are ordinary public
+  storage, so they move with the user.
+- **Content types are the ones stored at upload**, and every response sends `X-Content-Type-Options: nosniff` and
+  `Cache-Control: no-cache`. Store HTML with an HTML content type.
+- **Hosts are case-insensitive, so label folders must be lowercase.** The owner comes from `Host` alone; `pubky-host` is ignored.
+- **Only `GET`/`HEAD` reach a site.** Paths whose first segment is `account`, `auth`, `events`, `events-stream`, `info`, `priv`, `pub`,
+  `session`, `signup`, `signup_tokens`, or `storage` stay on the client API, so a site can't use those as top-level folders.
+- An unknown user returns 404. A disabled user returns 403.
+- **Limits:** no Range requests, so Safari cannot play `<video>` from a site. Opening `https://<user-key>/` needs a key-aware browser
+  and a PKARR record pointing the user key at the homeserver, and **the SDK has no helper to publish that record yet**.
 
 ### Storage locks
 
@@ -535,9 +615,13 @@ ordinary operations never lock.
   `UNLOCK` with an unknown token returns 409, a `lockinfo` body over 16 KiB returns 413, and a homeserver without lock support returns 405.
 - A write that presents the token keeps the lock alive until the write ends. **An unlocked write holds nothing:** a `LOCK` taken while
   the write is still streaming does not stop it.
-- **JS:** `session.storage.lock`, `putTextLocked`, `putBytesLocked`, `deleteLocked`, `refreshLock`, and `unlock`. There is **no
-  `putJsonLocked`**. If `lock()` rejects without a status code, the lock may still be held until it times out, and the path answers 423
+- **JS:** `session.storage.lock`, `putTextLocked`, `putBytesLocked`, `putBlobLocked` (0.17.1+), `deleteLocked`, `refreshLock`, and
+  `unlock`. There is **no `putJsonLocked`**. While a lock lives, a plain `putJson`/`putText`/`putBytes`/`putBlob`/`delete` on that path
+  rejects with 423. If `lock()` rejects without a status code, the lock may still be held until it times out, and the path answers 423
   meanwhile. The KB [sdk.md](https://pubky.org/sdk/#storage-locking) still says JS lacks these helpers; that is stale since 0.15.0.
+- **Not "Pubky Locks".** The KB page [Pubky Locks](https://pubky.org/pubky-locks/) describes a separate paid-content application service
+  ([pubky/locks](https://github.com/pubky/locks)) whose Lock Server can read the content it serves. It is not a homeserver primitive, is
+  unrelated to these WebDAV locks, and is not protocol-level encrypted or guarded data (still **planned**).
 
 ```rust
 let storage = session.storage();
@@ -548,7 +632,7 @@ storage.put_locked(&lock, state).await?;
 storage.unlock(&lock).await?;
 ```
 
-<sub>Source: rustdoc example for [`StorageLock`](https://docs.rs/pubky/0.16.2/pubky/struct.StorageLock.html#example) (`no_run`). **Requires `pubky >= 0.13.0`**: it fails to compile on 0.12.0 (`no method named lock`). Executed (clippy-clean) on 0.16.2 against a local testnet. `session` is a `PubkySession`; add `use std::time::Duration;`.</sub>
+<sub>Source: rustdoc example for [`StorageLock`](https://docs.rs/pubky/0.18.0/pubky/struct.StorageLock.html#example) (`no_run`), byte-identical to the 0.18.0 doc example. Executed on 0.18.0 against a local testnet: lock (30 s timeout), get, `put_locked`, and unlock all succeeded, and a plain `put` worked after unlock. **Requires `pubky >= 0.13.0`**: on 0.12.0 it fails to compile (`no method named lock` / `put_locked` / `unlock`). `session` is a `PubkySession`; add `use std::time::Duration;`.</sub>
 
 ### Transport and wire addressing
 
@@ -556,6 +640,9 @@ storage.unlock(&lock).await?;
 
 - **PubkyTLS** is TLS with Raw Public Keys (RFC 7250): the server's Ed25519 key is verified directly, with no X.509 CA chain. **ICANN**
   endpoints use standard HTTPS. Transport encryption protects the connection, **not** your data from the homeserver that handles it.
+  - **A rejected server certificate surfaces as `TlsVerification` (0.18.0+).** After a legitimate homeserver key rotation, a stale
+    PKARR cache produces the same error, so it does not prove interception on its own. Re-resolve the homeserver (and drop your own
+    cached entry) before treating it as an attack.
 - **How native clients choose a transport (Rust and native bindings, not WASM):** the client resolves the HTTPS endpoints in `_pubky.<pk>`.
   - No ICANN endpoint: PubkyTLS. Only an ICANN endpoint: ICANN.
   - Both: it TCP-probes the direct addresses (1500 ms timeout) and falls back to ICANN if they are unreachable.
@@ -566,17 +653,23 @@ storage.unlock(&lock).await?;
 - **Path addressing (current):** `/storage/{user_z32}/{path}`. The owner in the path is authoritative; any `pubky-host` header or query
   param is accepted but ignored.
 - **Legacy owner-relative routes (deprecated, still served):** the owner comes from `pubky-host`, then `Host`, then `?pubky-host=`.
-- **Feature detection:** `GET /info` returns `{"features":[...]}`: stable, opaque identifiers. Clients **must ignore unknown values**. At
-  0.16.2 the list is `path-addressed-storage`, `grant-proof-logout`, and `webdav-locks`. The SDK reads `/info` with a 16 KiB body cap.
-  High-level Rust storage APIs and JS `Client.fetch` fall back to legacy addressing automatically. **Raw HTTP clients should send
-  `/storage/{owner}/...` only to homeservers that advertise `path-addressed-storage`**, always with the owner as **z32**.
+- **Feature detection:** `GET /info` returns `{"features":[...]}`: stable, opaque identifiers. Clients **must ignore unknown values**.
+  - At 0.18.0 the list is `path-addressed-storage`, `grant-proof-logout`, and `webdav-locks`, plus `websites` when the operator leaves
+    `[drive] websites` enabled (the default).
+  - `grant-delegation` exists only on unreleased `main`.
+  - The SDK reads `/info` with a 16 KiB body cap and a 5 s timeout, and caches features for 60 s.
+  - **Since SDK 0.18.0, a failed `/info` fetch keeps the last known features** and retries after 5 s. Earlier SDKs could fall back to
+    legacy addressing after one transient `/info` error.
+  - High-level Rust storage APIs and JS `Client.fetch` fall back to legacy addressing automatically when the feature is absent.
+  - **Raw HTTP clients should send `/storage/{owner}/...` only to homeservers that advertise `path-addressed-storage`**, always with the
+    owner as **z32**.
 - **Deprecation clock:** the first stable SDK release with path addressing was v0.12.0 (2026-09-14). Legacy removal comes up for review no
   earlier than **2027-09-14**, and still requires an explicit review. Keep the fallback until then. See
   [`STORAGE_ADDRESSING_MIGRATION.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/STORAGE_ADDRESSING_MIGRATION.md).
 - **SDK client limits (0.13.0+):** HTTP error bodies are captured up to **4096 bytes** by default. Change this with Rust
   `PubkyHttpClient::builder().max_error_body_bytes(n)` or JS `new Client({ maxErrorBodyBytes })`; `0` skips the body and uses the status
   reason. Event streams default to effectively **unbounded** per-event size, so set Rust `.max_event_bytes(n)` or JS `.maxEventBytes(n)`
-  for untrusted streams. Details: [SDK README](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#error-body-limits).
+  for untrusted streams. Details: [SDK README](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#error-body-limits).
 
 ```rust
 use pubky::{PubkyHttpClient, resolve_pubky};
@@ -592,7 +685,7 @@ assert_eq!(
 let response = client.request_async(Method::GET, url).await?.send().await?;
 ```
 
-<sub>Source: [`pubky-sdk/README.md`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#resolve-identifiers-into-transport-urls) (`no_run`). Executed: the assert holds, the read-only mainnet `GET` returned 200, and a testnet variant fetched a local testnet user's file. The `pubky<z32>` input becomes raw z32 in both the hostname and the `/storage/` segment. `use reqwest::Method` needs a direct `reqwest` dependency matching pubky's (0.13). In JS, `resolvePubky(identifier)` returns the same URL string, and `pubky<pk>/…` and `pubky://<pk>/…` resolve identically ([`sdk-js.md`](sdk-js.md#raw-fetch-resolvepubky)).</sub>
+<sub>Source: [`pubky-sdk/README.md`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#resolve-identifiers-into-transport-urls) (`no_run`). Executed verbatim on 0.18.0 as a **read-only `GET` against mainnet**, not the testnet: the assert holds and the request returned 200 with the post JSON. The `pubky<z32>` input becomes raw z32 in both the hostname and the `/storage/` segment. **Gotcha:** `use reqwest::Method` type-checks only when your `reqwest` major version matches pubky's (0.13); with 0.12 it is a type mismatch. Use the re-export `pubky::Method` to avoid the extra dependency. In JS, `resolvePubky(identifier)` returns the same URL string, and `pubky<pk>/…` and `pubky://<pk>/…` resolve identically ([`sdk-js.md`](sdk-js.md#raw-fetch-resolvepubky)).</sub>
 
 ### Trust model and credible exit
 
@@ -637,24 +730,35 @@ const response = await fetch(
 const posts = await response.json();
 ```
 
-<sub>Source (KB CI type-checked, 0.14.0): [`developer-guide.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/44fcaed5b122464fef97ce8e0f7909d13d0ee350/snippets/js/src/developer-guide.ts). Executed as a read-only `GET` against live Nexus on 2026-10-26: HTTP 200 with an array body, matching the OpenAPI `PostStreamDetailed` schema.</sub>
+<sub>Source (KB CI type-checked, 0.14.0): [`developer-guide.ts`](https://github.com/pubky/pubky-knowledge-base-v2/blob/44fcaed5b122464fef97ce8e0f7909d13d0ee350/snippets/js/src/developer-guide.ts). Executed as a **read-only `GET` against live Nexus** (not the testnet) on 2026-11-12: HTTP 200 with an array of 10 post views (`details`, `counts`, `tags`, `relationships`, `bookmark`).</sub>
 
 > **Nexus `/v0` is unstable.** Expect breaking changes, and don't hardcode response shapes. Swagger is authoritative:
 > <https://nexus.pubky.app/swagger-ui/>. To run Nexus, see [`pubky-infra`](../../pubky-infra/SKILL.md). For read-only Cypher over the
 > graph, use the `nexus-scout` skill.
 
-**Event streams (what indexers consume).** Parameters are authoritative in
-[`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-homeserver/openapi-client.yml):
+### Event streams
+
+These are what indexers consume. Parameters are authoritative in
+[`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-homeserver/openapi-client.yml):
 - `GET /events/` covers public `/pub` events only: `text/plain` lines of `PUT|DEL pubky://...`, then `cursor: N`.
 - `GET /events-stream` is SSE, per user (`user=<z32>[:cursor]`, repeatable), with optional `path` filters and a `live` mode. Each message
   is `event: PUT|DEL` with the URL, `cursor:`, and a base64 `content_hash:`.
+  - A repeated `user` key counts once and resumes from the last cursor given for it. **More than 50 distinct users returns 400.**
+  - It accepts **only `GET`**; anything else, including `HEAD`, returns 405 with `Allow: GET`.
   - **`/priv/` filters are alpha.** They need exactly one user and a session with read capability, and fail with 401/403 otherwise.
   - **Slow live clients are disconnected.**
+- **Cursors are numeric event IDs only (0.18.0+, breaking, #753).** Both endpoints, and the admin `/events-stream`, reject legacy Base32
+  timestamp cursors with **400**. The default cursor is `0`. Persist the numeric cursor you last processed; if you only have a legacy
+  cursor, restart from `0` and make event handling idempotent, since events repeat.
+- Event URLs carry **plain** (not percent-encoded) paths since 0.18.0 (see [Path rules](#path-rules)).
 
-**SDK actors** (see the [README mental model](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#mental-model)):
+### SDK actors and the social write flow
+
+**SDK actors** (see the [README mental model](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#mental-model)):
 - `Pubky`: the facade and starting point; it owns the transport. **Reuse one shared instance.**
 - `PubkySigner`: the local key holder. It signs up, signs in, approves QR auth, and publishes PKDNS.
-- `PubkySession`: the authenticated handle with session-scoped storage.
+- `PubkySession`: the authenticated handle with session-scoped storage. `session.as_grant()` adds grant-only calls such as
+  [`account()`](#your-own-account-and-quota).
 - `GrantManager`: lists and revokes grants using an authenticated root session.
 - `PublicStorage`: unauthenticated reads.
 - `Pkdns`: resolves and publishes `_pubky`.
@@ -668,7 +772,11 @@ event. Indexers pick it up; others read it via Nexus or directly via public stor
 ## Authentication
 
 - **Bearer sessions are current.** `Authorization: Bearer <token>` comes from `POST /auth/grant/session`. Session cookies from
-  `POST /signup` and `POST /session` are **deprecated**, and a resolved bearer session takes precedence over a cookie.
+  `POST /signup` and `POST /session` are **deprecated** (since v0.10.0), and a resolved bearer session takes precedence over a cookie.
+- **Cookie auth is being removed.** From v0.18.0 it gets only limited security maintenance, and it **will be removed in August 2027**.
+  Use grant auth for new code and migrate existing code now; see
+  [`docs/v0.10-migration`](https://github.com/pubky/pubky-homeserver/tree/v0.18.0/docs/v0.10-migration). Grant-only features such as
+  [`GET /account`](#your-own-account-and-quota) return 401 to cookie sessions.
 - **Capabilities** have the form `<scope>:<actions>`; `/:rw` covers both roots.
 - **The `e` action (0.16.0+)** lets the signer deliver scoped content keys with the grant. It grants **no** HTTP storage access: it is
   client-side key delivery, **not** encrypted storage on the homeserver. The keys are **permanent**: revoking or expiring the grant does
@@ -683,32 +791,39 @@ capabilities, `pubkyauth` URLs, signup tokens, session lifecycle, and scoped enc
 - **The shipped-vs-planned guardrail is a hard rule.** [`shipped-vs-planned.md`](shipped-vs-planned.md) decides what apps may depend
   on: `/priv` is alpha, and encryption, mirroring, and backup restore are planned.
 - **Everything is pre-1.0:** the `/pub` layout is not stabilized, Nexus `/v0` is unstable, and app-specs are v0.x. Pin `pubky` /
-  `@synonymdev/pubky` to an exact version (current: **0.16.2**).
-- **Unreleased on `main` after v0.16.2. Do not document these as available:**
-  - static website serving from `/pub/website/` (the `/info` feature `websites`)
-  - client IP from the TCP peer or PROXY protocol
-  - rejection of `HEAD` on token and SSE endpoints
+  `@synonymdev/pubky` to an exact version (current: **0.18.0**).
+- **Unreleased on `main` after v0.18.0. Do not document these as available:**
+  - child grants and the `/info` feature `grant-delegation` (#792, breaking; caps a parent grant's lifetime at two years)
+  - a 100 MiB upload cap on both `PUT` routes, including streams without `Content-Length`, returning **413** (#808)
+  - the WASM SDK applying `request_timeout` per request and bounding internal body reads (#725)
+  - the signup service reporting concurrent signups for the same key as a conflict (#777)
+  - refactors of deep-link query parsing (#815) and file listing (#814)
 - **Stale sources to avoid.** The [pubky-ai-kit](https://github.com/pubky/pubky-ai-kit/blob/5654d0d27218/pubky-dev-context.md)
-  core-architecture section is out of date: it says `/priv` is not formalized, claims a 10 MB / 413 payload default, says all sessions
-  share one cookie, uses `startAuthFlow()` (now `startCookieAuthFlow`; the grant flow is `startGrantAuthFlow`), and describes 3-minute
-  AuthTokens. Still valid there: its scope conventions, the shared-facade advice, blobs carrying a MIME type, PostgreSQL holding only
-  metadata, and 429 being normal.
+  core-architecture section is out of date. It says `/priv` is not formalized, claims a 10 MB / 413 payload default (that matches
+  Synonym's public-homeserver policy of 1 GB per user with a 10 MB per-file ceiling, not the code, and not `main`'s unreleased 100 MiB
+  cap), says all sessions share one cookie, uses `startAuthFlow()` (now `startCookieAuthFlow`; the grant flow is `startGrantAuthFlow`),
+  and describes 3-minute AuthTokens. Still valid there: its scope conventions, the shared-facade advice, blobs carrying a MIME type,
+  PostgreSQL holding only metadata, and 429 being normal.
 - Gotchas in brief:
+  - Storage paths are plain names since 0.18.0, and older files with escaped names keep their `%XX` names ([Path rules](#path-rules)).
+  - Event cursors must be numeric since 0.18.0 ([Event streams](#event-streams)).
   - JS `pkdns.publish*` consumes its `PublicKey` argument, and an explicit host on a periodic `IfStale` can revert migrations ([Republishing](#republishing)).
   - `pkarr.relays` replaces the default relays.
   - LIST clamps `limit` at 1000 and orders by path.
-  - There is no reliable body-size cap.
+  - Released homeservers have no reliable body-size cap.
   - A 409 can mean "read again and retry" ([the homeserver model](#the-homeserver-model)).
+  - Private file bodies can outlive sign-out in the browser cache ([Storage roots and access](#storage-roots-and-access)).
 
 ## Upstream references
 
-- **Rust SDK:** [docs.rs/pubky 0.16.2](https://docs.rs/pubky/0.16.2/pubky/) · [SDK README](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md)
-- **JS/WASM SDK:** [JS README](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/pkg/README.md) · [npm](https://www.npmjs.com/package/@synonymdev/pubky)
-- **Homeserver client API:** [`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-homeserver/openapi-client.yml) ·
-  [`PRIVATE_STORAGE.md`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/docs/PRIVATE_STORAGE.md) ·
+- **Rust SDK:** [docs.rs/pubky 0.18.0](https://docs.rs/pubky/0.18.0/pubky/) · [SDK README](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md)
+- **JS/WASM SDK:** [JS README](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/bindings/js/pkg/README.md) · [npm](https://www.npmjs.com/package/@synonymdev/pubky)
+- **Homeserver client API:** [`openapi-client.yml`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-homeserver/openapi-client.yml) ·
+  [`PRIVATE_STORAGE.md`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/docs/PRIVATE_STORAGE.md) ·
+  [`WEBSITES.md`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/docs/WEBSITES.md) ·
   [`STORAGE_ADDRESSING_MIGRATION.md`](https://github.com/pubky/pubky-homeserver/blob/main/docs/STORAGE_ADDRESSING_MIGRATION.md) ·
-  [`REPUBLISHING.md`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/docs/REPUBLISHING.md) ·
-  [`scoped-encryption-keys.md`](https://github.com/pubky/pubky-homeserver/blob/v0.16.2/docs/scoped-encryption-keys.md) ·
+  [`REPUBLISHING.md`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/docs/REPUBLISHING.md) ·
+  [`scoped-encryption-keys.md`](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/docs/scoped-encryption-keys.md) ·
   [releases](https://github.com/pubky/pubky-homeserver/releases)
 - **PKARR:** [pkarr introduction](https://github.com/pubky/pkarr/blob/main/docs/introduction.md) · [design](https://github.com/pubky/pkarr/blob/main/design/base.md)
 - **Knowledge base:** [architecture](https://pubky.org/architecture/) · [security model](https://pubky.org/security-model/) ·

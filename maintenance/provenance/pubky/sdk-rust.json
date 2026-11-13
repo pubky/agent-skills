@@ -2,248 +2,184 @@
   "path": "skills/pubky/references/sdk-rust.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-10-26T14:07:49.115Z",
+  "generatedAt": "2026-11-12T08:25:14.580Z",
   "sourcesUsed": [
     {
       "repo": "pubky-knowledge-base-v2",
-      "sha": "44fcaed5b122464fef97ce8e0f7909d13d0ee350"
+      "sha": "827fb3ad3a2f2775946130500a390b7b2bc81a52"
     },
     {
       "repo": "pubky-homeserver",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8"
+      "sha": "8612a646b2fc0dd26cbecaf3f62366d04d381b03"
     },
     {
       "repo": "docs.rs/pubky",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8"
+      "sha": "8612a646b2fc0dd26cbecaf3f62366d04d381b03"
     },
     {
       "repo": "crate:pubky",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8"
+      "sha": "8612a646b2fc0dd26cbecaf3f62366d04d381b03"
     }
   ],
   "provenance": [
     {
-      "anchor": "Upstream (authoritative) / Version banner",
-      "repo": "pubky-homeserver",
+      "anchor": "rust-client-pubky-crate",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/README.md",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md"
+    },
+    {
+      "anchor": "rust-client-pubky-crate",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/Cargo.toml",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/Cargo.toml"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/Cargo.toml"
     },
     {
-      "anchor": "Version banner: unreleased main API",
-      "repo": "pubky-homeserver",
-      "path": "pubky-sdk/src/errors.rs",
-      "sha": "fd24bf0",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/pubky-sdk/src/errors.rs"
+      "anchor": "install-and-runtime",
+      "repo": "pubky/pubky-homeserver",
+      "path": "Cargo.toml",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/Cargo.toml"
     },
     {
-      "anchor": "Changes since 0.12 (0.15.0 breaking vs new features)",
-      "repo": "pubky-homeserver",
-      "path": "releases/tag/v0.15.0",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/releases/tag/v0.15.0"
-    },
-    {
-      "anchor": "Install and runtime: prelude and re-exports",
-      "repo": "pubky-homeserver",
+      "anchor": "install-and-runtime",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/src/prelude.rs",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/prelude.rs"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/src/prelude.rs"
     },
     {
-      "anchor": "Quick start",
-      "repo": "pubky-knowledge-base-v2",
+      "anchor": "quick-start",
+      "repo": "pubky/pubky-knowledge-base-v2",
       "path": "snippets/rust/src/lib.rs",
       "sha": "bb7232d5e8ebebc61c55945bedc87d83d2d6bc26",
       "url": "https://github.com/pubky/pubky-knowledge-base-v2/blob/bb7232d5e8ebebc61c55945bedc87d83d2d6bc26/snippets/rust/src/lib.rs"
     },
     {
-      "anchor": "Client setup / PubkyHttpClientBuilder",
-      "repo": "pubky-homeserver",
+      "anchor": "client-setup",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/src/client/core.rs",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/client/core.rs"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/src/client/core.rs"
     },
     {
-      "anchor": "Client setup: Pubky constructors",
-      "repo": "pubky-homeserver",
-      "path": "pubky-sdk/src/pubky.rs",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/pubky.rs"
-    },
-    {
-      "anchor": "Sign up and sign in",
-      "repo": "pubky-homeserver",
-      "path": "pubky-sdk/src/actors/signer/session.rs",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/actors/signer/session.rs"
-    },
-    {
-      "anchor": "Sign up snippet",
-      "repo": "pubky-homeserver",
+      "anchor": "sign-up-and-sign-in",
+      "repo": "pubky/pubky-homeserver",
       "path": "examples/rust/1-signup/signup.rs",
-      "sha": "fd24bf0",
+      "sha": "main",
       "url": "https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/1-signup/signup.rs"
     },
     {
-      "anchor": "Other auth APIs: scoped encryption keys",
-      "repo": "pubky-homeserver",
-      "path": "docs/scoped-encryption-keys.md",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/docs/scoped-encryption-keys.md"
+      "anchor": "sign-up-and-sign-in",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/src/actors/auth/grant/builder.rs",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/src/actors/auth/grant/builder.rs#L126-L138"
     },
     {
-      "anchor": "Session storage",
-      "repo": "pubky-homeserver",
-      "path": "pubky-sdk/src/actors/storage/core.rs",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/actors/storage/core.rs"
+      "anchor": "session-storage-your-own-data",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/src/actors/storage/verbs.rs",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/src/actors/storage/verbs.rs"
     },
     {
-      "anchor": "How the SDK handles paths",
-      "repo": "pubky-homeserver",
+      "anchor": "how-the-sdk-handles-paths",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/src/actors/storage/resource.rs",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/actors/storage/resource.rs"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/src/actors/storage/resource.rs#L42-L80"
     },
     {
-      "anchor": "Listing",
-      "repo": "pubky-homeserver",
+      "anchor": "how-the-sdk-handles-paths",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/src/actors/storage/list.rs",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/actors/storage/list.rs"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/src/actors/storage/list.rs"
     },
     {
-      "anchor": "/priv alpha callout",
-      "repo": "pubky-homeserver",
-      "path": "docs/PRIVATE_STORAGE.md",
-      "sha": "fd24bf0",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/PRIVATE_STORAGE.md"
-    },
-    {
-      "anchor": "Storage locks",
-      "repo": "pubky-homeserver",
-      "path": "pubky-sdk/src/actors/storage/lock.rs",
-      "sha": "f60e502",
-      "url": "https://docs.rs/pubky/0.16.2/pubky/struct.StorageLock.html"
-    },
-    {
-      "anchor": "Storage locks: JS bindings",
-      "repo": "pubky-homeserver",
-      "path": "pubky-sdk/bindings/js/pkg/README.md",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/bindings/js/pkg/README.md"
-    },
-    {
-      "anchor": "Storage locks: status table",
-      "repo": "pubky-homeserver",
-      "path": "pubky-homeserver/openapi-client.yml",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-homeserver/openapi-client.yml"
-    },
-    {
-      "anchor": "Public storage",
-      "repo": "pubky-homeserver",
+      "anchor": "storage-locks",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/README.md",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#storage-api-session--public"
+      "sha": "v0.18.0",
+      "url": "https://docs.rs/pubky/0.18.0/pubky/struct.StorageLock.html"
     },
     {
-      "anchor": "Key formats in Rust",
-      "repo": "pubky-homeserver",
+      "anchor": "public-storage-other-users-data",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/README.md",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#key-formats-display-vs-transport"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/README.md#storage-api-session--public"
     },
     {
-      "anchor": "Error handling",
-      "repo": "pubky-homeserver",
+      "anchor": "error-handling",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/src/errors.rs",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/errors.rs"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/src/errors.rs#L199-L231"
     },
     {
-      "anchor": "Error-body limit",
-      "repo": "pubky-homeserver",
-      "path": "pubky-sdk/README.md",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#error-body-limits"
-    },
-    {
-      "anchor": "ensure_signup helper",
-      "repo": "pubky-homeserver",
+      "anchor": "error-handling",
+      "repo": "pubky/pubky-homeserver",
       "path": "examples/rust/testnet.rs",
-      "sha": "fd24bf0",
+      "sha": "main",
       "url": "https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/testnet.rs"
     },
     {
-      "anchor": "Sessions: sign out",
-      "repo": "pubky-homeserver",
+      "anchor": "sessions-sign-out-and-persist",
+      "repo": "pubky/pubky-homeserver",
       "path": "pubky-sdk/src/actors/session/core.rs",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/actors/session/core.rs"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/src/actors/session/core.rs#L109-L128"
     },
     {
-      "anchor": "Sessions: persist",
-      "repo": "pubky-homeserver",
-      "path": "pubky-sdk/README.md",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#keypair-and-session-persistence"
+      "anchor": "account-info-and-quota-0180",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/src/actors/auth/grant/view.rs",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/src/actors/auth/grant/view.rs#L112-L138"
     },
     {
-      "anchor": "Event streams",
-      "repo": "pubky-homeserver",
-      "path": "pubky-sdk/src/actors/event_stream.rs",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/actors/event_stream.rs"
+      "anchor": "events-pkdns-and-raw-http",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-common/src/events.rs",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-common/src/events.rs#L21"
     },
     {
-      "anchor": "Event streams: multi-user excerpt",
-      "repo": "pubky-homeserver",
-      "path": "examples/rust/5-events_stream/main.rs",
-      "sha": "fd24bf0",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/5-events_stream/main.rs"
+      "anchor": "events-pkdns-and-raw-http",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/src/client/http_targets/features.rs",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.18.0/pubky-sdk/src/client/http_targets/features.rs#L16-L21"
     },
     {
-      "anchor": "PKDNS",
-      "repo": "pubky-homeserver",
-      "path": "pubky-sdk/README.md",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/README.md#pkdns-pkarr"
-    },
-    {
-      "anchor": "Raw HTTP",
-      "repo": "pubky-homeserver",
-      "path": "pubky-sdk/src/client/http_targets/mod.rs",
-      "sha": "f60e502",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.2/pubky-sdk/src/client/http_targets/mod.rs"
-    },
-    {
-      "anchor": "Runnable examples",
-      "repo": "pubky-homeserver",
+      "anchor": "runnable-examples",
+      "repo": "pubky/pubky-homeserver",
       "path": "examples/rust/Cargo.toml",
-      "sha": "fd24bf0",
-      "url": "https://github.com/pubky/pubky-homeserver/tree/main/examples/rust"
+      "sha": "main",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/examples/rust/Cargo.toml"
     }
   ],
   "snippet": {
-    "total": 16,
-    "pass": 16,
-    "fail": 0,
+    "total": 19,
+    "pass": 18,
+    "fail": 1,
     "unverifiable": 0,
-    "failing": []
+    "failing": [
+      "quick-start"
+    ]
   },
   "factCheck": {
-    "supported": 54,
+    "supported": 33,
     "refuted": 0,
-    "caveated": 5,
+    "caveated": 2,
     "unsupported": 0
   },
-  "guardrailViolations": [
-    "None of the sentences presents a planned feature (encrypted storage, mirroring, backup restore, cloud backup, two-way sync) as available. /priv carries the alpha, not-for-production, not-encrypted-from-the-operator caveat, and scoped encryption keys are framed as client-side key delivery. The /pub layout instability and pre-1.0 caveats are present. The public-key string usage is correct: Display/to_string() gives pubky<z32>, z32() gives raw z32, and 'pubky://pubky<z32>' is forbidden.",
-    "Mirrored API detail (low severity, §4 drift). The page lists in full the prelude contents, every pubky::Error, RequestError and PkarrError variant, every PubkyHttpClientBuilder setter and default, and every EventStreamBuilder method. All of it is pinned to 0.16.2 with a 'trust docs.rs' disclaimer and docs.rs links, which mitigates the risk. Still, consider trimming the prelude list and the full Error variant list to a docs.rs link plus the one behavioural point (keep a catch-all arm; Server.message is capped)."
-  ],
-  "wordCount": 3714,
+  "guardrailViolations": [],
+  "wordCount": 4799,
   "substance": {
     "ok": true,
     "reasons": []

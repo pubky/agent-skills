@@ -2,151 +2,165 @@
   "path": "skills/pubky-infra/references/http-relay.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-10-26T14:07:49.115Z",
+  "generatedAt": "2026-11-12T08:25:14.580Z",
   "sourcesUsed": [
     {
       "repo": "http-relay",
-      "sha": "9ce3b830ab6f0af185017ba8573b1887e7991cb3"
+      "sha": "f35c7f9d86a88f67988776cf4c768c64393a0839"
     }
   ],
   "provenance": [
     {
       "anchor": "version-and-upstream",
       "repo": "pubky/http-relay",
+      "path": "CHANGELOG.md",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/CHANGELOG.md#L9-L87"
+    },
+    {
+      "anchor": "version-and-upstream",
+      "repo": "pubky/pubky-homeserver",
+      "path": "Cargo.toml",
+      "sha": "8612a64",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/8612a64/Cargo.toml#L61"
+    },
+    {
+      "anchor": "run-the-binary",
+      "repo": "pubky/http-relay",
       "path": "README.md",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/README.md#L41-L46"
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/README.md#L61-L89"
     },
     {
       "anchor": "run-the-binary",
       "repo": "pubky/http-relay",
       "path": "src/main.rs",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/src/main.rs#L14-L129"
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/src/main.rs#L14-L134"
     },
     {
-      "anchor": "run-the-binary (shutdown)",
+      "anchor": "run-the-binary",
       "repo": "pubky/http-relay",
-      "path": "src/http_relay/server.rs",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/src/http_relay/server.rs#L311-L323"
+      "path": "src/server.rs",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/src/server.rs#L416-L433"
+    },
+    {
+      "anchor": "deploy-behind-a-reverse-proxy",
+      "repo": "pubky/http-relay",
+      "path": "DEPLOY.md",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/DEPLOY.md#L6-L241"
+    },
+    {
+      "anchor": "client-ips---trusted-proxy",
+      "repo": "pubky/http-relay",
+      "path": "src/client_ip.rs",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/src/client_ip.rs"
     },
     {
       "anchor": "run-in-docker",
       "repo": "pubky/http-relay",
       "path": "Dockerfile",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/Dockerfile"
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/Dockerfile"
     },
     {
       "anchor": "embed-as-a-rust-library",
       "repo": "pubky/http-relay",
-      "path": "src/http_relay/server.rs",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/src/http_relay/server.rs#L91-L175"
+      "path": "src/lib.rs",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/src/lib.rs"
     },
     {
-      "anchor": "embed-as-a-rust-library (features/persist)",
+      "anchor": "embed-as-a-rust-library",
       "repo": "pubky/http-relay",
-      "path": "src/http_relay/mod.rs",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/src/http_relay/mod.rs#L5-L10"
+      "path": "Cargo.toml",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/Cargo.toml#L33-L52"
     },
     {
-      "anchor": "embed-as-a-rust-library (testnet)",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-testnet/src/static_testnet.rs",
-      "sha": "fd24bf0",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0/pubky-testnet/src/static_testnet.rs#L339-L349"
+      "anchor": "inbox-api",
+      "repo": "pubky/http-relay",
+      "path": "src/endpoint.rs",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/src/endpoint.rs#L57-L200"
     },
     {
       "anchor": "inbox-api",
       "repo": "pubky/http-relay",
       "path": "src/http_relay/inbox_handler.rs",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/src/http_relay/inbox_handler.rs#L26-L167"
+      "sha": "v0.7.0",
+      "url": "https://github.com/pubky/http-relay/blob/v0.7.0/src/http_relay/inbox_handler.rs#L78"
     },
     {
       "anchor": "delivery-semantics",
       "repo": "pubky/http-relay",
-      "path": "src/http_relay/waiting_list.rs",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/src/http_relay/waiting_list.rs#L260-L300"
+      "path": "src/waiting_list.rs",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/src/waiting_list.rs#L300-L344"
     },
     {
       "anchor": "security-inbox-ids-are-bearer-secrets",
       "repo": "pubky/http-relay",
-      "path": "src/http_relay/response.rs",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/src/http_relay/response.rs#L22-L25"
+      "path": "src/inbox.rs",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/src/inbox.rs#L3-L12"
+    },
+    {
+      "anchor": "limits",
+      "repo": "pubky/http-relay",
+      "path": "DEPLOY.md",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/DEPLOY.md#L73-L119"
     },
     {
       "anchor": "persistence",
       "repo": "pubky/http-relay",
-      "path": "src/http_relay/persistence.rs",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/src/http_relay/persistence.rs#L35-L56"
+      "path": "src/storage/sqlite.rs",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/src/storage/sqlite.rs#L1-L75"
     },
     {
       "anchor": "cors",
       "repo": "pubky/http-relay",
-      "path": "src/http_relay/server.rs",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/src/http_relay/server.rs#L210-L214"
-    },
-    {
-      "anchor": "limits-and-eviction",
-      "repo": "pubky/http-relay",
-      "path": "src/http_relay/persistence.rs",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/src/http_relay/persistence.rs#L89-L136"
+      "path": "src/server.rs",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/src/server.rs#L295-L299"
     },
     {
       "anchor": "legacy-link-deprecated",
       "repo": "pubky/http-relay",
-      "path": "README.md",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/README.md#L223-L235"
+      "path": "src/link.rs",
+      "sha": "f35c7f9",
+      "url": "https://github.com/pubky/http-relay/blob/f35c7f9/src/link.rs#L28-L79"
     },
     {
       "anchor": "how-pubky-uses-it",
       "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/auth/relay/http_relay_inbox_channel.rs",
-      "sha": "fd24bf0",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0/pubky-sdk/src/actors/auth/relay/http_relay_inbox_channel.rs#L13"
-    },
-    {
-      "anchor": "how-pubky-uses-it (pubky-docker)",
-      "repo": "pubky/pubky-docker",
-      "path": "docker-compose.yml",
-      "sha": "bb01419",
-      "url": "https://github.com/pubky/pubky-docker/blob/bb01419/docker-compose.yml#L167"
-    },
-    {
-      "anchor": "known-upstream-readme-drift-dont-copy",
-      "repo": "pubky/http-relay",
-      "path": "README.md",
-      "sha": "9ce3b83",
-      "url": "https://github.com/pubky/http-relay/blob/9ce3b83/README.md#L237-L328"
+      "path": "pubky-testnet/src/static_testnet.rs",
+      "sha": "8612a64",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/8612a64/pubky-testnet/src/static_testnet.rs#L339-L349"
     }
   ],
   "snippet": {
-    "total": 5,
-    "pass": 5,
+    "total": 6,
+    "pass": 6,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 24,
+    "supported": 36,
     "refuted": 0,
-    "caveated": 5,
+    "caveated": 8,
     "unsupported": 0
   },
   "guardrailViolations": [
-    "Canonical-not-copy (CLAUDE.md §2 / mirrored detail that should be a link): the 'How Pubky uses it' JS block (startGrantAuthFlow with relay = 'https://httprelay.example.com/inbox/') is a verbatim copy of the 'Custom relay' snippet already in skills/pubky/references/auth.md. The draft's own header says 'Link to those files; don't restate them'. Replace the block with a one-line pointer to ../../pubky/references/auth.md#relays."
+    "Soft §4 (link, don't mirror): the CLI flags table restates the README options table (README L74-L89) row by row, and the status-code table restates the README per-endpoint Responses lists (README L151-L225). Both are drift-prone API detail. They are tolerable only because each row adds code-verified notes (413 that the README omits, NonZero limits, the long-poll scope) and links upstream. Consider trimming the rows that only repeat the README and keeping the code-derived deltas. No planned or unshipped Pubky feature is presented as available, there is no /priv or Nexus /v0 content, and no public-key string usage to check."
   ],
-  "wordCount": 2415,
+  "wordCount": 3286,
   "substance": {
     "ok": true,
     "reasons": []

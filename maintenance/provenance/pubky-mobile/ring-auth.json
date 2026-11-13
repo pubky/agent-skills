@@ -2,210 +2,168 @@
   "path": "skills/pubky-mobile/references/ring-auth.md",
   "role": "normal",
   "accept": true,
-  "generatedAt": "2026-10-26T14:07:49.115Z",
+  "generatedAt": "2026-11-12T08:25:14.580Z",
   "sourcesUsed": [
     {
       "repo": "pubky-ring",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc"
+      "sha": "f2f8c2d6d715823db4c18780ece3ce809e4fa1b3"
     },
     {
       "repo": "pubky-homeserver",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8"
+      "sha": "8612a646b2fc0dd26cbecaf3f62366d04d381b03"
     }
   ],
   "provenance": [
     {
-      "anchor": "Versions and drift",
+      "anchor": "versions-and-drift",
       "repo": "pubky/pubky-ring",
-      "path": "android/app/build.gradle",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc",
-      "url": "https://github.com/pubky/pubky-ring/blob/fac51afa53ce5bca2198bbec498002a836652edc/android/app/build.gradle"
+      "path": "ios/pubkyring.xcodeproj/project.pbxproj; android/app/build.gradle; package.json",
+      "sha": "f2f8c2d",
+      "url": "https://github.com/pubky/pubky-ring/blob/main/android/app/build.gradle"
     },
     {
-      "anchor": "Versions and drift",
+      "anchor": "versions-and-drift",
       "repo": "pubky/pubky-core-ffi",
       "path": "Cargo.toml",
       "sha": "cecd67c"
     },
     {
-      "anchor": "Two roles: pick the right one",
+      "anchor": "two-roles-pick-the-right-one",
       "repo": "pubky/react-native-pubky",
       "path": "README.md",
-      "sha": "e85e344",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e344/README.md#authWithCapabilities"
+      "sha": "0.15.0",
+      "url": "https://github.com/pubky/react-native-pubky/blob/main/README.md"
     },
     {
-      "anchor": "Request a scoped grant via Ring (primary path)",
+      "anchor": "request-a-scoped-grant-via-ring-primary-path",
       "repo": "pubky/react-native-pubky",
       "path": "src/index.tsx",
-      "sha": "e85e344",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e344/src/index.tsx"
+      "sha": "0.15.0",
+      "url": "https://github.com/pubky/react-native-pubky/blob/main/src/index.tsx"
     },
     {
-      "anchor": "Request a scoped grant via Ring (primary path)",
+      "anchor": "require-a-specific-identity-spk",
+      "repo": "pubky/pubky-homeserver",
+      "path": "docs/AUTH.md; pubky-sdk/src/actors/auth/grant/builder.rs; pubky-sdk/bindings/js/pkg/README.md",
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/AUTH.md"
+    },
+    {
+      "anchor": "require-a-specific-identity-spk",
+      "repo": "pubky/pubky-ring",
+      "path": "src/utils/expectedSigner.ts; src/hooks/useDeepLinkHandler.ts",
+      "sha": "f2f8c2d",
+      "url": "https://github.com/pubky/pubky-ring/blob/main/src/utils/expectedSigner.ts"
+    },
+    {
+      "anchor": "resumable-flows-survive-an-app-kill",
       "repo": "pubky/react-native-pubky",
-      "path": "src/index.tsx",
-      "sha": "91e0fcc",
-      "url": "https://github.com/pubky/react-native-pubky/blob/91e0fcc/src/index.tsx#L531-L541"
+      "path": "README.md; src/index.tsx",
+      "sha": "0.15.0",
+      "url": "https://github.com/pubky/react-native-pubky/blob/main/src/index.tsx"
     },
     {
-      "anchor": "Resumable flows (survive an app kill)",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/auth_flow.rs",
-      "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/auth_flow.rs#L109-L182"
-    },
-    {
-      "anchor": "Scoped encryption keys (e, pubky 0.16+)",
+      "anchor": "scoped-encryption-keys-e-pubky-016",
       "repo": "pubky/pubky-homeserver",
       "path": "docs/scoped-encryption-keys.md",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8/docs/scoped-encryption-keys.md"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/scoped-encryption-keys.md"
     },
     {
-      "anchor": "Scoped encryption keys (e, pubky 0.16+)",
-      "repo": "pubky/pubky-core-ffi",
-      "path": "src/grant_features.rs",
-      "sha": "cecd67c",
-      "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/grant_features.rs#L93-L113"
-    },
-    {
-      "anchor": "Scoped encryption keys (e, pubky 0.16+)",
+      "anchor": "scoped-encryption-keys-e-pubky-016",
       "repo": "pubky/pubky-ring",
-      "path": "src/utils/actions/authAction.ts",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc",
-      "url": "https://github.com/pubky/pubky-ring/blob/fac51afa53ce5bca2198bbec498002a836652edc/src/utils/actions/authAction.ts#L123-L140"
+      "path": "src/screens/ConfirmAuth.tsx; src/i18n/locales/en.json",
+      "sha": "f2f8c2d",
+      "url": "https://github.com/pubky/pubky-ring/blob/main/src/screens/ConfirmAuth.tsx"
     },
     {
-      "anchor": "Store and revoke the grant_secret",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-homeserver/src/client_server/auth/grant/error_mapping.rs",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8/pubky-homeserver/src/client_server/auth/grant/error_mapping.rs#L138"
-    },
-    {
-      "anchor": "Store and revoke the grant_secret",
+      "anchor": "store-and-revoke-the-grant_secret",
       "repo": "pubky/pubky-homeserver",
       "path": "docs/grant-session-lifecycle.md",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8/docs/grant-session-lifecycle.md"
+      "sha": "v0.18.0",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/main/docs/grant-session-lifecycle.md"
     },
     {
-      "anchor": "Store and revoke the grant_secret",
-      "repo": "pubky/react-native-pubky",
-      "path": "README.md",
-      "sha": "e85e344",
-      "url": "https://github.com/pubky/react-native-pubky/blob/e85e344/README.md#revokeGrant"
-    },
-    {
-      "anchor": "Store and revoke the grant_secret",
+      "anchor": "store-and-revoke-the-grant_secret",
       "repo": "pubky/pubky-ring",
-      "path": "src/store/selectors/pubkySelectors.ts",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc",
-      "url": "https://github.com/pubky/pubky-ring/blob/fac51afa53ce5bca2198bbec498002a836652edc/src/store/selectors/pubkySelectors.ts#L54"
+      "path": "src/components/PubkyDetail/AuthorizedGrantList.tsx; src/store/selectors/pubkySelectors.ts; docs/development.md",
+      "sha": "f2f8c2d",
+      "url": "https://github.com/pubky/pubky-ring/blob/main/docs/development.md#homeserver-setup-behavior"
     },
     {
-      "anchor": "Deeplink schemes and intents",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/auth/deep_links/query_params.rs",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8/pubky-sdk/src/actors/auth/deep_links/query_params.rs#L80-L124"
-    },
-    {
-      "anchor": "Deeplink schemes and intents",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/auth/deep_links/signin_grant.rs",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8/pubky-sdk/src/actors/auth/deep_links/signin_grant.rs#L117-L175"
-    },
-    {
-      "anchor": "Deeplink schemes and intents",
+      "anchor": "deeplink-schemes-and-intents",
       "repo": "pubky/pubky-ring",
-      "path": "src/utils/inputParser.ts",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc",
-      "url": "https://github.com/pubky/pubky-ring/blob/fac51afa53ce5bca2198bbec498002a836652edc/src/utils/inputParser.ts#L255-L295"
+      "path": "docs/input-formats.md; src/utils/inputParser.ts",
+      "sha": "f2f8c2d",
+      "url": "https://github.com/pubky/pubky-ring/blob/main/docs/input-formats.md#links"
     },
     {
-      "anchor": "Deeplink schemes and intents",
+      "anchor": "deeplink-schemes-and-intents",
+      "repo": "pubky/pubky-homeserver",
+      "path": "pubky-sdk/src/actors/auth/deep_links/query_params.rs; grant_relay_channel.rs; signup.rs (v0.16.1)",
+      "sha": "v0.16.1",
+      "url": "https://github.com/pubky/pubky-homeserver/blob/v0.16.1/pubky-sdk/src/actors/auth/deep_links/signup.rs"
+    },
+    {
+      "anchor": "deeplink-schemes-and-intents",
       "repo": "pubky/pubky-core-ffi",
-      "path": "src/keypair.rs",
+      "path": "src/keypair.rs; src/auth.rs",
       "sha": "cecd67c",
       "url": "https://github.com/pubky/pubky-core-ffi/blob/cecd67c/src/keypair.rs#L7-L11"
     },
     {
-      "anchor": "x-callback return to your app",
-      "repo": "pubky/pubky-homeserver",
-      "path": "pubky-sdk/src/actors/auth/deep_links/x_callback.rs",
-      "sha": "fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8",
-      "url": "https://github.com/pubky/pubky-homeserver/blob/fd24bf0c8bbe8b89548ca16fe152a3c10c60c9b8/pubky-sdk/src/actors/auth/deep_links/x_callback.rs#L4-L98"
-    },
-    {
-      "anchor": "x-callback return to your app",
+      "anchor": "x-callback-return-to-your-app",
       "repo": "pubky/pubky-ring",
-      "path": "src/utils/actions/inviteAction.ts",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc",
-      "url": "https://github.com/pubky/pubky-ring/blob/fac51afa53ce5bca2198bbec498002a836652edc/src/utils/actions/inviteAction.ts#L64"
+      "path": "src/screens/ConfirmAuth.tsx; src/utils/inputParser.ts",
+      "sha": "f2f8c2d",
+      "url": "https://github.com/pubky/pubky-ring/blob/main/src/screens/ConfirmAuth.tsx"
     },
     {
-      "anchor": "What Ring does when a link arrives (predicting UX and timeouts)",
+      "anchor": "cancellation-does-not-recall-a-grant",
       "repo": "pubky/pubky-ring",
-      "path": "src/i18n/locales/en.json",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc",
-      "url": "https://github.com/pubky/pubky-ring/blob/fac51afa53ce5bca2198bbec498002a836652edc/src/i18n/locales/en.json#L93-L94"
+      "path": "docs/security.md",
+      "sha": "f2f8c2d",
+      "url": "https://github.com/pubky/pubky-ring/blob/main/docs/security.md"
     },
     {
-      "anchor": "What Ring does when a link arrives (predicting UX and timeouts)",
+      "anchor": "what-ring-does-when-a-link-arrives-predicting-ux-and-timeouts",
       "repo": "pubky/pubky-ring",
-      "path": "src/utils/actions/authAction.ts",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc",
-      "url": "https://github.com/pubky/pubky-ring/blob/fac51afa53ce5bca2198bbec498002a836652edc/src/utils/actions/authAction.ts#L98-L140"
+      "path": "src/screens/ConfirmAuth.tsx; src/components/AuthSummary.tsx; src/utils/pubky.ts; src/utils/actions/signupAction.ts; src/types/pubky.ts; src/store/selectors/settingsSelectors.ts",
+      "sha": "f2f8c2d",
+      "url": "https://github.com/pubky/pubky-ring/blob/main/src/utils/pubky.ts"
     },
     {
-      "anchor": "What Ring does when a link arrives (predicting UX and timeouts)",
+      "anchor": "qr-and-clipboard-input",
       "repo": "pubky/pubky-ring",
-      "path": "src/utils/pubky.ts",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc",
-      "url": "https://github.com/pubky/pubky-ring/blob/fac51afa53ce5bca2198bbec498002a836652edc/src/utils/pubky.ts#L977-L1047"
+      "path": "src/utils/inputParser.ts; src/utils/homeserverSignupInput.ts; docs/input-formats.md",
+      "sha": "f2f8c2d",
+      "url": "https://github.com/pubky/pubky-ring/blob/main/src/utils/inputParser.ts"
     },
     {
-      "anchor": "What Ring does when a link arrives (predicting UX and timeouts)",
-      "repo": "pubky/pubky-ring",
-      "path": "src/utils/actions/signupAction.ts",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc",
-      "url": "https://github.com/pubky/pubky-ring/blob/fac51afa53ce5bca2198bbec498002a836652edc/src/utils/actions/signupAction.ts#L63-L239"
-    },
-    {
-      "anchor": "QR and clipboard input",
-      "repo": "pubky/pubky-ring",
-      "path": "src/utils/inputParser.ts",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc",
-      "url": "https://github.com/pubky/pubky-ring/blob/fac51afa53ce5bca2198bbec498002a836652edc/src/utils/inputParser.ts#L417-L569"
-    },
-    {
-      "anchor": "Key migration: animated QR (pubkyring://migrate)",
+      "anchor": "key-migration-animated-qr-pubkyringmigrate",
       "repo": "pubky/pubky-ring",
       "path": "src/screens/MigrateQRCode.tsx",
-      "sha": "fac51afa53ce5bca2198bbec498002a836652edc",
-      "url": "https://github.com/pubky/pubky-ring/blob/fac51afa53ce5bca2198bbec498002a836652edc/src/screens/MigrateQRCode.tsx#L115-L151"
+      "sha": "f2f8c2d",
+      "url": "https://github.com/pubky/pubky-ring/blob/main/src/screens/MigrateQRCode.tsx"
     }
   ],
   "snippet": {
-    "total": 7,
-    "pass": 7,
+    "total": 8,
+    "pass": 8,
     "fail": 0,
     "unverifiable": 0,
     "failing": []
   },
   "factCheck": {
-    "supported": 49,
-    "refuted": 2,
-    "caveated": 11,
+    "supported": 40,
+    "refuted": 0,
+    "caveated": 3,
     "unsupported": 0
   },
   "guardrailViolations": [
-    "'its sample output uses a /priv/example/:rw capability; /priv is alpha, see shipped-vs-planned.md': /priv must carry the full caveat 'alpha, not for production, not encrypted from the operator (a homeserver admin can read and write it)', not just 'alpha'."
+    "Mirrored API detail (CLAUDE.md §2/§4): the 17-line react-native-pubky 0.15.0 signature listing, the four full interface definitions (GrantSessionInfo, GrantInfo, GrantAuthFlowConfig, GrantAuthFlowState), and most of 'Resumable flows' (the global slot, poll/await/cancel semantics, saveGrantAuthFlow errors) duplicate skills/pubky-mobile/references/react-native.md, which already documents GrantAuthFlowState, the one process-global slot, poll semantics and a resumable snippet, and copy upstream src/index.tsx. These are drift-prone. Keep only the Ring-specific deltas (no expectedSigner, the Ring-relevant subset) and link react-native.md#resumable-cancellable-and-signup-grant-flows plus upstream index.tsx. This is pre-existing in the current ring-auth.md, so the reviewer may accept it, but it is the main canonical-not-copy exposure on this page."
   ],
-  "wordCount": 4507,
+  "wordCount": 4772,
   "substance": {
     "ok": true,
     "reasons": []

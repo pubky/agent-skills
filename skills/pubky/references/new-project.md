@@ -81,3 +81,4 @@ Defaults and app choices, not protocol rules. Keep them unless the user says oth
 | Same error for every identity on testnet | the testnet is down or not ready | [JS against the local testnet](./testing-and-testnet.md#js-against-the-local-testnet) |
 | Signup 400/401 mentioning a token | token-gated homeserver | [signup tokens](./auth.md#signup-tokens); do not invent a token source |
 | No **New identity** button | not `vite dev`, not testnet, or disabled | [dev-only identity shortcut](./reference-apps.md#dev-only-identity-shortcut) |
+| You approved in Ring, but the app keeps waiting (local testnet) | the signed approval exceeds the testnet relay's 2 KiB body limit; the relay answers `413` to the signer, never to the app | run `http-relay --max-body-size 16384` and point `VITE_PUBKY_HTTP_RELAY` at its inbox URL — [relay limits](https://github.com/pubky/pubky-homeserver/blob/v0.18.0/docs/scoped-encryption-keys.md#relay-limits) |
