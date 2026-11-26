@@ -7,7 +7,8 @@
 // This is deliberately NOT part of the plan-run/apply-run pipeline. That pipeline uses an LLM to
 // GENERATE references/*.md; a vendored skill is a hand-tuned upstream document and must survive
 // byte-for-byte, so it is copied, never regenerated. Only the YAML frontmatter is local — see the
-// `frontmatter` key in sources.lock.json and the note beside it.
+// `frontmatter` key in sources.lock.json and the note beside it — plus an optional `replace` map for
+// placeholders a serving instance fills in (see applyReplace).
 //
 // The copy is idempotent, so there is no staleness/SHA bookkeeping: run it every sync and git shows
 // no diff when upstream hasn't moved.
@@ -72,6 +73,18 @@ function renderFrontmatter(fm) {
   return lines.join('\n')
 }
 
+// An upstream file served by a running instance can carry a placeholder the server fills in (Pinakes
+// writes its own base URL as `{{BASE}}`). A byte copy would leave agents calling the raw placeholder,
+// so `replace` in the lock swaps each key for its value. A key that no longer occurs upstream is an
+// error, not a no-op: upstream changed shape and the entry needs a look.
+export function applyReplace(md, replace = {}) {
+  const missing = Object.keys(replace).filter((from) => !md.includes(from))
+  if (missing.length) return { body: null, missing }
+  let body = md
+  for (const [from, to] of Object.entries(replace)) body = body.split(from).join(to)
+  return { body, missing }
+}
+
 // verify.mjs resolves relative links and #anchor targets inside skills/, so a relative link that
 // upstream adds later would turn into a blocking failure here. Catch it at copy time instead.
 function relativeLinks(md) {
@@ -102,7 +115,13 @@ function main() {
     // Normalise both source shapes to the same bare body: a repo checkout arrives with a YAML
     // header (stripping it leaves a leading blank line), /llms.txt arrives without one. Trim both
     // ends so the two sources are byte-for-byte interchangeable.
-    const upstream = stripFrontmatter(body).replace(/^\s*/, '').replace(/\s*$/, '\n')
+    const bare = stripFrontmatter(body).replace(/^\s*/, '').replace(/\s*$/, '\n')
+    const { body: upstream, missing } = applyReplace(bare, entry.replace)
+    if (!upstream) {
+      console.error(`✗ ${relPath}: replace key(s) [${missing.join(', ')}] not found in ${origin} — upstream changed shape; update the lock entry`)
+      failed++
+      continue
+    }
 
     // Reuse the pipeline's substance gate so a truncated fetch or an HTML error page can never land
     // in skills/. Role 'normal' == the 120-word floor.

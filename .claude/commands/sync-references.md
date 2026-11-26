@@ -36,7 +36,8 @@ For incremental diffs you need history: when a repo is in scope and shallow, `gi
 
 ## 1b. Refresh vendored skills
 `node maintenance/vendor-skills.mjs` — byte-copies each `lock.vendoredSkills` entry (today
-`skills/nexus-scout/SKILL.md`) from the first available source, rewriting only its YAML frontmatter.
+`skills/nexus-scout/SKILL.md` and `skills/pinakes/SKILL.md`) from the first available source, rewriting
+only its YAML frontmatter and any `replace` placeholders.
 Record whether it reports `created`/`updated` or `unchanged`. It is **not** part of the workflow: a
 vendored skill is upstream's hand-tuned document and must never be LLM-rewritten (see `CLAUDE.md`
 §7). If it reports a substance-gate or relative-link failure, the fetch was bad or upstream changed

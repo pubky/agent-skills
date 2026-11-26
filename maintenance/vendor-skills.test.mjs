@@ -5,7 +5,7 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { execFileSync } from 'node:child_process'
-import { fromGit } from './vendor-skills.mjs'
+import { applyReplace, fromGit } from './vendor-skills.mjs'
 
 const git = (cwd, args) => execFileSync('git', ['-C', cwd, ...args], { encoding: 'utf8' }).trim()
 const root = mkdtempSync(join(tmpdir(), 'vendor-skills-test-'))
@@ -50,4 +50,13 @@ try {
   console.log('✓ fromGit refreshes stale sources and ignores dirty worktrees')
 } finally {
   rmSync(root, { recursive: true, force: true })
+}
+
+{
+  const guide = "Base URL `{{BASE}}` here.\n\ncurl -s '{{BASE}}/v1/search?q=x'\n"
+  const got = applyReplace(guide, { '{{BASE}}': '<pinakes-url>' })
+  assert.equal(got.body, "Base URL `<pinakes-url>` here.\n\ncurl -s '<pinakes-url>/v1/search?q=x'\n")
+  assert.deepEqual(applyReplace(guide), { body: guide, missing: [] })
+  assert.deepEqual(applyReplace('no placeholder\n', { '{{BASE}}': '<pinakes-url>' }), { body: null, missing: ['{{BASE}}'] })
+  console.log('✓ applyReplace swaps every placeholder and fails when one is gone upstream')
 }

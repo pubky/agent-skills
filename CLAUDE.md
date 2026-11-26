@@ -4,12 +4,14 @@ Rules for editing this repo. They keep the skills correct, cheap to load, and dr
 
 ## 1. Split by audience, never by SDK language
 
-Four skills, divided by who the developer is and what they're doing:
+Five skills, divided by who the developer is and what they're doing:
 
 - `skills/pubky` — building **web / server** apps (JS/WASM + Rust SDKs)
 - `skills/pubky-mobile` — building **native** apps (React Native, UniFFI Swift/Kotlin)
 - `skills/pubky-infra` — **operating / self-hosting** Pubky backend services
 - `skills/nexus-scout` — **querying** the social graph with read-only Cypher (vendored, see §7)
+- `skills/pinakes` — **searching** the external links people share on Pubky and reading their cards
+  (vendored, see §7)
 
 Do **not** add a skill per SDK or per language. Every SDK re-expresses the same protocol
 spine (identity, `pubkyauth`, homeserver signup/session, `pubky://` CRUD, app-specs
@@ -41,7 +43,7 @@ old ~1,300-line monolith.
 `verify.mjs` budgets this at 90 lines / 800 words. **Vendored skills (§7) are exempt** — their
 body is a byte copy, so trimming it to fit is not available; `verify.mjs` lists them in `VENDORED`
 and reports thinness as `info`. That exemption is the price of not maintaining a fork, and it is
-paid in always-loaded context (~10 KB → ~22.5 KB with `nexus-scout`). Do not extend it to a skill
+paid in always-loaded context (~10 KB → ~22.5 KB with `nexus-scout` → ~43 KB with `pinakes`). Do not extend it to a skill
 we author ourselves.
 
 ## 4. Link upstream; summarize, don't mirror
@@ -66,8 +68,11 @@ distinct, and keep the "NOT for … (use the X skill)" cross-references intact.
 `nexus-scout` (cypher/followers/tags/threads/follow-distance — reading the graph, not building on
 it) is the fourth vocabulary. Its `VOCAB` entry in `verify.mjs` deliberately uses terms absent from
 the other three descriptions, so registering it cannot retroactively flag an existing trigger. Every
-skill's `NOT for …` clause must name **all** the others — adding a fifth skill means touching all of
+skill's `NOT for …` clause must name **all** the others — adding a skill means touching all of
 them.
+
+`pinakes` (external links, typed cards, ISBN/DOI/ISRC/OSM ids, Also on — what a shared link *is*, not
+who shared it) is the fifth. Its `VOCAB` entry follows the same rule as `nexus-scout`'s.
 
 ## 6. Only document what exists
 
@@ -80,6 +85,9 @@ mirroring, backup restore, etc.) as available.
 `skills/nexus-scout/SKILL.md` is a **byte copy** of a file authored and maintained upstream in
 [`pubky/nexus-scout`](https://github.com/pubky/nexus-scout). That file cannot move here — it is
 `include_str!`'d into the gateway binary and served at `/llms.txt`, so the service depends on it.
+`skills/pinakes/SKILL.md` is the same kind of copy of
+[`pubky/pinakes`](https://github.com/pubky/pinakes)' `crates/pinakes-core/src/agents/guide.md`,
+which `pinakesd` compiles in and serves at `/llms.txt` and `/skill.md`.
 
 Rules for any vendored skill:
 
@@ -90,6 +98,10 @@ Rules for any vendored skill:
 - **Only the YAML frontmatter is local**, declared in `sources.lock.json` under `vendoredSkills`.
   It exists because upstream's own frontmatter has no `NOT for …` cross-reference clause (§5
   requires one) and its "Neo4j" wording collides with `pubky-infra` trigger vocab.
+- **Placeholders a server fills in** are swapped by the entry's `replace` map, and nothing else.
+  The Pinakes guide writes its instance's base URL as `{{BASE}}`; with no public production
+  instance yet, the copy says `<pinakes-url>` and the frontmatter tells agents to use the URL they
+  were given. A `replace` key that no longer occurs upstream fails the copy.
 - The copy is idempotent — there is no SHA bookkeeping. Run the copier on every sync; git shows
   no diff when upstream hasn't moved.
 

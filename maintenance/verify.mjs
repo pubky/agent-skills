@@ -24,12 +24,12 @@ const WORD_BUDGET = 800     // per SKILL.md (largest today is 604)
 const DESC_BUDGET = 1200    // frontmatter description chars
 const COPY_THRESHOLD = 0.18 // shingle-overlap ratio vs a canonical file
 
-const SKILLS = ['pubky', 'pubky-mobile', 'pubky-infra', 'nexus-scout']
+const SKILLS = ['pubky', 'pubky-mobile', 'pubky-infra', 'nexus-scout', 'pinakes']
 // Skills whose SKILL.md is a byte copy of an upstream-authored file (see maintenance/vendor-skills.mjs
 // and lock.vendoredSkills). The thinness budget is skipped for these: the whole point is that the body
 // survives verbatim, so trimming it to fit is not an option and a permanent warning would only mask
 // real regressions in the hand-written skills. CLAUDE.md rule 3 carries the same carve-out.
-const VENDORED = new Set(['nexus-scout'])
+const VENDORED = new Set(['nexus-scout', 'pinakes'])
 const CANONICAL = [
   'skills/pubky/references/concepts.md',
   'skills/pubky/references/app-specs.md',
@@ -43,6 +43,8 @@ const VOCAB = {
   // Terms deliberately absent from the other three descriptions, so registering them here cannot
   // retroactively flag an existing trigger. ('followers'/'social graph' would — pubky has near-matches.)
   'nexus-scout': ['cypher', 'follow distance', 'trending tags'],
+  // Same rule as nexus-scout: none of these occur in another skill's positive trigger.
+  'pinakes': ['pinakes', 'external links', 'isbn', 'isrc'],
 }
 
 const findings = []
