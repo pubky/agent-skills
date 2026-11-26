@@ -292,6 +292,15 @@
         "docs/**"
       ],
       "lastSeenSha": null
+    },
+    "pinakes": {
+      "url": "https://github.com/pubky/pinakes",
+      "branch": "main",
+      "note": "Upstream home of skills/pinakes/SKILL.md. The guide is include_str!'d into pinakesd and served at /llms.txt and /skill.md, with {{BASE}} replaced by the host that served it, so it cannot move into this repo; we take a byte copy (see vendoredSkills). lastSeenSha stays null for the same reason as nexus-scout: no reference file is generated from this repo.",
+      "pathsOfInterest": [
+        "crates/pinakes-core/src/agents/guide.md"
+      ],
+      "lastSeenSha": null
     }
   },
   "vendoredSkills": {
@@ -308,7 +317,30 @@
       ],
       "frontmatter": {
         "name": "nexus-scout",
-        "description": "Use when you need facts from the Pubky social graph - who follows whom, trending tags, thread/reply history, author reputation, trust distance between users. Query the graph with read-only Cypher over HTTP. NOT for building or debugging a Pubky app (use pubky), NOT for native iOS/Android or React Native apps (use pubky-mobile), and NOT for running or self-hosting Pubky services (use pubky-infra).",
+        "description": "Use when you need facts from the Pubky social graph - who follows whom, trending tags, thread/reply history, author reputation, trust distance between users. Query the graph with read-only Cypher over HTTP. NOT for building or debugging a Pubky app (use pubky), NOT for native iOS/Android or React Native apps (use pubky-mobile), NOT for running or self-hosting Pubky services (use pubky-infra), and NOT for searching the external links people share or reading their cards (use pinakes).",
+        "metadata": {
+          "author": "pubky",
+          "version": "0.1.0"
+        }
+      }
+    },
+    "skills/pinakes/SKILL.md": {
+      "note": "Byte copy of upstream's guide (served by every Pinakes instance at /llms.txt and /skill.md) - never hand-edit and never run it through the reference-generation workflow. Two things are local: the YAML frontmatter below, because upstream's has no 'NOT for ...' cross-reference clause, and `replace`, because the guide writes the instance's own base URL as {{BASE}} and there is no public production Pinakes host to put there yet. The copier fails if a `replace` key no longer occurs upstream.",
+      "from": [
+        {
+          "repo": "pinakes",
+          "path": "crates/pinakes-core/src/agents/guide.md"
+        },
+        {
+          "endpoint": "https://raw.githubusercontent.com/pubky/pinakes/main/crates/pinakes-core/src/agents/guide.md"
+        }
+      ],
+      "replace": {
+        "{{BASE}}": "<pinakes-url>"
+      },
+      "frontmatter": {
+        "name": "pinakes",
+        "description": "Use when you need facts about the external links people share on Pubky - what a link is (its typed card: web page, place, event, book, music, video, paper, post on another network, another Pubky app's object), places near a point with a tag, events in a city and time window, every link with one ISBN, DOI, ISRC or OSM id, and which links are the same thing on several services (Also on). Search Pinakes over HTTP or MCP. There is no public default instance: use the Pinakes URL you were given in place of <pinakes-url>. NOT for building or debugging a Pubky app (use pubky), NOT for native iOS/Android or React Native apps (use pubky-mobile), NOT for running or self-hosting Pubky services (use pubky-infra), and NOT for follows, users or threads in the social graph (use nexus-scout).",
         "metadata": {
           "author": "pubky",
           "version": "0.1.0"

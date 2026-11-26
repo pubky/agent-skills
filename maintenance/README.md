@@ -72,8 +72,9 @@ the workflow's fact-check + consistency stages enforce the judgment ones.
 ## Vendored skills (the one thing this pipeline does *not* generate)
 
 `skills/nexus-scout/SKILL.md` is a **byte copy** of a file maintained in
-[`pubky/nexus-scout`](https://github.com/pubky/nexus-scout), refreshed by
-`node maintenance/vendor-skills.mjs`. Why it is copied rather than generated, or moved here:
+[`pubky/nexus-scout`](https://github.com/pubky/nexus-scout), and `skills/pinakes/SKILL.md` one of
+[`pubky/pinakes`](https://github.com/pubky/pinakes)' `crates/pinakes-core/src/agents/guide.md`, both
+refreshed by `node maintenance/vendor-skills.mjs`. Why it is copied rather than generated, or moved here:
 
 - Upstream `include_str!`s that file into the gateway binary and serves it at `/llms.txt`, so the
   service depends on it staying put. We take a copy; upstream stays the single author.
@@ -88,3 +89,9 @@ of the trigger (it is `pubky-infra` vocab). Before writing, the body must pass `
 and contain no relative markdown links — a bad fetch or an upstream shape change fails loudly
 instead of landing in `skills/`. `verify.mjs` exempts these files from the thinness budget via
 its `VENDORED` set. See `../CLAUDE.md` §7.
+
+The Pinakes guide is a template: each instance replaces `{{BASE}}` with its own host, so its
+`/llms.txt` differs per instance and is not a fallback. Its entry falls back to the raw file on
+GitHub instead, and a `replace` map writes the placeholder as `<pinakes-url>` (the copy fails if
+the placeholder disappears upstream). Its frontmatter tells agents to use the instance URL they
+were given, because there is no public production instance yet.
